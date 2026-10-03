@@ -1,0 +1,26 @@
+---
+/**
+ * 「→」だけで見せる送りボタン。href があればリンク、無ければ次のスライドへ送る。
+ */
+interface Props {
+  label: string;
+  href?: string;
+  caption?: string;
+  size?: 'md' | 'lg';
+  class?: string;
+}
+
+const { label, href, caption, size = 'md', class: className } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  href={href}
+  type={href ? undefined : 'button'}
+  data-deck-next={href ? undefined : true}
+  aria-label={label}
+  class:list={['flex w-[128px] cursor-pointer flex-col items-center font-serif leading-auto text-paper', className]}
+>
+  <span class:list={[size === 'lg' ? 'mb-[-39px] text-arrow' : 'text-greeting-lg']}>→</span>
+  {caption && <span class="w-full text-caption font-light opacity-50">{caption}</span>}
+</Tag>

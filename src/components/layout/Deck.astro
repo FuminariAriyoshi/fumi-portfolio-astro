@@ -1,0 +1,23 @@
+---
+/**
+ * 1 枚 = 1 ビューポートのスライドを束ねるコンテナ。
+ * ホイール・キーボード・スワイプ・[data-deck-next] / [data-deck-prev] で送る。
+ */
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<main data-deck class="stage overflow-hidden" aria-roledescription="carousel" aria-label={label}>
+  <slot />
+</main>
+
+<script>
+  import { initDeck } from '@/lib/deck';
+  import { initMarquees } from '@/lib/marquee';
+
+  initMarquees();
+  initDeck();
+</script>

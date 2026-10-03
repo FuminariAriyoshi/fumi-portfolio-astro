@@ -1,0 +1,30 @@
+---
+/**
+ * スライドの上下を流れる大きなキーワード列。
+ * ループの継ぎ目が出ないよう同じ列を 2 回並べ、2 つ目は読み上げから外す。
+ */
+interface Props {
+  words: string[];
+  size?: 'en' | 'jp';
+  reverse?: boolean;
+  duration?: number;
+  class?: string;
+}
+
+const { words, size = 'en', reverse = false, duration = 40, class: className } = Astro.props;
+const sizeClass = size === 'jp' ? 'text-marquee-jp' : 'text-marquee';
+---
+
+<div class:list={['absolute whitespace-nowrap', className]}>
+  <div
+    class:list={['flex font-black leading-auto', sizeClass]}
+    data-marquee={reverse ? 'reverse' : 'forward'}
+    data-duration={duration}
+  >
+    {[0, 1].map((copy) => (
+      <p class="flex shrink-0 gap-[44px] pr-[44px]" aria-hidden={copy === 1 ? 'true' : undefined}>
+        {words.map((word) => <span>{word}</span>)}
+      </p>
+    ))}
+  </div>
+</div>

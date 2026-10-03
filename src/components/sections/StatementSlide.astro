@@ -1,0 +1,20 @@
+---
+/** 大きなグラデーション文字の一行(例: Think Logically) */
+interface Props {
+  id?: string;
+  words: string[];
+}
+
+const { id, words } = Astro.props;
+const textClass = 'bg-linear-to-b from-ink to-ink-soft bg-clip-text';
+---
+
+<section id={id} aria-label={words.join(' ')} class="w-full shrink-0 md:h-[266px]">
+  <p
+    class="flex items-center gap-[21px] whitespace-nowrap font-black leading-auto text-transparent text-title md:text-marquee md:sidebar-closed:ml-[-186px]"
+  >
+    {words.map((word, i) => (
+      <span class:list={[textClass, i > 0 && 'md:tracking-[-4.4px]']}>{word}</span>
+    ))}
+  </p>
+</section>

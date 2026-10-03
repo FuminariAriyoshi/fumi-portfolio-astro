@@ -1,0 +1,20 @@
+---
+interface Props {
+  href: string;
+  size?: 'sm' | 'md';
+  ariaLabel?: string;
+}
+
+const { href, size = 'sm', ariaLabel } = Astro.props;
+---
+
+<a
+  href={href}
+  aria-label={ariaLabel}
+  class:list={[
+    'flex items-end gap-[4px] rounded-[40px] border border-paper px-[25px] py-[11px] leading-auto',
+    size === 'md' ? 'text-nav' : 'text-meta',
+  ]}
+>
+  <slot />
+</a>

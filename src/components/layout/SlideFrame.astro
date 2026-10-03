@@ -1,0 +1,28 @@
+---
+/** 16:9 のスライド枠。md 未満では高さを中身に合わせる */
+interface Props {
+  id: string;
+  label: string;
+  tone?: 'accent' | 'ink' | 'light';
+  class?: string;
+}
+
+const { id, label, tone = 'accent', class: className } = Astro.props;
+const toneClass = {
+  accent: 'bg-accent text-paper',
+  ink: 'bg-ink text-paper',
+  light: 'bg-thumb-3 text-ink',
+}[tone];
+---
+
+<section
+  id={id}
+  aria-label={label}
+  class:list={[
+    'flex w-full shrink-0 scroll-mt-[24px] flex-col overflow-clip rounded-[24px] p-[24px] md:aspect-video md:p-[40px]',
+    toneClass,
+    className,
+  ]}
+>
+  <slot />
+</section>

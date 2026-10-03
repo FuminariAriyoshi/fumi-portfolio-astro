@@ -1,0 +1,22 @@
+---
+import SlideLayout from '@/layouts/SlideLayout.astro';
+import Deck from '@/components/layout/Deck.astro';
+import StorySlide from '@/components/sections/StorySlide.astro';
+import { pitatobiChapters, pitatobiStories } from '@/data/projects';
+
+// 1 番目の Introduction は一覧スライドと同じ内容なので、本文は Origin から
+const total = 11;
+---
+
+<SlideLayout title="ピタとび — Fumi Portfolio">
+  <Deck label="ピタとび">
+    {pitatobiStories.map((story, i) => (
+      <StorySlide
+        story={story}
+        chapters={pitatobiChapters}
+        active={i + 1}
+        counter={`${String(i + 1).padStart(2, '0')}/${total}`}
+      />
+    ))}
+  </Deck>
+</SlideLayout>

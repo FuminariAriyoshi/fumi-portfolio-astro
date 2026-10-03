@@ -1,0 +1,16 @@
+---
+const links = [
+  { href: '#about', label: 'About' },
+  { href: '#works', label: 'Works' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<header class="bg-paper px-[24px] py-[25px]">
+  <nav class="flex items-center justify-between whitespace-nowrap leading-auto" aria-label="Main">
+    <a href="/" class="font-serif text-nav" aria-label="Fumi (home)">Fumi</a>
+    {links.map((link) => (
+      <a href={link.href} class="text-meta">{link.label}</a>
+    ))}
+  </nav>
+</header>

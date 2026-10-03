@@ -1,0 +1,16 @@
+{
+  "repositoryName": "fumiportfolio",
+  "libraries": [
+    "./src/slices"
+  ],
+  "routes": [
+    {
+      "type": "case_study",
+      "path": "/case-study/:uid"
+    },
+    {
+      "type": "page",
+      "path": "/pages/:uid"
+    }
+  ]
+}

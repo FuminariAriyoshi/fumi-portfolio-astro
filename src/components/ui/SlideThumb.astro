@@ -1,0 +1,23 @@
+---
+/**
+ * サイドバーのスライドサムネイル。
+ * aria-current="true" のもの(いま見ているスライド)を大きく明るく表示する。
+ */
+interface Props {
+  label: string;
+  href: string;
+  current?: boolean;
+}
+
+const { label, href, current = false } = Astro.props;
+---
+
+<a
+  href={href}
+  data-thumb={href.slice(1)}
+  aria-label={`Go to slide: ${label}`}
+  aria-current={current ? 'true' : undefined}
+  class="flex h-[168px] w-full shrink-0 flex-col items-start justify-end overflow-clip rounded-[8px] bg-thumb px-[10px] pb-[5px] aria-[current=true]:h-[356px] aria-[current=true]:bg-thumb-3 sidebar-closed:h-[31px] sidebar-closed:aria-[current=true]:h-[104px] sidebar-closed:aria-[current=true]:bg-thumb"
+>
+  <span class="text-caption leading-auto tracking-[-0.64px] whitespace-nowrap">{label}</span>
+</a>

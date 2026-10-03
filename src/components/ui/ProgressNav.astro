@@ -1,0 +1,29 @@
+---
+/**
+ * 進捗バー + 見出しの一覧。現在地だけ不透明にする。
+ */
+interface Props {
+  items: string[];
+  active: number;
+  /** 白いバーの長さ(px) */
+  fill?: number;
+  label: string;
+  class?: string;
+  labelClass?: string;
+}
+
+const { items, active, fill = 134, label, class: className, labelClass } = Astro.props;
+---
+
+<nav aria-label={label} class:list={['flex flex-col gap-[16px]', className]}>
+  <div class="relative h-[6px] w-full bg-track" aria-hidden="true">
+    <div class="absolute inset-y-0 left-0 bg-paper" style={`width: ${fill}px`}></div>
+  </div>
+  <ol class:list={['flex items-center justify-between whitespace-nowrap font-serif text-body leading-auto', labelClass]}>
+    {items.map((item, i) => (
+      <li class:list={[i !== active && 'opacity-50']} aria-current={i === active ? 'step' : undefined}>
+        {item}
+      </li>
+    ))}
+  </ol>
+</nav>

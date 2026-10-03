@@ -1,0 +1,60 @@
+---
+import Slide from '../layout/Slide.astro';
+import Header from '../layout/Header.astro';
+import ProgressNav from '../ui/ProgressNav.astro';
+import ArrowButton from '../ui/ArrowButton.astro';
+
+export interface Story {
+  heading: string;
+  /** 空文字は段落間の空行として描画する */
+  paragraphs: string[];
+  image: { src: string; alt: string };
+  note?: { title: string; body: string };
+}
+
+interface Props {
+  story: Story;
+  chapters: string[];
+  active: number;
+  counter: string;
+}
+
+const { story, chapters, active, counter } = Astro.props;
+---
+
+<Slide label={`${chapters[active]}: ${story.heading}`}>
+  <Header variant="chapter" counter={counter} class="absolute left-[30px] top-[23px] w-[1228px]" />
+  <ProgressNav
+    items={chapters}
+    active={active}
+    label="Chapters"
+    class="absolute left-[21px] top-[105px] w-[1237px]"
+    labelClass="ml-[9px]"
+  />
+
+  <div class="absolute left-[30px] top-[234px] h-[501px] w-[435px] overflow-hidden" data-reveal>
+    <img
+      src={story.image.src}
+      alt={story.image.alt}
+      width="1404"
+      height="1304"
+      class="absolute left-[-52.28%] top-[-3.4%] h-[122.71%] w-[152.25%] max-w-none"
+    />
+  </div>
+
+  <div class="absolute left-[574px] top-[242px] flex w-[678px] flex-col gap-[16px]" data-reveal>
+    <h2 class="whitespace-nowrap text-subtitle font-semibold leading-auto tracking-tighter">{story.heading}</h2>
+    <div class="text-body leading-body tracking-tighter">
+      {story.paragraphs.map((p) => (p ? <p>{p}</p> : <br aria-hidden="true" />))}
+    </div>
+  </div>
+
+  {story.note && (
+    <div class="absolute left-[578px] top-[619px] flex w-[500px] flex-col text-meta leading-body tracking-tighter" data-reveal>
+      <p class="whitespace-nowrap">{story.note.title}</p>
+      <p class="opacity-50">{story.note.body}</p>
+    </div>
+  )}
+
+  <ArrowButton label="Next chapter" class="absolute left-[1165px] top-[735px]" />
+</Slide>

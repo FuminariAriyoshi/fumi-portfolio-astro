@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "PP Migra";
+  src: url("/fonts/PPMigra-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PP Migra";
+  src: url("/fonts/PPMigra-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Inter", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --font-serif: "PP Migra", "Hiragino Mincho ProN", serif;
+
+  --color-ink: #000;
+  --color-paper: #fff;
+  --color-track: #575757;
+  --color-thumb: #adadad;
+  --color-thumb-2: #bababa;
+  --color-thumb-3: #d4d4d4;
+  --color-accent: #d75e5e;
+  --color-ink-soft: #666;
+
+  /* 1rem = 16px。デザイン(1280×832)の px 値をそのまま rem に換算 */
+  --text-meta: 1rem;
+  --text-body: 1.25rem;
+  --text-nav: 1.5rem;
+  --text-subtitle: 2.25rem;
+  --text-caption: 2rem;
+  --text-cta: 2.5rem;
+  --text-greeting: 3rem;
+  --text-greeting-lg: 4rem;
+  --text-title: 5rem;
+  --text-name: 6rem;
+  --text-arrow: 8rem;
+  --text-ticker: 8rem;
+  --text-marquee-jp: 12.5rem;
+  --text-marquee: 13.75rem;
+
+  --leading-auto: normal;
+  --leading-body: 1.8;
+}
+
+/* Workspace のサイドバーを閉じた状態(data-sidebar="closed")のスタイル */
+@custom-variant sidebar-closed (&:where([data-sidebar="closed"] *));
+
+/* スライドの固定キャンバス。ビューポートに contain でフィットさせる */
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1280px;
+  height: 832px;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+}

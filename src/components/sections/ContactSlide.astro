@@ -1,0 +1,27 @@
+---
+import SlideFrame from '../layout/SlideFrame.astro';
+import SlideHeading from '../ui/SlideHeading.astro';
+import { socials } from '@/data/home';
+---
+
+<SlideFrame id="contact" label="Contact" tone="light">
+  <SlideHeading number="03" title="Contact" />
+  <div class="mt-auto flex flex-col gap-[24px] pt-[32px]">
+    <p class="font-serif text-greeting leading-auto md:text-title">Let’s work together.</p>
+    <ul class="flex gap-[24px] text-body leading-auto">
+      {socials.map((social) => (
+        <li>
+          <a
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Fumi on ${social.label} (opens in a new tab)`}
+            class="underline underline-offset-4"
+          >
+            {social.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</SlideFrame>

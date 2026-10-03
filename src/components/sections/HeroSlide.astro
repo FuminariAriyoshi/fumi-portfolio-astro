@@ -1,0 +1,36 @@
+---
+import Slide from '../layout/Slide.astro';
+import Marquee from '../ui/Marquee.astro';
+import ArrowButton from '../ui/ArrowButton.astro';
+---
+
+<Slide label="Hi, I'm Fumi">
+  <Marquee
+    words={['自分いけます。', '花札', '京都', '英語オタク']}
+    size="jp"
+    reverse
+    class="left-[-1677px] top-[-22px]"
+  />
+
+  <div class="absolute left-[308px] top-[336px] flex items-start gap-[26px]">
+    <div class="flex items-start gap-[56px]" data-reveal>
+      <img
+        src="/slides/fumi-memoji.png"
+        alt="Fumi のミー文字"
+        width="154"
+        height="155"
+        class="h-[155px] w-[154px] shrink-0 rounded-[77px] object-cover"
+      />
+      <h1 class="flex w-[380px] flex-col items-start leading-auto">
+        <span class="mb-[-11px] text-greeting">Hi!</span>
+        <span class="flex items-center gap-[24px] whitespace-nowrap">
+          <span class="text-greeting-lg">I’m</span>
+          <span class="font-serif text-name">Fumi</span>
+        </span>
+      </h1>
+    </div>
+    <ArrowButton label="Next slide: About me" caption="About me" size="lg" class="mt-[27px]" />
+  </div>
+
+  <Marquee words={['Design', 'Tech', 'Japan', 'Claude']} class="left-[-20px] top-[615px]" />
+</Slide>

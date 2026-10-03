@@ -1,0 +1,44 @@
+---
+/** 1 枚目: 自己紹介。背景に流れる単語 2 列と中央の「Hi! I'm Fumi」 */
+const topWords = ['花札', '京都', '英語オタク'];
+const bottomWords = ['Design', 'Tech', 'Japan', 'Claude'];
+const rowClass =
+  'absolute flex items-center gap-[24px] whitespace-nowrap font-black leading-auto text-paper opacity-50 text-greeting-lg md:text-ticker md:sidebar-closed:text-marquee-jp';
+---
+
+<section
+  id="top"
+  aria-label="Hi, I'm Fumi"
+  class="w-full shrink-0 overflow-clip rounded-[12px] bg-ink"
+>
+  <div class="relative aspect-video w-full overflow-clip bg-[linear-gradient(122.2deg,rgba(0,0,0,0.2)_11.07%,rgba(42,206,252,0.2)_89.18%)]">
+    <p aria-hidden="true" class:list={[rowClass, 'top-[-8px] left-[-40px] md:top-[-19px] md:left-[-149px] md:sidebar-closed:top-[-44px] md:sidebar-closed:left-[-137px]']}>
+      {topWords.map((word) => <span>{word}</span>)}
+    </p>
+    <p
+      aria-hidden="true"
+      class:list={[rowClass, 'bottom-[-8px] left-[-40px] md:bottom-auto md:top-[calc(77.78%-12.88px)] md:left-[-149px] md:sidebar-closed:top-[calc(66.67%+20.75px)]']}
+    >
+      {bottomWords.map((word) => <span>{word}</span>)}
+    </p>
+
+    <div class="absolute inset-0 flex items-center justify-center md:block">
+      <div class="flex items-center gap-[16px] md:absolute md:top-[calc(33.33%+27.62px)] md:left-[calc(25%+50.5px)] md:gap-[37px] md:sidebar-closed:gap-[22px]">
+        <img
+          src="/slides/fumi-memoji.png"
+          alt="Fumi のミー文字"
+          width="90"
+          height="91"
+          class="size-[56px] shrink-0 rounded-[77px] object-cover md:h-[91px] md:w-[90px] md:sidebar-closed:size-[105px]"
+        />
+        <h1 class="flex flex-col items-start leading-auto text-paper">
+          <span class="text-nav md:mb-[-11px] md:text-greeting">Hi!</span>
+          <span class="flex items-center gap-[12px] whitespace-nowrap md:gap-[24px] md:sidebar-closed:gap-[11px]">
+            <span class="text-nav md:text-greeting">I’m</span>
+            <span class="font-serif text-subtitle md:text-greeting-lg md:sidebar-closed:text-name">Fumi</span>
+          </span>
+        </h1>
+      </div>
+    </div>
+  </div>
+</section>

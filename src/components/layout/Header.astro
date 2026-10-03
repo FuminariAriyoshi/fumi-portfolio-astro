@@ -1,0 +1,40 @@
+---
+/**
+ * スライド上部の共通ヘッダー。
+ * index: 作品一覧(枠内に番号) / chapter: 作品ページ(枠の下に 01/11)
+ */
+import PillLink from '../ui/PillLink.astro';
+
+interface Props {
+  variant?: 'index' | 'chapter';
+  index?: string;
+  counter?: string;
+  class?: string;
+}
+
+const { variant = 'index', index, counter, class: className } = Astro.props;
+const isChapter = variant === 'chapter';
+const boxHeight = isChapter ? 'h-[49px]' : 'h-[41px]';
+---
+
+<header class:list={['relative flex items-center justify-between', className]}>
+  <div class="flex items-center gap-[7px]" aria-hidden={index ? undefined : 'true'}>
+    <div class:list={['flex w-[69px] items-center justify-center border border-paper font-serif text-meta leading-auto', boxHeight]}>
+      {index}
+    </div>
+    <div class:list={['w-px border border-paper', boxHeight, !isChapter && 'opacity-50']}></div>
+    <div class:list={['w-px border border-paper', boxHeight, !isChapter && 'opacity-50']}></div>
+  </div>
+
+  {counter && (
+    <p class="absolute left-[43px] top-[53px] font-serif text-nav leading-auto">{counter}</p>
+  )}
+
+  <div class="flex items-center gap-[14px] whitespace-nowrap">
+    <p class="font-serif text-nav leading-auto">EN/JP</p>
+    <PillLink href="/" size={isChapter ? 'md' : 'sm'} ariaLabel="About Fumi (home)">
+      <span>About</span>
+      <span class="font-serif">Fumi</span>
+    </PillLink>
+  </div>
+</header>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title">
+  <title id="title">英会話の吹き出し</title>
+  <rect width="1200" height="675" fill="#f0f9ff"/>
+  <path d="M145 130h570a55 55 0 0155 55v190a55 55 0 01-55 55H390l-145 105 35-105h-135a55 55 0 01-55-55V185a55 55 0 0155-55z" fill="#ffffff" stroke="#38bdf8" stroke-width="8"/>
+  <path d="M485 260h430a55 55 0 0155 55v150a55 55 0 01-55 55H750l-120 80 25-80H485a55 55 0 01-55-55V315a55 55 0 0155-55z" fill="#0f172a"/>
+  <circle cx="250" cy="280" r="20" fill="#0284c7"/><circle cx="340" cy="280" r="20" fill="#0284c7"/><circle cx="430" cy="280" r="20" fill="#0284c7"/>
+  <circle cx="610" cy="390" r="18" fill="#ffffff"/><circle cx="690" cy="390" r="18" fill="#ffffff"/><circle cx="770" cy="390" r="18" fill="#ffffff"/>
+</svg>

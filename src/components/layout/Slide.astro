@@ -1,0 +1,16 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<section
+  data-slide
+  class="absolute inset-0 overflow-hidden bg-ink"
+  aria-roledescription="slide"
+  aria-label={label}
+>
+  <slot />
+</section>

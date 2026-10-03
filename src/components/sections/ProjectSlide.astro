@@ -1,0 +1,66 @@
+---
+import Slide from '../layout/Slide.astro';
+import Header from '../layout/Header.astro';
+import Marquee from '../ui/Marquee.astro';
+import ProgressNav from '../ui/ProgressNav.astro';
+import MetaItem from '../ui/MetaItem.astro';
+import CtaLink from '../ui/CtaLink.astro';
+
+export interface Project {
+  title: string;
+  image: { src: string; alt: string };
+  intro: string;
+  client: string;
+  year: string;
+  role: string;
+  href: string;
+  keywords: string[];
+}
+
+interface Props {
+  project: Project;
+  index: number;
+  projectTitles: string[];
+}
+
+const { project, index, projectTitles } = Astro.props;
+const number = String(index + 1).padStart(2, '0');
+---
+
+<Slide label={project.title}>
+  <div class="absolute left-[19px] top-[23px] flex w-[1237px] flex-col gap-[39px]">
+    <Header variant="index" index={number} class="w-[1228px]" />
+    <ProgressNav items={projectTitles} active={index} label="Works" labelClass="w-[1228px]" />
+  </div>
+
+  <div class="absolute left-[38px] top-[211px] flex w-[1218px] items-center gap-[51px]">
+    <img
+      src={project.image.src}
+      alt={project.image.alt}
+      width="429"
+      height="241"
+      class="h-[241px] w-[429px] shrink-0 rounded-[11px] object-cover"
+      data-reveal
+    />
+    <div class="flex min-w-px flex-1 flex-col gap-[22px]" data-reveal>
+      <div class="flex flex-col gap-[16px]">
+        <div class="flex flex-col gap-[12px]">
+          <h2 class="whitespace-nowrap text-title font-semibold leading-auto tracking-tighter">{project.title}</h2>
+          <MetaItem label="Introduction">
+            <p class="text-body leading-body tracking-tighter">{project.intro}</p>
+          </MetaItem>
+        </div>
+        <div class="flex items-start gap-[25px] text-meta">
+          <MetaItem label="Client"><p class="leading-body">{project.client}</p></MetaItem>
+          <MetaItem label="Year"><p class="leading-body">{project.year}</p></MetaItem>
+          <MetaItem label="Role"><p class="whitespace-nowrap leading-body">{project.role}</p></MetaItem>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <CtaLink href={project.href} label="Go to the Project" ariaLabel={`Go to the project: ${project.title}`} />
+      </div>
+    </div>
+  </div>
+
+  <Marquee words={project.keywords} class="left-[-511px] top-[632px]" />
+</Slide>

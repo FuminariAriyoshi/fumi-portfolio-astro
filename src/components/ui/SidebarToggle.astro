@@ -1,0 +1,22 @@
+---
+/** サイドバー開閉ボタン。中の縦線の位置で開閉状態を表す */
+interface Props {
+  controls: string;
+}
+
+const { controls } = Astro.props;
+---
+
+<button
+  type="button"
+  data-sidebar-toggle
+  aria-controls={controls}
+  aria-expanded="true"
+  aria-label="Toggle slide list"
+  class="relative block h-[32px] w-[51px] overflow-clip rounded-[5px] border-[1.5px] border-ink"
+>
+  <span
+    aria-hidden="true"
+    class="absolute top-[-1.5px] left-[-1.5px] h-[32px] w-[22px] border-r-[1.5px] border-ink sidebar-closed:w-[13px]"
+  ></span>
+</button>

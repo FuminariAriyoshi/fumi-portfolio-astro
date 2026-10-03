@@ -1,0 +1,80 @@
+---
+/**
+ * 左にスライド一覧、右にスライド本体を並べる作業画面風レイアウト。
+ * data-sidebar="open" | "closed" で全体の寸法が切り替わる。md 未満ではサイドバーを出さない。
+ */
+import SidebarToggle from '../ui/SidebarToggle.astro';
+import SlideThumb from '../ui/SlideThumb.astro';
+import type { SlideMeta } from '@/data/home';
+
+interface Props {
+  slides: SlideMeta[];
+}
+
+const { slides } = Astro.props;
+---
+
+<div data-workspace data-sidebar="open" class="flex flex-col px-[16px] pb-[120px] md:px-[26px]">
+  <!-- 前回の開閉状態を初回描画前に戻す -->
+  <script is:inline>
+    (function (root) {
+      try {
+        if (localStorage.getItem('sidebar') === 'closed') root.dataset.sidebar = 'closed';
+      } catch (e) {}
+    })(document.currentScript.parentElement);
+  </script>
+
+  <div class="hidden items-center md:flex">
+    <SidebarToggle controls="slide-list" />
+  </div>
+
+  <div class="flex items-start gap-[31px]">
+    <nav
+      id="slide-list"
+      aria-label="Slides"
+      class="sticky top-0 hidden max-h-dvh w-[299px] shrink-0 flex-col items-start gap-[12px] overflow-y-auto py-[25px] md:flex sidebar-closed:w-[55px]"
+    >
+      {slides.map((slide, i) => (
+        <SlideThumb label={slide.label} href={`#${slide.id}`} current={i === 0} />
+      ))}
+    </nav>
+
+    <main class="flex min-w-px flex-1 flex-col items-start gap-[14px] overflow-clip py-[26px]">
+      <slot />
+    </main>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-workspace]').forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>('[data-sidebar-toggle]');
+    const sync = () => button?.setAttribute('aria-expanded', String(root.dataset.sidebar === 'open'));
+    sync();
+    button?.addEventListener('click', () => {
+      root.dataset.sidebar = root.dataset.sidebar === 'open' ? 'closed' : 'open';
+      sync();
+      try {
+        localStorage.setItem('sidebar', root.dataset.sidebar);
+      } catch {}
+    });
+
+    // 画面の中央付近にあるスライドのサムネイルを current にする
+    const thumbs = [...root.querySelectorAll<HTMLAnchorElement>('[data-thumb]')];
+    const setCurrent = (id: string) => {
+      thumbs.forEach((thumb) => {
+        if (thumb.dataset.thumb === id) thumb.setAttribute('aria-current', 'true');
+        else thumb.removeAttribute('aria-current');
+      });
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => entry.isIntersecting && setCurrent(entry.target.id));
+      },
+      { rootMargin: '-45% 0px -54% 0px' },
+    );
+    thumbs.forEach((thumb) => {
+      const target = document.getElementById(thumb.dataset.thumb ?? '');
+      if (target) observer.observe(target);
+    });
+  });
+</script>

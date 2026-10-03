@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title">
+  <title id="title">英語の発音を表す音声波形</title>
+  <rect width="1200" height="675" fill="#fffbeb"/>
+  <circle cx="600" cy="338" r="245" fill="#ffffff" stroke="#fbbf24" stroke-width="8"/>
+  <path d="M310 338h70l35-95 55 205 55-280 65 340 55-240 55 145 45-75h95" fill="none" stroke="#d97706" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

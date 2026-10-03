@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import Workspace from '@/components/layout/Workspace.astro';
+import IntroSlide from '@/components/sections/IntroSlide.astro';
+import StatementSlide from '@/components/sections/StatementSlide.astro';
+import AboutSlide from '@/components/sections/AboutSlide.astro';
+import WorksSlide from '@/components/sections/WorksSlide.astro';
+import ContactSlide from '@/components/sections/ContactSlide.astro';
+import { slides } from '@/data/home';
+---
+
+<BaseLayout title="Fumi Portfolio">
+  <SiteHeader />
+  <Workspace slides={slides}>
+    <IntroSlide />
+    <StatementSlide words={['Think', 'Logically']} />
+    <AboutSlide />
+    <WorksSlide />
+    <ContactSlide />
+  </Workspace>
+</BaseLayout>

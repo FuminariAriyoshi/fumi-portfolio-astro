@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title">
+  <title id="title">英語を読むためのノートとペン</title>
+  <rect width="1200" height="675" fill="#fff7ed"/>
+  <rect x="190" y="120" width="820" height="435" rx="36" fill="#ffffff" stroke="#fdba74" stroke-width="8"/>
+  <path d="M600 155v365" stroke="#fed7aa" stroke-width="6"/>
+  <path d="M255 220h270M255 280h220M255 340h260M675 220h270M675 280h210M675 340h250" stroke="#64748b" stroke-width="18" stroke-linecap="round"/>
+  <path d="M765 475l205-205 34 34-205 205-55 20z" fill="#ea580c"/>
+</svg>

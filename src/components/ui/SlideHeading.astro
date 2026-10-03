@@ -1,0 +1,14 @@
+---
+/** スライド左上の見出し(番号 + タイトル) */
+interface Props {
+  number: string;
+  title: string;
+}
+
+const { number, title } = Astro.props;
+---
+
+<div class="flex items-baseline gap-[16px] leading-auto">
+  <span class="font-serif text-nav opacity-60">{number}</span>
+  <h2 class="font-serif text-subtitle md:text-greeting">{title}</h2>
+</div>
