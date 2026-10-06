@@ -1,0 +1,26 @@
+---
+/** ピタとび: サービス名(Figma 172-3 を型に合わせて整理) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+---
+
+<ChapterSlide label="BrandSystem: サービス名" chapter="BrandSystem">
+  <!-- 「ピタとび」をカードの縦の中心に置き、由来はその下にぶら下げる(由来の分だけ上にずれないよう absolute) -->
+  <div slot="visual" class:list={[t.card, 'flex h-[420px] w-full items-center justify-center']}>
+    <div class="relative">
+      <p class="text-name font-bold leading-[1.2] tracking-[-0.06em]">ピタとび</p>
+      <p class:list={[t.body, 'absolute top-full left-1/2 mt-[16px] -translate-x-1/2 whitespace-nowrap font-medium opacity-60']}>ピッタリ × 旅 × 飛ぶ</p>
+    </div>
+  </div>
+  <h3 class={t.title}>サービス名</h3>
+  <p class={t.lead}>元のサービス名 である、留学NEXTのサービス名にはあまり理由がなかった。</p>
+  <div class={t.body}>
+    <p>留学NEXTチームの強みは「一人ひとりにピッタリ」な留学方法を提案できること。またよりICPに刺さるサービス名があると思い、</p>
+    <p>だからサービス名から作り直した。もう一人のデザイナーと案出しを行い、非常にいい案が出た。</p>
+    <p>それが「ピタとび」だった。覚えやすく、ICPにも刺さりそうな名前。実際</p>
+  </div>
+  <div class={t.column}>
+    <p class={t.columnTitle}>サービスコンセプト</p>
+    <p class={t.columnBody}>実際の経験に基づいた多様な留学のカタチをご提案。ユーザーが自分らしさを大切にしながら、「本当にやりたい、ぴったりな留学」を見つけ、海外へ飛び立つための一歩を全力でサポート。</p>
+  </div>
+</ChapterSlide>

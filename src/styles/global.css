@@ -29,7 +29,36 @@
   --color-accent: #d75e5e;
   --color-ink-soft: #666;
 
+  /* サイドバーのサムネイル色。
+     -soft: 普段(白に近い)。無印: 現在のスライドで使う色。表紙と同じく黒地に 20% で重ねるグラデーション(bg-tint-*)にする。
+     Fumi は表紙の色、作品は各キービジュアルの色(ピタとび=ロゴ / Reikikkawa=モノクロ写真 / 星紡ぎ=琥珀の光) */
+  --color-slide-fumi: rgb(42 206 252);
+  --color-slide-fumi-soft: #e9eff1;
+  --color-slide-about: #2ed3b0;
+  --color-slide-about-soft: #e8f2f0;
+  --color-slide-works: #d6d62a;
+  --color-slide-works-soft: #f3f3e4;
+  --color-slide-contact: #f04fb0;
+  --color-slide-contact-soft: #f8e9f2;
+  --color-work-pitatobi: #00a0f0;
+  --color-work-pitatobi-soft: #e6f4fb;
+  /* 作品のキーワードの帯のグラデーション(黒 → この色) */
+  --color-work-pitatobi-deep: #3a5967;
+  /* ピタとびのブランドカラー(ロゴ・キャラクターの青) */
+  --color-pitatobi-blue: #00affe;
+  /* Before/After の AFTER ボードのグラデーション(#1A1A1A → この青) */
+  --color-pitatobi-glow: #1184ff;
+  --color-board-from: #1a1a1a;
+  --color-work-reikikkawa: #9aa6ba;
+  --color-work-reikikkawa-soft: #f1f2f3;
+  --color-work-starweaving: #f0a030;
+  --color-work-starweaving-soft: #f6f0e5;
+
   /* 1rem = 16px。デザイン(1280×832)の px 値をそのまま rem に換算 */
+  --text-micro: 0.625rem;
+  --text-tiny: 0.6875rem;
+  --text-kicker: 0.75rem;
+  --text-small: 0.875rem;
   --text-meta: 1rem;
   --text-body: 1.25rem;
   --text-nav: 1.5rem;
@@ -44,9 +73,35 @@
   --text-ticker: 8rem;
   --text-marquee-jp: 12.5rem;
   --text-marquee: 13.75rem;
+  --text-stat: 11.25rem; /* 成果の大きな数字(180px) */
+
+  /* 角丸は要素の大きさで段階を決める。小さい要素に大きい角丸を使うと過剰に丸く見えるため。
+     slide: 16:9 の大きなスライド / frame: 表紙・資料型スライドの枠(Figma) / card: 300〜500px 程度のカード・写真
+     thumb: サイドバーのサムネイル(Figma) / media: 100px 前後の小さな画像枠 */
+  --radius-slide: 24px;
+  --radius-frame: 12px;
+  --radius-card: 12px;
+  --radius-thumb: 8px;
+  --radius-media: 6px;
 
   --leading-auto: normal;
   --leading-body: 1.8;
+}
+
+/* 表紙のグラデーション(黒地に色を 20% で重ねる)。bg-tint-slide-fumi が表紙そのもの。サイドバーの現在項目でも使う */
+@utility bg-tint-* {
+  background-image: linear-gradient(122.2deg, rgba(0, 0, 0, 0.2) 11.07%, color-mix(in srgb, --value(--color-*) 20%, transparent) 89.18%);
+}
+
+/* サイドバーの現在項目用。表紙と同じ形のグラデーションで、色が分かるよう濃くしたもの */
+@utility bg-tint-strong-* {
+  background-image: linear-gradient(122.2deg, rgba(0, 0, 0, 0.2) 11.07%, color-mix(in srgb, --value(--color-*) 55%, transparent) 89.18%);
+}
+
+/* ワークごとの背景グラデーション。サイドバーと同じ形で、文字が読めるよう表紙(bg-tint-*)と同じ 20% に抑える。
+   作品のまとまりに work-tint-* を付けると、中の黒いスライド・ブロック(bg-(image:--work-tint))にだけ効く */
+@utility work-tint-* {
+  --work-tint: linear-gradient(122.2deg, rgba(0, 0, 0, 0.2) 11.07%, color-mix(in srgb, --value(--color-*) 20%, transparent) 89.18%);
 }
 
 /* Workspace のサイドバーを閉じた状態(data-sidebar="closed")のスタイル */
@@ -61,4 +116,120 @@
   height: 832px;
   transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
+}
+
+/* Single-page additions; the original slides and cover keep their design. */
+@theme { --color-canvas: hsl(0 0% 96%); --color-rule: hsl(0 0% 82%); --color-muted: hsl(0 0% 38%); --text-case: 3rem; }
+.portfolio-header { position: sticky; top: 0; z-index: 50; }
+/* ページ内リンクで飛んだスライドの上端を、サイドバーの現在項目と同じ揃え線に置く(値は Workspace が計算) */
+[data-workspace] main [id] { scroll-margin-top: var(--align-line, 137px); }
+.portfolio-footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; font-size: var(--text-kicker); }
+.portfolio-skip { position: fixed; top: 8px; left: 8px; z-index: 100; padding: 12px; background: var(--color-paper); transform: translateY(-200%); }
+.portfolio-skip:focus { transform: none; }
+[data-workspace] a:focus-visible,[data-workspace] button:focus-visible,.portfolio-header a:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { [data-workspace] *,[data-workspace] *::before,[data-workspace] *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+
+/* The mobile rail reuses the desktop slide navigation and active state. */
+@media (max-width: 767px) {
+  [data-workspace] [data-slide-list] {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    max-height: none;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: var(--color-paper);
+    border-top: 1px solid var(--color-rule);
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 16px;
+  }
+  [data-workspace] [data-slide-list] [data-thumb] {
+    width: 144px;
+    height: 72px;
+    margin-left: 0;
+    padding: 8px 10px;
+    justify-content: flex-end;
+  }
+  [data-workspace] [data-slide-list] [data-thumb] [data-thumb-label] {
+    font-size: var(--text-meta);
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+  /* 現在の項目は枠線ではなく横に大きくする */
+  [data-workspace] [data-slide-list] [data-thumb][aria-current="true"] {
+    width: 240px;
+  }
+  [data-workspace] { padding-bottom: calc(144px + env(safe-area-inset-bottom)); }
+}
+
+/* Keep the toggle reachable while the slide list follows the page. */
+/* 開閉ボタンの帯。下に 12px 空けて、スクロールしたサムネイルがボタンにくっつかないようにする */
+[data-workspace] .portfolio-toolbar { position: sticky; top: var(--portfolio-header-height, 78px); z-index: 40; padding-bottom: 12px; background: var(--color-paper); }
+@media (min-width: 768px) {
+  /* 開閉ボタンの帯(32px + 下余白 12px)の下から始める */
+  [data-workspace] [data-slide-list] { top: calc(var(--portfolio-header-height, 78px) + 44px); max-height: calc(100dvh - var(--portfolio-header-height, 78px) - 60px); }
+  /* 閉じている時はサイドバーを縦いっぱいにし、項目の高さで埋める(高さは Workspace が --thumb-h に出す) */
+  [data-workspace][data-sidebar="closed"] [data-slide-list] { height: calc(100dvh - var(--portfolio-header-height, 78px) - 60px); }
+}
+
+/* サイドバーは画面より長くなるので内部スクロールするが、スクロールバーは見せない */
+[data-slide-list] { --thumb-h: 31px; --thumb-current-h: 104px; --thumb-fill-h: 356px; scrollbar-width: none; overflow-anchor: none; } /* Flip 中にブラウザがスクロール位置を勝手に補正しないよう anchor を切る */
+[data-slide-list]::-webkit-scrollbar { display: none; }
+
+/* 登場アニメーション前の要素は、GSAP が表示するまで隠す(html.motion は BaseLayout が付ける) */
+.motion [data-enter] { visibility: hidden; }
+
+/* 閉じたサイドバーで、マウスを乗せた項目(data-peek。PortfolioMotion が付ける)を大きくしてラベルを小さく出す */
+@media (min-width: 768px) {
+  /* 高さはラベルに合わせる。上は番号と重ならないよう空ける */
+  [data-workspace][data-sidebar="closed"] [data-thumb][data-peek]:not([aria-current="true"]) { height: auto; min-height: max(64px, var(--thumb-h)); padding-top: 24px; padding-inline: 4px; }
+  [data-workspace][data-sidebar="closed"] [data-thumb][data-peek] > [data-thumb-label] {
+    display: block;
+    padding-inline: 0;
+    font-size: var(--text-micro);
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    word-break: keep-all; /* 単語の途中では改行しない(日本語も)。枠に入りきらない長い単語だけは折り返す */
+  }
+}
+/* 作品の章の一覧は、その作品のサムネイルが current の時だけ出す */
+[data-thumb-group] > [data-thumb]:not([aria-current="true"]) ~ [data-chapter-list] { display: none; }
+
+/* マウスを乗せた時の層は現在の項目には出さない(すでに同じ色なので) */
+[data-thumb][aria-current="true"] > [data-thumb-hover] { display: none; }
+/* 番号はマウスを乗せた時の層より上に */
+[data-thumb] > [data-thumb-number] { z-index: 1; }
+
+/* reduced-motion では PortfolioMotion が動かないので :hover で同じ見た目にする(アニメーションなし) */
+@media (prefers-reduced-motion: reduce) {
+  [data-thumb]:not([aria-current="true"]):hover > [data-thumb-hover] { opacity: 1; }
+  [data-thumb]:not([aria-current="true"]):hover { color: var(--color-paper); }
+}
+@media (min-width: 768px) and (prefers-reduced-motion: reduce) {
+  [data-workspace][data-sidebar="closed"] [data-thumb]:hover:not([aria-current="true"]) { height: auto; min-height: max(64px, var(--thumb-h)); padding-top: 24px; }
+  [data-workspace][data-sidebar="closed"] [data-thumb]:not([aria-current="true"]):hover > [data-thumb-label] {
+    display: block;
+    font-size: var(--text-micro);
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    word-break: keep-all; /* 単語の途中では改行しない(日本語も)。枠に入りきらない長い単語だけは折り返す */
+  }
+}
+
+/* Collapsed desktop thumbnails keep their accessible names, without clipped labels. */
+@media (min-width: 768px) {
+  /* 閉じている時はラベルを隠す。現在の項目とマウスを乗せた項目だけ小さく出す */
+  [data-workspace][data-sidebar="closed"] [data-thumb]:not([aria-current="true"]):not([data-peek]) > [data-thumb-label] { display: none; }
+  [data-workspace][data-sidebar="closed"] [data-thumb][aria-current="true"] > [data-thumb-label] {
+    font-size: var(--text-micro);
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    word-break: keep-all; /* 単語の途中では改行しない(日本語も)。枠に入りきらない長い単語だけは折り返す */
+  }
 }

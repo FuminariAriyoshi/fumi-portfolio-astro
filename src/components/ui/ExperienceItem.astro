@@ -1,0 +1,19 @@
+---
+/** Experience の 1 件: 名称 / 役割 / 期間(右寄せ)と、何をしていたか */
+import type { CareerItem } from '@/data/about';
+
+interface Props {
+  item: CareerItem;
+}
+
+const { item } = Astro.props;
+---
+
+<li class="flex flex-col gap-[6px] leading-auto">
+  <div class="flex flex-wrap items-baseline gap-x-[8px] gap-y-[2px]">
+    <span class="text-meta">{item.title}</span>
+    <span class="text-kicker opacity-60">{item.role}</span>
+    <span class="ml-auto text-kicker opacity-50">{item.period}</span>
+  </div>
+  {item.description && <p class="text-kicker leading-[1.5] opacity-50">{item.description}</p>}
+</li>

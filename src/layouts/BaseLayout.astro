@@ -20,8 +20,18 @@ const { title } = Astro.props;
       rel="stylesheet"
     />
     <title>{title}</title>
+    <!-- 登場アニメーション対象を初回描画から隠す。JS が動かなかった時は 3 秒で戻す -->
+    <script is:inline>
+      (function () {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var html = document.documentElement;
+        html.classList.add('motion');
+        setTimeout(function () { html.classList.remove('motion'); }, 3000);
+      })();
+    </script>
   </head>
   <body class="bg-paper font-sans text-ink">
+    <a href="#main-content" class="portfolio-skip">本文へ移動</a>
     <slot />
   </body>
 </html>

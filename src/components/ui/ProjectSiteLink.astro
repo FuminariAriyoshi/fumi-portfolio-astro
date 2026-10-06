@@ -1,0 +1,5 @@
+---
+interface Props { href: string; title: string; text?: string; }
+const { href, title, text = 'Visit Site' } = Astro.props;
+---
+<a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${title}を見る（新しいタブ）`} class="self-start text-meta underline underline-offset-4">{text} ↗</a>

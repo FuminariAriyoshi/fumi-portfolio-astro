@@ -1,0 +1,15 @@
+---
+/** 枠いっぱいに上寄せで敷く画像(studio-fumi の CoverImage) */
+interface Props {
+  src: string;
+  alt: string;
+  aspect: string;
+  class?: string;
+}
+
+const { src, alt, aspect, class: className } = Astro.props;
+---
+
+<div class:list={['relative overflow-clip', className]} style={`aspect-ratio: ${aspect}`}>
+  <img src={src} alt={alt} loading="lazy" class="absolute inset-0 size-full object-cover object-top select-none" />
+</div>

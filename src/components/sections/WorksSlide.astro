@@ -6,14 +6,14 @@ import { projects, projectTitles } from '@/data/projects';
 // 個別ページがある作品だけリンクにする
 const items = projectTitles.map((title) => {
   const project = projects.find((p) => p.title === title);
-  return { title, href: project?.href, meta: project ? `${project.client} — ${project.year}` : 'Coming soon' };
+  return { title, href: ['#pitatobi', '#reikikkawa', '#starweaving'][projectTitles.indexOf(title)], meta: project ? [project.client ?? project.team, project.year].filter(Boolean).join(' — ') : 'Case study in preparation' };
 });
 ---
 
 <SlideFrame id="works" label="Works" tone="ink">
-  <SlideHeading number="02" title="Works" />
+  <SlideHeading title="Works" />
   <ol class="mt-auto flex flex-col pt-[32px]">
-    {items.map((item, i) => {
+    {items.map((item) => {
       const Tag = item.href ? 'a' : 'div';
       return (
         <li class="border-t border-paper/30 last:border-b">
@@ -22,10 +22,7 @@ const items = projectTitles.map((title) => {
             aria-label={item.href ? `View case study: ${item.title}` : undefined}
             class="flex flex-col gap-[4px] py-[16px] leading-auto md:flex-row md:items-baseline md:justify-between"
           >
-            <span class="flex items-baseline gap-[16px]">
-              <span class="font-serif text-meta opacity-60">{String(i + 1).padStart(2, '0')}</span>
-              <span class="text-nav font-semibold">{item.title}</span>
-            </span>
+            <span class="text-nav font-semibold">{item.title}</span>
             <span class="text-meta opacity-60">{item.meta}</span>
           </Tag>
         </li>

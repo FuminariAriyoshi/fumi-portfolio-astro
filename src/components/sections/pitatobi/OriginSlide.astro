@@ -1,0 +1,24 @@
+---
+/** ピタとび: Origin(留学は人生を変える。) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+import { pitatobiStories } from '@/data/projects';
+
+const story = pitatobiStories[0];
+const paragraphs = story.paragraphs.filter(Boolean);
+---
+
+<ChapterSlide label={`Origin: ${story.heading}`} chapter="Origin">
+  <div slot="visual" class:list={[t.card, 'relative h-[560px] w-[480px]']}>
+    <img src={story.image.src} alt={story.image.alt} width="1404" height="1304" loading="lazy" class="absolute inset-0 size-full object-cover object-[35%_50%]" />
+  </div>
+  <h3 class={t.title}>{story.heading}</h3>
+  <p class={t.lead}>{paragraphs[0]}</p>
+  <div class={t.body}>{paragraphs.slice(1).map((p) => <p>{p}</p>)}</div>
+  {story.note && (
+    <div class={t.column}>
+      <p class={t.columnTitle}>{story.note.title}</p>
+      <p class={t.columnBody}>{story.note.body}</p>
+    </div>
+  )}
+</ChapterSlide>

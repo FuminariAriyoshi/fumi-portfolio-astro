@@ -123,7 +123,7 @@ CSSWinner      Star            2026.02
 ### EDUCATION
 ```
 2026.08 – 2027.07  LASALLE College of the Arts (Singapore)  Design Communication Exchange Program
-2024.04 – PRESENT  武蔵野美術大学                            造形学部 デザイン情報学科
+2024.04 – PRESENT  武蔵野美術大学                            造形学部 基礎デザイン学科
 ```
 
 ### LANGUAGE & CERTIFICATIONS

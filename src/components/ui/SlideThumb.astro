@@ -1,15 +1,45 @@
 ---
 /**
- * サイドバーのスライドサムネイル。
- * aria-current="true" のもの(いま見ているスライド)を大きく明るく表示する。
+ * サイドバーのスライドサムネイル(Figma 420-14)。
+ * aria-current="true" のもの(いま見ているスライド)を縦に大きく、表紙と同じ黒+グラデーションで表示する。それ以外は白に近い色。
+ * nested は Works の下の各作品。少し狭く右に寄せる。
  */
+import type { SlideColor } from '@/data/home';
+
 interface Props {
   label: string;
   href: string;
+  color: SlideColor;
+  /** サイドバー上の通し番号(スライド側には番号を付けない) */
+  number: number;
   current?: boolean;
+  nested?: boolean;
+  /** 章の一覧と一緒に枠(data-thumb-group)で包まれている。幅は枠に合わせる */
+  grouped?: boolean;
 }
 
-const { label, href, current = false } = Astro.props;
+const { label, href, color, number, current = false, nested = false, grouped = false } = Astro.props;
+// 普段は白に近い -soft。現在のスライドは表紙と同じ作り(黒 + 各色のグラデーション、白文字)。色が分かるよう表紙より濃い
+const currentLook = 'aria-[current=true]:bg-ink aria-[current=true]:text-paper';
+const colorClass: Record<SlideColor, string> = {
+  fumi: `bg-slide-fumi-soft aria-[current=true]:bg-tint-strong-slide-fumi ${currentLook}`,
+  about: `bg-slide-about-soft aria-[current=true]:bg-tint-strong-slide-about ${currentLook}`,
+  works: `bg-slide-works-soft aria-[current=true]:bg-tint-strong-slide-works ${currentLook}`,
+  contact: `bg-slide-contact-soft aria-[current=true]:bg-tint-strong-slide-contact ${currentLook}`,
+  pitatobi: `bg-work-pitatobi-soft aria-[current=true]:bg-tint-strong-work-pitatobi ${currentLook}`,
+  reikikkawa: `bg-work-reikikkawa-soft aria-[current=true]:bg-tint-strong-work-reikikkawa ${currentLook}`,
+  starweaving: `bg-work-starweaving-soft aria-[current=true]:bg-tint-strong-work-starweaving ${currentLook}`,
+};
+// マウスを乗せた時の層。現在のスライドと同じ色を、少し透けさせて重ねる(表示は PortfolioMotion / global.css)
+const hoverClass: Record<SlideColor, string> = {
+  fumi: 'bg-tint-strong-slide-fumi',
+  about: 'bg-tint-strong-slide-about',
+  works: 'bg-tint-strong-slide-works',
+  contact: 'bg-tint-strong-slide-contact',
+  pitatobi: 'bg-tint-strong-work-pitatobi',
+  reikikkawa: 'bg-tint-strong-work-reikikkawa',
+  starweaving: 'bg-tint-strong-work-starweaving',
+};
 ---
 
 <a
@@ -17,7 +47,21 @@ const { label, href, current = false } = Astro.props;
   data-thumb={href.slice(1)}
   aria-label={`Go to slide: ${label}`}
   aria-current={current ? 'true' : undefined}
-  class="flex h-[168px] w-full shrink-0 flex-col items-start justify-end overflow-clip rounded-[8px] bg-thumb px-[10px] pb-[5px] aria-[current=true]:h-[356px] aria-[current=true]:bg-thumb-3 sidebar-closed:h-[31px] sidebar-closed:aria-[current=true]:h-[104px] sidebar-closed:aria-[current=true]:bg-thumb"
+  class:list={[
+    'relative flex shrink-0 flex-col items-start justify-end overflow-clip rounded-thumb px-[10px] pb-[10px] text-ink sidebar-closed:px-[6px]',
+    // 閉じている時の高さは Workspace が計算する(--thumb-h / --thumb-current-h)
+    // 章の一覧と一緒の作品(grouped)は、current の時にサイドバーの下まで伸ばす(--thumb-fill-h は Workspace が計算)
+    grouped ? 'aria-[current=true]:h-(--thumb-fill-h)' : 'aria-[current=true]:h-[356px]',
+    'sidebar-closed:h-(--thumb-h) sidebar-closed:aria-[current=true]:h-(--thumb-current-h)',
+    nested ? 'h-[155px]' : 'h-[168px]',
+    nested && !grouped ? 'w-[calc(100%-23px)] self-end sidebar-closed:w-full' : 'w-full',
+    colorClass[color],
+  ]}
 >
-  <span class="text-caption leading-auto tracking-[-0.64px] whitespace-nowrap">{label}</span>
+  <span data-thumb-hover aria-hidden="true" class:list={['pointer-events-none absolute inset-0 bg-ink/75 opacity-0', hoverClass[color]]}></span>
+  <span data-thumb-number aria-hidden="true" class="absolute top-[8px] left-[10px] text-kicker leading-none opacity-60 sidebar-closed:top-[6px] sidebar-closed:left-[8px]">
+    {String(number).padStart(2, '0')}
+  </span>
+  <!-- 作品(入れ子)は少し小さくして、正式名でも 1 行に収める -->
+  <span data-thumb-label class:list={['relative w-full font-semibold leading-auto', nested ? 'text-meta' : 'text-body']}>{label}</span>
 </a>

@@ -1,0 +1,25 @@
+---
+import SlideCanvas from '../../layout/SlideCanvas.astro';
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import WorkGalleryImage from '../../ui/WorkGalleryImage.astro';
+import VimeoVideo from '../../ui/VimeoVideo.astro';
+import { reikikkawaSections } from '@/data/reikikkawa';
+import { slideType as t } from '@/lib/slideType';
+---
+
+<VimeoVideo videoId="1188937366" title="ReiKikkawa Graduation WorkのWebサイト操作動画" />
+{reikikkawaSections.map((section) => (
+  <>
+    <SlideCanvas id={section.id} height={584}>
+      <ChapterSlide label={`${section.chapter}: ${section.title}`} chapter={section.chapter} layout="text">
+        <h3 class={t.title}>{section.title}</h3>
+        <div class:list={[t.body, 'flex flex-col gap-4']}>
+          {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </ChapterSlide>
+    </SlideCanvas>
+    {section.images.map((image) => <WorkGalleryImage {...image} />)}
+    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title="写真の年月を際立たせるテキストアニメーション" />}
+  </>
+))}
+<WorkGalleryImage src="/works/reikikkawa/recognition.png" alt="CSSWinner StarとNomineeの認定、デザイン・機能性・使いやすさ・コンテンツの評価" />

@@ -1,0 +1,11 @@
+---
+/** ピタとび: 本番WEB(Figma 193-260 を型に合わせて整理。画面はスライドの後の WebShowcase で見せる) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+---
+
+<ChapterSlide label="TheUIUX: 本番WEB" chapter="TheUIUX" layout="text">
+  <h3 class={t.title}>本番WEB</h3>
+  <p class={t.lead}>本番ではブランディングしたHPデザインに加え、機能として、会社概要、留学ブログ、留学体験記を追加した。</p>
+  <p class={t.body}>SEO等での流入をねらう。また、体験記は、強みとして定義した「経験者の種類の多さ」をそのまま貯めていく場所になる。</p>
+</ChapterSlide>

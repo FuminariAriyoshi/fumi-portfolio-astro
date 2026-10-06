@@ -1,0 +1,88 @@
+---
+import WorkTitle from './WorkTitle.astro';
+import type { Project } from './ProjectSlide.astro';
+
+interface Props {
+  project: Project;
+  id: string;
+  previews: string[];
+}
+const { project, id, previews } = Astro.props;
+---
+
+<details class="work-deck w-full" data-work-deck>
+  <summary class="work-deck-summary cursor-pointer list-none" aria-label={`${project.title}のスライドを開閉`} aria-controls={`${id}-slides`}>
+    <WorkTitle project={project} compactTitle={id === 'reikikkawa'} responsiveTitle={id === 'starweaving'} />
+    <div class="work-deck-stack relative isolate">
+      {previews.map((src, index) => (
+        <div class:list={['work-deck-sheet absolute inset-0 overflow-clip rounded-frame bg-ink', index === 0 ? 'work-deck-sheet-back' : 'work-deck-sheet-middle']} aria-hidden="true">
+          <img src={src} alt="" width="1920" height="1080" loading="lazy" class="size-full object-cover" />
+        </div>
+      ))}
+      <div class="relative aspect-video overflow-clip rounded-frame bg-ink">
+        <img src={project.image.src} alt={project.image.alt} width="1920" height="1080" loading="lazy" class="size-full object-cover" />
+      </div>
+    </div>
+    <div class="flex items-center justify-between py-6 text-meta">
+      <span class="work-deck-open-label">スライドを開く</span>
+      <span class="work-deck-close-label">スライドを閉じる</span>
+      <span aria-hidden="true" class="text-nav"><span class="work-deck-open-label">＋</span><span class="work-deck-close-label">−</span></span>
+    </div>
+  </summary>
+  <div id={`${id}-slides`} class="flex w-full flex-col gap-4">
+    <slot />
+    <button type="button" data-work-deck-close aria-label={`${project.title}のスライドを閉じる`} class="self-center rounded-card border border-ink/20 px-6 py-4 text-meta">スライドを閉じる −</button>
+  </div>
+</details>
+
+<style>
+  .work-deck-summary::-webkit-details-marker { display: none; }
+  .work-deck-summary:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; border-radius: var(--radius-frame); }
+  .work-deck-stack { margin: 24px 16px 32px; }
+  .work-deck-sheet-back { transform: translateY(-16px) rotate(-2deg); z-index: -2; }
+  .work-deck-sheet-middle { transform: translateY(-8px) rotate(1deg); z-index: -1; }
+  .work-deck-close-label { display: none; }
+  .work-deck[open] .work-deck-close-label { display: inline; }
+  .work-deck[open] .work-deck-open-label { display: none; }
+  .work-deck[open] .work-deck-sheet { display: none; }
+  .work-deck[open] .work-deck-stack { margin: 0; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('[data-work-deck]').forEach((deck) => {
+    const summary = deck.querySelector<HTMLElement>('summary');
+    // 閉じたデッキの映像は読み込まず、閉じると再生も止める。
+    const frames = [...deck.querySelectorAll<HTMLIFrameElement>('iframe')];
+    frames.forEach((frame) => { frame.dataset.deckSrc = frame.getAttribute('src') ?? ''; });
+    const syncMedia = () => {
+      frames.forEach((frame) => {
+        if (deck.open && frame.dataset.deckSrc && !frame.hasAttribute('src')) frame.src = frame.dataset.deckSrc;
+        if (!deck.open) frame.removeAttribute('src');
+      });
+      if (!deck.open) deck.querySelectorAll('video').forEach((video) => video.pause());
+    };
+    deck.addEventListener('toggle', syncMedia);
+    const openForTarget = (hash: string) => {
+      const target = document.getElementById(hash.slice(1));
+      if (!target || !deck.contains(target) || summary?.contains(target)) return false;
+      deck.open = true;
+      syncMedia();
+      return true;
+    };
+    document.addEventListener('click', (event) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      if (link) openForTarget(link.hash);
+    }, true);
+    window.addEventListener('hashchange', () => openForTarget(location.hash));
+    if (openForTarget(location.hash)) {
+      requestAnimationFrame(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    }
+    syncMedia();
+    deck.querySelector('[data-work-deck-close]')?.addEventListener('click', () => {
+      deck.open = false;
+      syncMedia();
+      deck.closest<HTMLElement>('[id]')?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      summary?.focus({ preventScroll: true });
+    });
+  });
+</script>

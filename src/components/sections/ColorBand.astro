@@ -1,0 +1,17 @@
+---
+/** ブランドカラーの見本を横幅いっぱいに並べる帯(枠なし。Figma 429-3833) */
+interface Props {
+  colors: { hex: string; dark: boolean }[];
+  label: string;
+}
+
+const { colors, label } = Astro.props;
+---
+
+<ul class="grid w-full shrink-0 grid-cols-4 overflow-clip rounded-frame" style="aspect-ratio: 1250 / 305" aria-label={label}>
+  {colors.map((color) => (
+    <li class:list={['flex items-end p-[12px] font-serif text-meta leading-auto', color.dark ? 'text-paper' : 'text-ink']} style={`background-color: ${color.hex}`}>
+      {color.hex}
+    </li>
+  ))}
+</ul>

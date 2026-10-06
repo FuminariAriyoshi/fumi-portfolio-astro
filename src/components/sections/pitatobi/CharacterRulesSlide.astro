@@ -1,0 +1,45 @@
+---
+/** ピタとび: キャラクターの3つ縛り(Figma 193-3 を型に合わせて整理) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+
+const rules = [
+  { title: '色を黒赤にしない', body: 'くまモンという強すぎる資産に勝てない' },
+  { title: '顔は四角ベース', body: '他は基本円形ベース' },
+  { title: '目を大きく', body: '元のクマの特徴でもあるが、最大の差別化にもなる。' },
+];
+---
+
+<ChapterSlide label="BrandSystem: キャラクターの3つ縛り" chapter="BrandSystem">
+  <div slot="visual" class:list={[t.card, 'flex h-[560px] w-full flex-col items-center justify-center gap-[32px] px-[40px]']}>
+    <figure class="flex flex-col items-center gap-[8px]">
+      <div class="flex items-center gap-[16px]">
+        <div class="relative h-[148px] w-[298px] overflow-clip rounded-media">
+          <img src="/works/pitatobi-story/character-rough.webp" alt="キャラクターの初期ラフ(手描きのクマ)" width="700" height="525" loading="lazy" class="absolute top-[-32.8%] left-0 h-[151.2%] w-full max-w-none" />
+        </div>
+        <img src="/works/pitatobi-story/character-gray.svg" alt="グレーで塗ったキャラクターの初期案" width="159" height="159" loading="lazy" class="size-[148px]" />
+      </div>
+      <figcaption class={t.caption}>キャラクター初期ラフ</figcaption>
+    </figure>
+    <figure class="flex w-full flex-col items-center gap-[8px]">
+      <img src="/works/pitatobi-story/bear-ranking.webp" alt="既存のクマのキャラクター(プーさん、リラックマ、くまモンなど)" width="800" height="312" loading="lazy" class="aspect-[1076/418.5] w-[400px] object-cover" />
+      <figcaption class:list={[t.caption, 'text-center']}>
+        【人気投票 1~69位】クマのキャラクターといえば？くまのキャラランキング！<br />
+        <span class="text-tiny">https://ranking.net/rankings/best-bear-characters</span>
+      </figcaption>
+    </figure>
+  </div>
+  <h3 class={t.title}>キャラクター</h3>
+  <div class={t.lead}><p>ただしクマは競合だらけだった。プーさん、リラックマ、くまモン、ダッフィー、テッド。</p><p>似てしまう特徴の組み合わせを避けるために、3つ縛りを決めた。</p></div>
+  <ol class="flex flex-col">
+    {rules.map((rule, i) => (
+      <li class="grid grid-cols-[32px_1fr] gap-x-[8px] py-[16px]">
+        <span class="font-serif text-body leading-body opacity-50">{i + 1}</span>
+        <div class="flex flex-col">
+          <p class={t.lead}>{rule.title}</p>
+          <p class={t.note}>{rule.body}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</ChapterSlide>

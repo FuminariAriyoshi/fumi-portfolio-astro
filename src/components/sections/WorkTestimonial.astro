@@ -1,0 +1,27 @@
+---
+/** 作品ごとの推薦文(暗い横長の箱。左に人、右に全文)。データは About の testimonials から名前で引く */
+import { testimonials } from '@/data/about';
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+const item = testimonials.find((t) => t.name === name);
+---
+
+{item && (
+  <figure class="grid w-full shrink-0 grid-cols-1 gap-[24px] rounded-frame bg-ink bg-(image:--work-tint) px-[24px] py-[32px] text-paper md:grid-cols-[1fr_2.2fr] md:gap-[40px] md:px-[70px] md:py-[48px]">
+    <p class="text-meta leading-auto md:col-span-2">Testimonials</p>
+    <figcaption class="flex items-center gap-[16px] leading-auto">
+      <img src={item.avatar} alt="" width="56" height="56" loading="lazy" class="size-[56px] shrink-0 rounded-full object-cover" />
+      <span class="flex flex-col gap-[2px]">
+        <span class="text-meta">{item.name}</span>
+        <span class="text-small opacity-60">{item.role}</span>
+      </span>
+    </figcaption>
+    <blockquote class="flex flex-col text-meta leading-[1.9]">
+      {item.quote.map((paragraph) => <p>{paragraph}</p>)}
+    </blockquote>
+  </figure>
+)}

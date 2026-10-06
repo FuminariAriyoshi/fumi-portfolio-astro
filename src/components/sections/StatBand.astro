@@ -1,0 +1,49 @@
+---
+/**
+ * 作品の成果の数字を、大きな打ち抜き文字で横に流す帯(KeywordBand と同じ扱い。枠なし)。
+ * 各数字の前に小さな見出し、帯の下に期間などの注記を置く。lib/marquee.ts の等速ループ。
+ */
+interface Stat {
+  label: string;
+  value: string;
+  unit?: string;
+  note: string;
+}
+
+interface Props {
+  stats: Stat[];
+  /** グラデーションの終わりの色(Tailwind の to-* クラス) */
+  toClass: string;
+  label: string;
+}
+
+const { stats, toClass, label } = Astro.props;
+const textClass = ['bg-linear-to-b from-ink from-[10%] to-80% bg-clip-text text-transparent', toClass];
+---
+
+<section aria-label={label} class="flex w-full shrink-0 flex-col gap-[8px]">
+  <!-- 読み上げ用(流れる帯は aria-hidden) -->
+  <ul class="sr-only">
+    {stats.map((stat) => <li>{stat.label} {stat.value}{stat.unit}({stat.note})</li>)}
+  </ul>
+  <div class="overflow-clip" aria-hidden="true">
+    <div class="flex w-max" data-marquee="forward" data-duration="60">
+      {[0, 1].map(() => (
+        <div class="flex shrink-0 items-end gap-[64px] pr-[64px]">
+          {stats.map((stat) => (
+            <div class="flex items-end gap-[16px]">
+              <span class="pb-[40px] text-meta leading-auto whitespace-nowrap">{stat.label}</span>
+              <span class="flex items-end whitespace-nowrap font-black leading-auto text-title md:text-marquee-jp">
+                <span class:list={textClass}>{stat.value}</span>
+                {stat.unit && <span class="pb-[40px] text-meta font-normal">{stat.unit}</span>}
+              </span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+  <ul class="flex flex-wrap gap-x-[24px] gap-y-[4px] px-[24px] text-small leading-body opacity-60 md:px-[40px]">
+    {stats.map((stat) => <li>{stat.label}: {stat.note}</li>)}
+  </ul>
+</section>

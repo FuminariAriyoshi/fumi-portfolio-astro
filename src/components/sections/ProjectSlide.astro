@@ -10,7 +10,8 @@ export interface Project {
   title: string;
   image: { src: string; alt: string };
   intro: string;
-  client: string;
+  client?: string;
+  team?: string;
   year: string;
   role: string;
   href: string;
@@ -21,15 +22,21 @@ interface Props {
   project: Project;
   index: number;
   projectTitles: string[];
+  /** 上部のバー(番号 / EN/JP / About Fumi)。トップに埋め込む時は出さない */
+  header?: boolean;
 }
 
-const { project, index, projectTitles } = Astro.props;
+const { project, index, projectTitles, header = true } = Astro.props;
 const number = String(index + 1).padStart(2, '0');
 ---
 
 <Slide label={project.title}>
   <div class="absolute left-[19px] top-[23px] flex w-[1237px] flex-col gap-[39px]">
-    <Header variant="index" index={number} class="w-[1228px]" />
+    {header ? (
+      <Header variant="index" index={number} class="w-[1228px]" />
+    ) : (
+      <div class="h-[41px]" data-header-spacer aria-hidden="true"></div>
+    )}
     <ProgressNav items={projectTitles} active={index} label="Works" labelClass="w-[1228px]" />
   </div>
 

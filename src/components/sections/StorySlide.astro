@@ -17,13 +17,15 @@ interface Props {
   chapters: string[];
   active: number;
   counter: string;
+  /** 上部のバー(番号 / EN/JP / About Fumi)。トップに埋め込む時は出さない */
+  header?: boolean;
 }
 
-const { story, chapters, active, counter } = Astro.props;
+const { story, chapters, active, counter, header = true } = Astro.props;
 ---
 
 <Slide label={`${chapters[active]}: ${story.heading}`}>
-  <Header variant="chapter" counter={counter} class="absolute left-[30px] top-[23px] w-[1228px]" />
+  {header && <Header variant="chapter" counter={counter} class="absolute left-[30px] top-[23px] w-[1228px]" />}
   <ProgressNav
     items={chapters}
     active={active}

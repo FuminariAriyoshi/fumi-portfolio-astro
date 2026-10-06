@@ -1,0 +1,46 @@
+---
+/**
+ * 1280×720(16:9。ページ内のほかのスライドと同じ比率)の資料型スライドを、そのままの組みで列幅に縮めて置く枠。
+ * 中の Slide は absolute inset-0 で描画される。
+ */
+interface Props {
+  id?: string;
+  /** キャンバスの高さ(既定 720 = 16:9)。文字だけのスライドなどは低くできる */
+  height?: number;
+}
+
+const { id, height = 720 } = Astro.props;
+---
+
+<div
+  id={id}
+  data-canvas
+  class="relative w-full shrink-0 overflow-clip rounded-frame bg-ink text-paper"
+  style={`aspect-ratio: 1280 / ${height}`}
+>
+  <div class="absolute top-0 left-0 w-[1280px] origin-top-left [transform:scale(var(--canvas-scale,1))]" style={`height: ${height}px`}>
+    <slot />
+  </div>
+</div>
+
+<script>
+  const canvases = document.querySelectorAll<HTMLElement>('[data-canvas]');
+  const observer = new ResizeObserver((entries) => {
+    entries.forEach((entry) => {
+      const el = entry.target as HTMLElement;
+      el.style.setProperty('--canvas-scale', String(entry.contentRect.width / 1280));
+    });
+  });
+  canvases.forEach((canvas) => {
+    observer.observe(canvas);
+    // 元デザインの「次へ」ボタンは、ページ内の次のスライドへ送る
+    canvas.querySelectorAll<HTMLElement>('[data-deck-next]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const next = (canvas.nextElementSibling ?? canvas.parentElement?.nextElementSibling) as HTMLElement | null;
+        if (!next) return;
+        if (window.portfolioScrollTo) window.portfolioScrollTo(next);
+        else next.scrollIntoView({ block: 'start' });
+      });
+    });
+  });
+</script>

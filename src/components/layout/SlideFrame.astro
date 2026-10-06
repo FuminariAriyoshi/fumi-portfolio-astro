@@ -1,9 +1,9 @@
 ---
-/** 16:9 のスライド枠。md 未満では高さを中身に合わせる */
+/** 16:9 のスライド枠。md 未満では高さを中身に合わせる。@container なので中身はスライド幅で出し分けられる */
 interface Props {
   id: string;
   label: string;
-  tone?: 'accent' | 'ink' | 'light';
+  tone?: 'accent' | 'ink' | 'light' | 'about';
   class?: string;
 }
 
@@ -12,6 +12,8 @@ const toneClass = {
   accent: 'bg-accent text-paper',
   ink: 'bg-ink text-paper',
   light: 'bg-thumb-3 text-ink',
+  // 表紙と同じ作り(黒 + About の色のグラデーション)
+  about: 'bg-ink bg-tint-slide-about text-paper',
 }[tone];
 ---
 
@@ -19,7 +21,7 @@ const toneClass = {
   id={id}
   aria-label={label}
   class:list={[
-    'flex w-full shrink-0 scroll-mt-[24px] flex-col overflow-clip rounded-[24px] p-[24px] md:aspect-video md:p-[40px]',
+    '@container flex w-full shrink-0 flex-col overflow-clip rounded-slide p-[24px] md:aspect-video md:p-[40px]',
     toneClass,
     className,
   ]}

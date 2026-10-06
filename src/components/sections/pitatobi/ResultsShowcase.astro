@@ -1,0 +1,47 @@
+---
+/** ピタとび: Outcome(白地。見出し + SNS・Web のスクリーンショット + 数字の帯。Figma 429-3849) */
+import StatBand from '../StatBand.astro';
+import ScreenVideo from '../../ui/ScreenVideo.astro';
+import { slideType as t } from '@/lib/slideType';
+
+const channels = [
+  { label: 'Line', src: '/works/pitatobi-story/sns-line.webp', alt: 'ピタとびの LINE 公式アカウントのトーク画面', img: 'top-[-5.1%] h-[109.41%]' },
+  { label: 'Instagram', src: '/works/pitatobi-story/sns-instagram.webp', alt: 'ピタとびの Instagram のプロフィール', img: 'top-0 h-full object-cover' },
+  { label: 'Tiktok', src: '/works/pitatobi-story/sns-tiktok.webp', alt: 'ピタとびの TikTok のプロフィール', img: 'top-[-6.57%] h-[106.57%]' },
+];
+// 成果の数字(帯で出す)
+const stats = [
+  { label: '診断完了率', value: '90.9%', note: '2026年8月30日~2026年9月26日(28日計測)・診断を開始した11人中' },
+  { label: 'LINE登録者数', value: '0→87', unit: '人', note: '2026年8月4日~2026年9月26日' },
+];
+---
+
+<section id="pitatobi-results" aria-label="ピタとびの成果" class="flex w-full shrink-0 flex-col gap-[14px]">
+  <h3 class={t.title}>Outcome</h3>
+  <div class="relative flex w-full flex-col items-center gap-[40px] py-[24px]">
+    <div class="flex w-full items-center gap-[24px]">
+      <img src="/works/pitatobi-story/character-logo.webp" alt="ピタとびのキャラクターとロゴ" width="868" height="376" loading="lazy" class="w-[32%] shrink-0" />
+      <div class="flex flex-1 items-start gap-[24px]">
+        {channels.map((ch) => (
+          <figure class="flex flex-1 flex-col items-center gap-[10px]">
+            <div class="relative aspect-[98/191] w-full overflow-clip rounded-media">
+              <img src={ch.src} alt={ch.alt} width="240" height="522" loading="lazy" class:list={['absolute left-0 w-full max-w-none', ch.img]} />
+            </div>
+            <figcaption class={t.caption}>{ch.label}</figcaption>
+            {ch.label === 'Line' && <p class="text-micro leading-auto text-center opacity-40">*リッチメニューは制作していません。</p>}
+          </figure>
+        ))}
+      </div>
+    </div>
+    <figure class="flex w-full flex-col items-center gap-[10px]">
+      <div class="flex w-full items-center gap-[40px]">
+        <ScreenVideo src="/works/pitatobi-case/pitatobi-sp-diagnosis.mp4" poster="/works/pitatobi-story/web-diagnosis.webp" label="留学タイプ診断をスマートフォンで進める操作の様子" class="aspect-[92/195] w-[17%] rounded-media" />
+        <div class="relative aspect-[348/172] flex-1 overflow-clip rounded-media">
+          <img src="/works/pitatobi-story/web-home-lg.webp" alt="ピタとびのホームページのファーストビュー" width="1255" height="5892" loading="lazy" class="absolute top-0 left-0 w-full max-w-none" />
+        </div>
+      </div>
+      <figcaption class={t.caption}>Website</figcaption>
+    </figure>
+  </div>
+</section>
+<StatBand stats={stats} toClass="to-work-pitatobi-deep" label="ピタとびの成果の数字" />

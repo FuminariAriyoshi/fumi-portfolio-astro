@@ -1,0 +1,36 @@
+---
+/** ピタとび: キャラクター(Figma 178-52 を型に合わせて整理) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+
+const notes = [
+  {
+    title: 'ICPへの反応',
+    body: 'クライアント様が福岡で留学の登壇があられた際、高校生に今の留学NEXTのインスタのアカウント見せて、「これから『ピタとび』ってサービスになるよ」って伝えて、アイコンとか見せたら、高校生の反応が「ピタとびかわいい」ってなってて、受けがとても良かった。と報告を受けた。',
+  },
+  {
+    title: 'クマかペンギンか',
+    body: '最初に出た案はペンギンだった。世界へ飛び込んでいく、飛び立つ。名前の「とび」とも合う。だが、勇気を出して飛び込むのはユーザーのほうだ。キャラクターが立つべきなのは飛び込む側ではなく、サービス提供者側としてなるべきは、受け止める側。相談される役。',
+  },
+];
+---
+
+<ChapterSlide label="BrandSystem: キャラクター" chapter="BrandSystem">
+  <div slot="visual" class:list={[t.card, 'flex w-full flex-col items-center gap-[32px] py-[56px]']}>
+    <img src="/works/pitatobi-story/character-logo.webp" alt="ピタとびのキャラクター「ユーシー」とロゴ" width="868" height="376" loading="lazy" class="h-auto w-[480px]" />
+    <div class="flex flex-col items-center">
+      <p class="text-greeting-lg leading-[1.1] font-bold">ユーシー</p>
+      <p class="text-nav font-medium leading-body opacity-50">Lucy × UCLA × You see.</p>
+    </div>
+  </div>
+  <h3 class={t.title}>キャラクター</h3>
+  <p class={t.lead}>ピタとびのサービスに親しみを持てるようキャラクターも制作をした。コアバリューの「信頼できる相談者」だった。これを表現するように、モチーフをクマとした。また、クライアントの原体験であるUCLAのシンボルも、クマであり、ピッタリだと思った。</p>
+  <div class="grid grid-cols-2 gap-[24px]">
+    {notes.map((note) => (
+      <div class={t.column}>
+        <p class={t.columnTitle}>{note.title}</p>
+        <p class={t.columnBody}>{note.body}</p>
+      </div>
+    ))}
+  </div>
+</ChapterSlide>

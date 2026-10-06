@@ -1,0 +1,45 @@
+---
+/** ピタとび: 課題点(Figma 307-271 を型に合わせて整理。全幅の 3 段組み) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+
+const issues = [
+  {
+    title: ['SNS経由での', '診断開始率'],
+    body: [
+      '90日で、Instagram経由の160人のうち、ホームページから診断に入るのは20人であった。Instagram単体で見ても、87.5%が診断をせずにHomeで落ちている。ホーム自体が診断ページであったベータ版での診断開始率は59.4%であったことから、ホームの役割が変わったことにより、SNSでの診断開始率が大幅に落ちてしまった。',
+      '現在、SNSのbioでは、ベータ版のようにいきなり診断にしようと計画をしている。',
+    ],
+  },
+  {
+    title: ['マネタイズが', '起こっていない'],
+    body: [
+      '再生数やフォロワーは取れているものの、マネタイズが未だ起こせていない。',
+      '私自身もマネタイズへの戦略へ関わらせていただいており、現在も改善を行っている。',
+      '低単価×多客数でマネタイズを起こそうとしたが、うまくいかず、高単価×低客数への方向転換の提案なども行っている。',
+    ],
+  },
+  {
+    title: ['ICPと実際の', 'オーディエンス'],
+    body: [
+      'デザイン時点でのICPとコンテンツで獲得できている視聴層は大きく異なってしまっている。元のICPでは17才高校生であり、当時のコンテンツでは18歳~20代前半等が取れていたものの、',
+      'マネタイズが難しい、新規コンテンツで実際に取れている視聴者が20代後半または40~50代であること、現在のマネタイズ戦略では後者をターゲットにしようとしていることから将来的に再度デザイン戦略の改善が必要かもしれない。',
+    ],
+  },
+];
+---
+
+<ChapterSlide label="Improvement: 課題点" chapter="Improvement" layout="full">
+  <div class="flex flex-col gap-[8px]">
+    <h3 class={t.title}>課題点</h3>
+    <p class:list={[t.lead, 'opacity-60']}>現在での課題と、改善案</p>
+  </div>
+  <ul class="mt-[48px] grid grid-cols-3 gap-[40px]">
+    {issues.map((issue) => (
+      <li class="flex flex-col gap-[24px]">
+        <p class="text-caption leading-[1.35] tracking-[-0.02em]">{issue.title[0]}<br />{issue.title[1]}</p>
+        <div class:list={[t.body, 'flex flex-col gap-[8px] opacity-80']}>{issue.body.map((line) => <p>{line}</p>)}</div>
+      </li>
+    ))}
+  </ul>
+</ChapterSlide>

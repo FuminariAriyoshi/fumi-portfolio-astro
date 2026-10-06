@@ -1,0 +1,49 @@
+---
+/** About 1 枚目: 写真・名前・自己紹介・SNS */
+import SlideFrame from '../layout/SlideFrame.astro';
+import SlideHeading from '../ui/SlideHeading.astro';
+import { profile } from '@/data/about';
+import { socials } from '@/data/home';
+---
+
+<SlideFrame id="about" label="About" tone="about" class="md:grid md:grid-cols-[46%_1fr] md:gap-[40px]">
+  <!-- md 以上は列の高さいっぱいに写真を敷く(写真の実寸でスライドが伸びないよう absolute)。人物が右寄りなので右に寄せて切り抜く -->
+  <div class="relative aspect-[4/3] w-full overflow-clip rounded-card md:aspect-auto md:h-full">
+    <img
+      src={profile.photo.src}
+      alt={profile.photo.alt}
+      width={profile.photo.width}
+      height={profile.photo.height}
+      loading="lazy"
+      class="absolute inset-0 size-full object-cover object-[72%_50%]"
+    />
+  </div>
+  <div class="flex min-h-0 min-w-px flex-col pt-[24px] md:pt-0">
+    <SlideHeading title="About" />
+    <!-- 見出しの下の残りの高さの中で、縦方向の中央に置く(Figma 427-350) -->
+    <div class="flex flex-1 flex-col justify-center gap-[16px] pt-[24px]">
+      <h3 class="flex flex-col leading-auto">
+        <span class="font-serif text-subtitle @[60rem]:text-greeting">{profile.name}</span>
+        <span class="text-meta opacity-60">{profile.nameJa}</span>
+      </h3>
+      <div class="flex flex-col gap-[4px] text-meta leading-body">
+        {profile.intro.map((line) => <p>{line}</p>)}
+      </div>
+      <ul class="flex gap-[20px] text-meta">
+        {socials.map((social) => (
+          <li>
+            <a
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Fumi on ${social.label} (opens in a new tab)`}
+              class="underline decoration-paper/40 underline-offset-4"
+            >
+              {social.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</SlideFrame>

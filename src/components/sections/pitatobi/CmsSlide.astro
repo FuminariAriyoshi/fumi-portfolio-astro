@@ -1,0 +1,41 @@
+---
+/** ピタとび: CMS管理と分析ツール(Figma 316-415 を型に合わせて整理。左は本文にある計測の流れを図にしたもの) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+
+const funnel = ['流入', '診断', 'LINE登録'];
+const entries = ['Instagram', 'TikTok', 'Web'];
+const tools = ['GA4', 'Clarity', 'GTM', 'UTM'];
+---
+
+<ChapterSlide label="TheUIUX: CMS管理と分析ツール" chapter="TheUIUX">
+  <figure slot="visual" class:list={[t.card, 'flex h-[420px] w-full flex-col justify-center gap-[32px] px-[40px]']} aria-label="入口別に、流入から診断、LINE登録までの歩留まりを見る分析の流れ">
+    <div class="flex flex-col gap-[8px]">
+      <p class={t.caption}>入口</p>
+      <ul class="flex gap-[8px]">
+        {entries.map((entry) => <li class="rounded-full border border-ink/20 px-[14px] py-[6px] text-small leading-auto">{entry}</li>)}
+      </ul>
+    </div>
+    <ol class="flex items-center gap-[12px]">
+      {funnel.map((step, i) => (
+        <>
+          {i > 0 && <span class="font-serif text-nav opacity-40" aria-hidden="true">→</span>}
+          <li class:list={['flex h-[88px] flex-1 items-center justify-center rounded-media text-nav font-semibold leading-auto', i === funnel.length - 1 ? 'bg-pitatobi-blue text-paper' : 'bg-ink/5']}>{step}</li>
+        </>
+      ))}
+    </ol>
+    <div class="flex flex-col gap-[8px]">
+      <p class={t.caption}>計測</p>
+      <ul class="flex gap-[8px]">
+        {tools.map((tool) => <li class="rounded-full bg-ink px-[14px] py-[6px] text-small leading-auto text-paper">{tool}</li>)}
+      </ul>
+    </div>
+  </figure>
+  <h3 class={t.title}>CMS管理と分析ツール</h3>
+  <div class="flex flex-col gap-[12px]">
+    <p class={t.body}>本番では会社概要、留学ブログ、留学体験記を追加した。体験記は、強みとして定義した「経験者の種類の多さ」をそのまま貯めていく場所になる。クライアント自身でも更新できるようにCMSを組んだ。</p>
+    <p class={t.body}>詳しく分析ができるよう、GA4はもちろん、Clarityや、診断の回答等もGTMをつけて計測を行っている。また、SNSのbioにはUTMを設置して入口も判定している。</p>
+    <p class={t.body}>GA4のデータを元に、流入 → 診断 → LINE登録の歩留まりを入口別に見れる分析ツールをクライアントの要望から製作した。</p>
+    <p class={t.note}>LINE登録の数値はサイトに飛んでから実際にLINE追加をしたかが測れず、目安として診断後のLINEで結果をみるのCTAで計測を行っている</p>
+  </div>
+</ChapterSlide>

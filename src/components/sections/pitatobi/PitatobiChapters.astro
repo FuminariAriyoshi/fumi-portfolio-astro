@@ -1,0 +1,49 @@
+---
+/**
+ * ピタとびの章(概要の後)。黒い資料型スライドは説明、白地のブロック(資料ビューア・色見本・画面・成果)は見せ場。
+ * 章の最初の要素には、サイドバーの章リンクが飛ぶ id を付ける(data/home.ts の chapters と対応)。
+ */
+import SlideCanvas from '../../layout/SlideCanvas.astro';
+import DeckViewer from '../../ui/DeckViewer.astro';
+import ColorBand from '../ColorBand.astro';
+import OriginSlide from './OriginSlide.astro';
+import StrategySlide from './StrategySlide.astro';
+import ServiceNameSlide from './ServiceNameSlide.astro';
+import ServiceLogoSlide from './ServiceLogoSlide.astro';
+import CharacterSlide from './CharacterSlide.astro';
+import CharacterRulesSlide from './CharacterRulesSlide.astro';
+import ColoringSlide from './ColoringSlide.astro';
+import WebSlide from './WebSlide.astro';
+import WebShowcase from './WebShowcase.astro';
+import CmsSlide from './CmsSlide.astro';
+import ResultsShowcase from './ResultsShowcase.astro';
+import ImprovementSlide from './ImprovementSlide.astro';
+import { pitatobiDeck } from '@/data/projects';
+
+const brandColors = [
+  { hex: '#FFFFFF', dark: false },
+  { hex: '#00AFFE', dark: true },
+  { hex: '#FDE10C', dark: false },
+  { hex: '#1A1A1A', dark: true },
+];
+---
+
+<SlideCanvas id="pitatobi-origin"><OriginSlide /></SlideCanvas>
+
+<SlideCanvas id="pitatobi-strategy" height={584}><StrategySlide /></SlideCanvas>
+<DeckViewer title="留学NEXT 新規デザイン案" pages={pitatobiDeck} caption="ブランディング案資料" />
+
+<SlideCanvas id="pitatobi-brand"><ServiceNameSlide /></SlideCanvas>
+<SlideCanvas><ServiceLogoSlide /></SlideCanvas>
+<SlideCanvas><CharacterSlide /></SlideCanvas>
+<SlideCanvas><CharacterRulesSlide /></SlideCanvas>
+<SlideCanvas><ColoringSlide /></SlideCanvas>
+<ColorBand colors={brandColors} label="ピタとびのブランドカラー" />
+
+<SlideCanvas id="pitatobi-uiux" height={407}><WebSlide /></SlideCanvas>
+<WebShowcase />
+<SlideCanvas><CmsSlide /></SlideCanvas>
+
+<ResultsShowcase />
+
+<SlideCanvas id="pitatobi-improvement"><ImprovementSlide /></SlideCanvas>

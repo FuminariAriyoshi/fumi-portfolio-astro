@@ -1,0 +1,27 @@
+---
+/**
+ * 作品のキーワードを大きな打ち抜き文字で横に流す帯(Figma 427-350)。Think Logically と同じく枠なし。
+ * 文字のグラデーションは黒 → toClass の色。lib/marquee.ts の等速ループ(スクロールには連動しない)。
+ */
+interface Props {
+  words: string[];
+  /** グラデーションの終わりの色(Tailwind の to-* クラス) */
+  toClass: string;
+  label: string;
+}
+
+const { words, toClass, label } = Astro.props;
+const textClass = ['bg-linear-to-b from-ink from-[10%] to-80% bg-clip-text', toClass];
+---
+
+<section aria-label={label} class="w-full shrink-0 overflow-clip">
+  <p class="flex items-center whitespace-nowrap font-black leading-auto text-transparent text-title md:text-marquee-jp">
+    <span class="flex" data-marquee="forward" data-duration="50">
+      {[0, 1].map((copy) => (
+        <span class="flex shrink-0 gap-[40px] pr-[40px]" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {words.map((word) => <span class:list={textClass}>{word}</span>)}
+        </span>
+      ))}
+    </span>
+  </p>
+</section>

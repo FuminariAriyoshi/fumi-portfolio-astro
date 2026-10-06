@@ -1,0 +1,23 @@
+---
+/** 作品の冒頭(白地): 作品名と Client / Year / Role(Figma 428-3685) */
+import MetaItem from '../ui/MetaItem.astro';
+import type { Project } from './ProjectSlide.astro';
+
+interface Props {
+  project: Project;
+  compactTitle?: boolean;
+  responsiveTitle?: boolean;
+}
+
+const { project, compactTitle = false, responsiveTitle = false } = Astro.props;
+---
+
+<header class="flex w-full shrink-0 flex-col gap-[16px] py-[48px]">
+  <h2 class:list={['font-semibold leading-auto tracking-tighter', compactTitle ? 'text-subtitle' : responsiveTitle ? 'text-subtitle md:text-title' : 'whitespace-nowrap text-title']}>{project.title}</h2>
+  <div class="flex flex-wrap items-start gap-x-[24px] gap-y-[8px] text-meta">
+    {project.client && <MetaItem label="Client"><p class="leading-body">{project.client}</p></MetaItem>}
+    <MetaItem label="Year"><p class="leading-body">{project.year}</p></MetaItem>
+    <MetaItem label="Role"><p class="leading-body">{project.role}</p></MetaItem>
+    {project.team && <MetaItem label="Team"><p class="leading-body">{project.team}</p></MetaItem>}
+  </div>
+</header>

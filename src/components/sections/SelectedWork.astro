@@ -1,0 +1,89 @@
+---
+/**
+ * Selected Works の 1 作品(Figma 427-350)。
+ * データがある作品: 作品名(白地)→ ロゴ → キーワードの帯 → (Before/After)→ 概要スライド → 章(ピタとびは PitatobiChapters)→ 推薦文。
+ * データが無い作品は WorkPendingSlide。
+ */
+import SlideCanvas from '../layout/SlideCanvas.astro';
+import KeywordBand from './KeywordBand.astro';
+import ProjectIntroSlide from './ProjectIntroSlide.astro';
+import WorkPendingSlide from './WorkPendingSlide.astro';
+import PitatobiChapters from './pitatobi/PitatobiChapters.astro';
+import PitatobiBeforeAfter from './pitatobi/PitatobiBeforeAfter.astro';
+import WorkTitle from './WorkTitle.astro';
+import WorkTestimonial from './WorkTestimonial.astro';
+import ReikikkawaChapters from './reikikkawa/ReikikkawaChapters.astro';
+import StarWeavingChapters from './starweaving/StarWeavingChapters.astro';
+import ProjectSiteLink from '../ui/ProjectSiteLink.astro';
+import StackedWorkDeck from './StackedWorkDeck.astro';
+import { projects, projectTitles } from '@/data/projects';
+
+interface Props {
+  id: string;
+  index: number;
+}
+
+const { id, index } = Astro.props;
+const title = projectTitles[index];
+const project = projects.find((p) => p.title === title);
+const stacked = id === 'reikikkawa' || id === 'starweaving';
+const previews = id === 'reikikkawa'
+  ? ['/works/reikikkawa/prototype.png', '/works/reikikkawa/mobile.png']
+  : ['/works/starweaving/exhibition.png', '/works/starweaving/implementation.png'];
+// キーワードの帯の色と章スライドがあるのは現状ピタとびのみ
+const bandColor: Record<string, string> = { ピタとび: 'to-work-pitatobi-deep' };
+// 作品ごとの背景グラデーション(サイドバーと同じテーマカラー)
+const tintClass: Record<string, string> = {
+  pitatobi: 'work-tint-work-pitatobi',
+  reikikkawa: 'work-tint-work-reikikkawa',
+  starweaving: 'work-tint-work-starweaving',
+};
+---
+
+<div id={id} class:list={['flex w-full shrink-0 flex-col gap-[14px]', tintClass[id]]}>
+  {project && stacked ? (
+    <StackedWorkDeck project={project} id={id} previews={previews}>
+      {id === 'reikikkawa' && <ProjectSiteLink href={project.href} title={project.title} />}
+      <KeywordBand words={project.keywords} toClass="to-ink-soft" label={`${title} のキーワード`} />
+      <SlideCanvas id={`${id}-intro`}><ProjectIntroSlide project={project} /></SlideCanvas>
+      {id === 'reikikkawa' ? (
+        <>
+          <ReikikkawaChapters />
+          <WorkTestimonial name="吉川 伶" />
+        </>
+      ) : <StarWeavingChapters />}
+    </StackedWorkDeck>
+  ) : project ? (
+    <>
+      <WorkTitle project={project} compactTitle={id === 'reikikkawa'} responsiveTitle={id === 'starweaving'} />
+      {id === 'reikikkawa' && <ProjectSiteLink href={project.href} title={project.title} />}
+      <div class:list={['relative w-full overflow-clip rounded-frame', id === 'pitatobi' ? 'aspect-[1182/451]' : 'aspect-video']}>
+        <img
+          src={project.image.src}
+          alt={project.image.alt}
+          width="3840"
+          height="2160"
+          loading="lazy"
+          class="absolute inset-0 size-full object-cover object-[50%_45%]"
+        />
+      </div>
+      <KeywordBand words={project.keywords} toClass={bandColor[title] ?? 'to-ink-soft'} label={`${title} のキーワード`} />
+      {title === 'ピタとび' && <PitatobiBeforeAfter />}
+      <SlideCanvas id={`${id}-intro`}>
+        <ProjectIntroSlide project={project} />
+      </SlideCanvas>
+    </>
+  ) : (
+    <SlideCanvas>
+      <WorkPendingSlide title={title} index={index} projectTitles={projectTitles} />
+    </SlideCanvas>
+  )}
+
+
+  {title === 'ピタとび' && (
+    <>
+      <PitatobiChapters />
+      <WorkTestimonial name="中嶋 来門" />
+    </>
+  )}
+</div>

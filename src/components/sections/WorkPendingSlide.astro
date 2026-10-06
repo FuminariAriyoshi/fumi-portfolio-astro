@@ -1,0 +1,25 @@
+---
+/** 作品データ未提供の作品。元の作品スライドの枠組み(ProgressNav / 見出し位置)だけ使う */
+import Slide from '../layout/Slide.astro';
+import ProgressNav from '../ui/ProgressNav.astro';
+
+interface Props {
+  title: string;
+  index: number;
+  projectTitles: string[];
+}
+
+const { title, index, projectTitles } = Astro.props;
+---
+
+<Slide label={title}>
+  <div class="absolute left-[19px] top-[23px] flex w-[1237px] flex-col gap-[39px]">
+    <div class="h-[41px]" aria-hidden="true"></div>
+    <ProgressNav items={projectTitles} active={index} label="Works" labelClass="w-[1228px]" />
+  </div>
+
+  <div class="absolute left-[38px] top-[180px] flex flex-col gap-[12px]">
+    <h2 class="whitespace-nowrap text-title font-semibold leading-auto tracking-tighter">{title}</h2>
+    <p class="text-body leading-body opacity-50">Case study in preparation.</p>
+  </div>
+</Slide>

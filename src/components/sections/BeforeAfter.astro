@@ -1,0 +1,113 @@
+---
+/**
+ * 作品の制作前(BEFORE)と制作後(AFTER)を切り替えて見せる(studio-fumi の before-after-showcase を移植)。
+ * BEFORE を表示し、「→ AFTER」または上の切り替えで AFTER を右から横スライドで出す(GSAP expo.out)。
+ * 上の切り替えはスクロール中もヘッダーの下に固定。中身は slot="before" / slot="after"。
+ */
+interface Props {
+  id?: string;
+  projectTitle: string;
+}
+
+const { id, projectTitle } = Astro.props;
+---
+
+<div id={id} data-before-after class="w-full shrink-0 rounded-frame bg-ink bg-(image:--work-tint) px-[16px] py-[32px] text-paper md:px-[40px] md:py-[48px]">
+  <div class="sticky top-[calc(var(--portfolio-header-height,78px)+56px)] z-30 mb-[32px] flex justify-center">
+    <div role="group" aria-label={`${projectTitle} の制作前・制作後の切り替え`} class="flex rounded-full border border-paper/20 bg-ink/70 p-[4px] backdrop-blur-md">
+      {[{ key: 'before', label: 'Before' }, { key: 'after', label: 'After' }].map((phase) => (
+        <button
+          type="button"
+          data-ba-switch={phase.key}
+          aria-pressed={phase.key === 'before' ? 'true' : 'false'}
+          class="rounded-full px-[28px] py-[6px] text-small font-bold tracking-[0.12em] uppercase opacity-60 aria-pressed:bg-paper aria-pressed:text-ink aria-pressed:opacity-100"
+        >
+          {phase.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div data-ba-viewport class="relative overflow-clip">
+    <div data-ba-track class="flex items-start gap-[24px]">
+      <section data-ba-panel="before" aria-label={`${projectTitle} 制作前`} class="w-full shrink-0">
+        <div class="flex flex-col items-center gap-[24px]">
+          <slot name="before" />
+          <button
+            type="button"
+            data-ba-switch="after"
+            aria-label={`${projectTitle} の制作後(AFTER)を見る`}
+            class="rounded-full border border-paper px-[57px] py-[18px] text-cta font-bold tracking-[0.12em] uppercase"
+          >
+            → After
+          </button>
+        </div>
+      </section>
+      <section data-ba-panel="after" aria-label={`${projectTitle} 制作後`} aria-hidden="true" inert class="w-full shrink-0">
+        <slot name="after" />
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+
+  const GAP = 24;
+  document.querySelectorAll<HTMLElement>('[data-before-after]').forEach((root) => {
+    const viewport = root.querySelector<HTMLElement>('[data-ba-viewport]');
+    const track = root.querySelector<HTMLElement>('[data-ba-track]');
+    const before = root.querySelector<HTMLElement>('[data-ba-panel="before"]');
+    const after = root.querySelector<HTMLElement>('[data-ba-panel="after"]');
+    if (!viewport || !track || !before || !after) return;
+    const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let showAfter = false;
+    let animating = false;
+
+    const active = () => (showAfter ? after : before);
+    const offset = () => (showAfter ? -(viewport.clientWidth + GAP) : 0);
+    // 表示中の面の高さに合わせる(非表示の面の高さで余白ができないように)
+    const fit = () => {
+      if (animating) return;
+      gsap.set(track, { x: offset() });
+      gsap.set(viewport, { height: active().offsetHeight });
+    };
+    fit();
+    new ResizeObserver(fit).observe(before);
+    new ResizeObserver(fit).observe(after);
+    addEventListener('resize', fit);
+
+    const switchTo = (next: boolean) => {
+      if (next === showAfter) return;
+      showAfter = next;
+      before.inert = next;
+      after.inert = !next;
+      before.setAttribute('aria-hidden', String(next));
+      after.setAttribute('aria-hidden', String(!next));
+      root.querySelectorAll<HTMLElement>('[data-ba-switch]').forEach((button) => {
+        if (button.closest('[data-ba-panel]')) return;
+        button.setAttribute('aria-pressed', String((button.dataset.baSwitch === 'after') === next));
+      });
+      // 切り替えたら作品の Before/After の先頭に戻す
+      if (root.getBoundingClientRect().top < 0) {
+        if (window.portfolioScrollTo) window.portfolioScrollTo(root);
+        else root.scrollIntoView({ block: 'start' });
+      }
+      if (reduce()) return fit();
+      animating = true;
+      gsap.to(track, { x: offset(), duration: 0.9, ease: 'expo.out' });
+      gsap.to(viewport, {
+        height: active().offsetHeight,
+        duration: 0.9,
+        ease: 'expo.out',
+        onComplete: () => {
+          animating = false;
+          fit();
+        },
+      });
+    };
+    root.querySelectorAll<HTMLElement>('[data-ba-switch]').forEach((button) => {
+      button.addEventListener('click', () => switchTo(button.dataset.baSwitch === 'after'));
+    });
+  });
+</script>

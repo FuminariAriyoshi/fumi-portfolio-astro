@@ -1,0 +1,7 @@
+---
+interface Props { src: string; alt: string; }
+const { src, alt } = Astro.props;
+---
+<figure class="w-full overflow-clip rounded-frame">
+  <img src={src} alt={alt} width="1920" height="1080" loading="lazy" class="block h-auto w-full" />
+</figure>

@@ -1,10 +1,11 @@
 ---
 /**
  * 左にスライド一覧、右にスライド本体を並べる作業画面風レイアウト。
- * data-sidebar="open" | "closed" で全体の寸法が切り替わる。md 未満ではサイドバーを出さない。
+ * data-sidebar="open" | "closed" で全体の寸法が切り替わる(既定は closed)。スマホでは画面下の横スクロールナビに切り替える。
  */
 import SidebarToggle from '../ui/SidebarToggle.astro';
 import SlideThumb from '../ui/SlideThumb.astro';
+import ChapterList from '../ui/ChapterList.astro';
 import type { SlideMeta } from '@/data/home';
 
 interface Props {
@@ -14,17 +15,18 @@ interface Props {
 const { slides } = Astro.props;
 ---
 
-<div data-workspace data-sidebar="open" class="flex flex-col px-[16px] pb-[120px] md:px-[26px]">
+<div data-workspace data-sidebar="closed" class="flex flex-col px-[16px] pb-[120px] md:px-[26px] md:pb-0">
   <!-- 前回の開閉状態を初回描画前に戻す -->
   <script is:inline>
     (function (root) {
       try {
-        if (localStorage.getItem('sidebar') === 'closed') root.dataset.sidebar = 'closed';
+        // 既定は閉じた状態。前回開いていた人だけ開いて復元する
+        if (localStorage.getItem('sidebar') === 'open') root.dataset.sidebar = 'open';
       } catch (e) {}
     })(document.currentScript.parentElement);
   </script>
 
-  <div class="hidden items-center md:flex">
+  <div class="portfolio-toolbar hidden items-center md:flex">
     <SidebarToggle controls="slide-list" />
   </div>
 
@@ -32,14 +34,23 @@ const { slides } = Astro.props;
     <nav
       id="slide-list"
       aria-label="Slides"
-      class="sticky top-0 hidden max-h-dvh w-[299px] shrink-0 flex-col items-start gap-[12px] overflow-y-auto py-[25px] md:flex sidebar-closed:w-[55px]"
+      data-slide-list
+      data-lenis-prevent
+      class="sticky top-[104px] hidden max-h-[calc(100dvh-120px)] w-[299px] shrink-0 flex-col items-start gap-[12px] overflow-y-auto py-[26px] md:flex sidebar-closed:w-[55px]"
     >
       {slides.map((slide, i) => (
-        <SlideThumb label={slide.label} href={`#${slide.id}`} current={i === 0} />
+        slide.chapters ? (
+          <div data-thumb-group class:list={['relative flex shrink-0 flex-col', slide.nested ? 'w-[calc(100%-23px)] self-end sidebar-closed:w-full' : 'w-full']}>
+            <SlideThumb label={slide.label} href={`#${slide.id}`} color={slide.color} number={i + 1} current={i === 0} nested={slide.nested} grouped />
+            <ChapterList parent={slide.id} label={slide.label} chapters={slide.chapters} />
+          </div>
+        ) : (
+          <SlideThumb label={slide.label} href={`#${slide.id}`} color={slide.color} number={i + 1} current={i === 0} nested={slide.nested} />
+        )
       ))}
     </nav>
 
-    <main class="flex min-w-px flex-1 flex-col items-start gap-[14px] overflow-clip py-[26px]">
+    <main id="main-content" class="flex min-w-px flex-1 flex-col items-start gap-[14px] overflow-clip py-[26px]">
       <slot />
     </main>
   </div>
@@ -47,6 +58,8 @@ const { slides } = Astro.props;
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-workspace]').forEach((root) => {
+    const header = document.querySelector<HTMLElement>('.portfolio-header');
+    if (header) new ResizeObserver(() => root.style.setProperty('--portfolio-header-height', `${header.offsetHeight}px`)).observe(header);
     const button = root.querySelector<HTMLButtonElement>('[data-sidebar-toggle]');
     const sync = () => button?.setAttribute('aria-expanded', String(root.dataset.sidebar === 'open'));
     sync();
@@ -58,23 +71,202 @@ const { slides } = Astro.props;
       } catch {}
     });
 
-    // 画面の中央付近にあるスライドのサムネイルを current にする
+    // 揃え線: サイドバーの上余白が終わる高さ。現在の項目の上端とスライドの上端をここに揃える
+    const nav = root.querySelector<HTMLElement>('[data-slide-list]');
+    const main = root.querySelector<HTMLElement>('main');
     const thumbs = [...root.querySelectorAll<HTMLAnchorElement>('[data-thumb]')];
-    const setCurrent = (id: string) => {
-      thumbs.forEach((thumb) => {
-        if (thumb.dataset.thumb === id) thumb.setAttribute('aria-current', 'true');
-        else thumb.removeAttribute('aria-current');
+    const desktop = matchMedia('(min-width: 768px)');
+    const NAV_PAD = 26;
+    const CURRENT_WEIGHT = 3;
+    let alignLine = 137;
+    const measure = () => {
+      if (desktop.matches && nav) {
+        const stickyTop = parseFloat(getComputedStyle(nav).top) || 0;
+        alignLine = Math.round(stickyTop + NAV_PAD);
+        // サイドバーのスクロールは最後の項目(Contact)の下で止める。余白は足さない(ユーザー指定)。
+        // そのため末尾に近い項目は揃え線まで上がらず、スクロールの限界で止まる
+        nav.style.paddingBottom = '';
+        // 閉じている時は、項目の高さを計算してサイドバーの縦をちょうど埋める(現在の項目 = 3、他 = 1 の比率)
+        const gap = parseFloat(getComputedStyle(nav).rowGap) || 0;
+        const available = nav.clientHeight - NAV_PAD * 2 - gap * (thumbs.length - 1);
+        const unit = Math.max(24, Math.floor(available / (thumbs.length - 1 + CURRENT_WEIGHT)));
+        nav.style.setProperty('--thumb-h', `${unit}px`);
+        nav.style.setProperty('--thumb-current-h', `${unit * CURRENT_WEIGHT}px`);
+        // 開いている時、章の一覧を持つ作品の current はサイドバーの下まで伸ばす(上に寄せた時にちょうど埋まる高さ)
+        nav.style.setProperty('--thumb-fill-h', `${Math.max(356, nav.clientHeight - NAV_PAD * 2)}px`);
+        // 最後のスライドも揃え線まで上がるよう、本体の下に余白を足す
+        const lastId = thumbs.at(-1)?.dataset.thumb;
+        const last = lastId ? document.getElementById(lastId) : null;
+        if (main && last) main.style.paddingBottom = `${Math.max(NAV_PAD, innerHeight - alignLine - last.offsetHeight)}px`;
+      } else {
+        alignLine = (document.querySelector<HTMLElement>('.portfolio-header')?.offsetHeight ?? 64) + 16;
+        if (nav) nav.style.paddingBottom = '';
+        if (main) main.style.paddingBottom = '';
+      }
+      root.style.setProperty('--align-line', `${alignLine}px`);
+    };
+
+    let currentId = thumbs.find((thumb) => thumb.getAttribute('aria-current') === 'true')?.dataset.thumb;
+    const alignNav = (active: HTMLElement) => {
+      if (!nav) return;
+      if (desktop.matches) {
+        // 閉じている(小さい)時は全項目が収まるので、現在の項目を上に寄せない
+        if (root.dataset.sidebar !== 'open') {
+          nav.scrollTo({ top: 0, behavior: 'instant' });
+          return;
+        }
+        const top = active.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop;
+        nav.scrollTo({ top: Math.max(0, top - NAV_PAD), behavior: 'instant' });
+      } else {
+        const start = active.offsetLeft - nav.offsetLeft;
+        const end = start + active.offsetWidth;
+        if (start < nav.scrollLeft || end > nav.scrollLeft + nav.clientWidth) {
+          nav.scrollTo({ left: Math.max(0, start - (nav.clientWidth - active.offsetWidth) / 2), behavior: 'instant' });
+        }
+      }
+    };
+    // 変更の前後にイベントを出す。アニメーション(PortfolioMotion)はこれを使う
+    // 作品の章(サイドバーの章リンク)。current の作品の中で、画面の中央より上にある最後の章を強調する
+    const chapterLinks = [...root.querySelectorAll<HTMLAnchorElement>('[data-chapter]')];
+    let currentChapter: string | undefined;
+    const setChapter = (id?: string) => {
+      if (id === currentChapter) return;
+      currentChapter = id;
+      chapterLinks.forEach((link) => {
+        if (link.dataset.chapter === id) link.setAttribute('aria-current', 'step');
+        else link.removeAttribute('aria-current');
       });
     };
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => entry.isIntersecting && setCurrent(entry.target.id));
-      },
-      { rootMargin: '-45% 0px -54% 0px' },
-    );
-    thumbs.forEach((thumb) => {
-      const target = document.getElementById(thumb.dataset.thumb ?? '');
-      if (target) observer.observe(target);
+    const chapterAtLine = () => {
+      let id: string | undefined;
+      const line = innerHeight / 2;
+      chapterLinks
+        .filter((link) => link.dataset.chapterParent === currentId)
+        .forEach((link) => {
+          const target = document.getElementById(link.dataset.chapter ?? '');
+          if (target && target.getClientRects().length > 0 && target.getBoundingClientRect().top <= line) id = link.dataset.chapter;
+        });
+      return id;
+    };
+
+    const setCurrent = (id: string) => {
+      if (id === currentId) return;
+      const active = thumbs.find((thumb) => thumb.dataset.thumb === id);
+      if (!active) return;
+      currentId = id;
+      root.dispatchEvent(new CustomEvent('slidelist:beforechange'));
+      thumbs.forEach((thumb) => {
+        if (thumb === active) thumb.setAttribute('aria-current', 'true');
+        else thumb.removeAttribute('aria-current');
+      });
+      alignNav(active);
+      root.dispatchEvent(new CustomEvent('slidelist:afterchange'));
+    };
+
+    // ページ内リンクで移動する時は、クリックした瞬間に current を切り替えてスクロールと同時に動かす。
+    // スクロールが止まるまでは途中のスライドで切り替えない(locked)
+    let locked = false;
+    let unlockTimer: number | undefined;
+    const currentAtLine = () => {
+      let id = thumbs[0]?.dataset.thumb;
+      // スライドの上端が画面の中央まで来たら、その項目に切り替える(ユーザー指定)
+      const line = innerHeight / 2;
+      thumbs.forEach((thumb) => {
+        const target = document.getElementById(thumb.dataset.thumb ?? '');
+        if (target && target.getBoundingClientRect().top <= line) id = thumb.dataset.thumb;
+      });
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) id = thumbs.at(-1)?.dataset.thumb;
+      return id;
+    };
+    const unlockLater = () => {
+      clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => {
+        locked = false;
+        const id = currentAtLine();
+        if (id) setCurrent(id);
+        setChapter(chapterAtLine());
+      }, 160);
+    };
+    document.addEventListener('click', (event) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href^="#"]');
+      const id = link?.hash.slice(1);
+      if (!id) return;
+      // 章リンクなら、親の作品を current にして章も即座に切り替える
+      const parent = link?.dataset.chapterParent;
+      if (parent) {
+        setCurrent(parent);
+        setChapter(id);
+      } else if (thumbs.some((thumb) => thumb.dataset.thumb === id)) {
+        setCurrent(id);
+        setChapter(chapterAtLine());
+      } else return;
+      locked = true;
+      unlockLater();
+    }, true);
+    addEventListener('scroll', () => {
+      if (locked) unlockLater();
+    }, { passive: true });
+
+    // スクロールのたびに、画面の中央より上にある最後のスライドを current にする。
+    // (線を横切ったかどうかで判定すると、一気に飛んだ時に取りこぼすため位置で判定する)
+    let scrollFrame = 0;
+    const syncCurrent = () => {
+      if (locked) return;
+      const id = currentAtLine();
+      if (id) setCurrent(id);
+      setChapter(chapterAtLine());
+    };
+    addEventListener('scroll', () => {
+      cancelAnimationFrame(scrollFrame);
+      scrollFrame = requestAnimationFrame(syncCurrent);
+    }, { passive: true });
+
+    measure();
+    syncCurrent();
+    // 開閉で本体の幅が変わっても、見ていたスライドが同じ高さに留まるようページのスクロールを追従させる
+    let anchor: { el: HTMLElement; top: number } | undefined;
+    button?.addEventListener('click', () => {
+      const el = currentId ? document.getElementById(currentId) : null;
+      anchor = el && scrollY > 0 ? { el, top: el.getBoundingClientRect().top } : undefined;
+    }, true);
+    const keepAnchor = (ms: number) => {
+      if (!anchor) return;
+      const { el, top } = anchor;
+      const end = performance.now() + ms;
+      locked = true;
+      const tick = () => {
+        const delta = el.getBoundingClientRect().top - top;
+        if (Math.abs(delta) > 0.5) scrollBy({ top: delta, behavior: 'instant' });
+        if (performance.now() < end) requestAnimationFrame(tick);
+        else unlockLater();
+      };
+      tick();
+    };
+    // 開閉したら、その状態に合わせてサイドバーのスクロール位置を直す
+    button?.addEventListener('click', () => {
+      keepAnchor(1000);
+      const active = thumbs.find((thumb) => thumb.dataset.thumb === currentId);
+      requestAnimationFrame(() => {
+        measure();
+        if (active) alignNav(active);
+      });
+    });
+    // 開閉アニメーション中も含め、最後のスライドやサイドバーの大きさが変わったら測り直す
+    let measureFrame = 0;
+    const sizeObserver = new ResizeObserver(() => {
+      cancelAnimationFrame(measureFrame);
+      measureFrame = requestAnimationFrame(measure);
+    });
+    const lastTarget = document.getElementById(thumbs.at(-1)?.dataset.thumb ?? '');
+    if (lastTarget) sizeObserver.observe(lastTarget);
+    if (nav) sizeObserver.observe(nav);
+    let resizeTimer: number | undefined;
+    addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        measure();
+        syncCurrent();
+      }, 150);
     });
   });
 </script>

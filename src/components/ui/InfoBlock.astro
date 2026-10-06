@@ -1,0 +1,14 @@
+---
+/** About の小見出し付きブロック(見出しの下に罫線) */
+interface Props {
+  label: string;
+  class?: string;
+}
+
+const { label, class: className } = Astro.props;
+---
+
+<section class:list={['flex flex-col gap-[10px]', className]} aria-label={label}>
+  <h3 class="border-b border-paper/25 pb-[6px] text-kicker uppercase tracking-[0.1em] opacity-60">{label}</h3>
+  <slot />
+</section>

@@ -1,5 +1,8 @@
 ---
-/** 大きなグラデーション文字の一行(例: Think Logically) */
+/**
+ * 大きなグラデーション文字の一行(例: Think Logically)。
+ * 行全体が横に流れ続ける。打ち抜き(bg-clip-text)のグラデーションは動かさない。
+ */
 interface Props {
   id?: string;
   words: string[];
@@ -9,12 +12,18 @@ const { id, words } = Astro.props;
 const textClass = 'bg-linear-to-b from-ink to-ink-soft bg-clip-text';
 ---
 
-<section id={id} aria-label={words.join(' ')} class="w-full shrink-0 md:h-[266px]">
+<section id={id} data-statement aria-label={words.join(' ')} class="w-full shrink-0 md:h-[266px]">
   <p
-    class="flex items-center gap-[21px] whitespace-nowrap font-black leading-auto text-transparent text-title md:text-marquee md:sidebar-closed:ml-[-186px]"
+    class="flex items-center whitespace-nowrap font-black leading-auto text-transparent text-title md:text-marquee md:sidebar-closed:ml-[-186px]"
   >
-    {words.map((word, i) => (
-      <span class:list={[textClass, i > 0 && 'md:tracking-[-4.4px]']}>{word}</span>
-    ))}
+    <span class="flex" data-marquee="forward" data-duration="45">
+      {[0, 1].map((copy) => (
+        <span class="flex shrink-0 gap-[21px] pr-[21px]" aria-hidden={copy === 1 ? 'true' : undefined}>
+          {words.map((word, i) => (
+            <span data-enter="word" class:list={[textClass, i > 0 && 'md:tracking-[-4.4px]']}>{word}</span>
+          ))}
+        </span>
+      ))}
+    </span>
   </p>
 </section>

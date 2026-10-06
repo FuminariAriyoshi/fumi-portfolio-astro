@@ -1,0 +1,89 @@
+---
+/** ピタとびの BEFORE / AFTER(studio-fumi の pitatobi-case を移植。Figma 367-39 / 369-193) */
+import BeforeAfter from '../BeforeAfter.astro';
+import ChangeSummary from '../../ui/case/ChangeSummary.astro';
+import CroppedImage from '../../ui/case/CroppedImage.astro';
+import CoverImage from '../../ui/case/CoverImage.astro';
+import AssetCaption from '../../ui/case/AssetCaption.astro';
+import DeckViewer from '../../ui/DeckViewer.astro';
+import { pitatobiDeck } from '@/data/projects';
+
+// BEFORE の課題 → AFTER の成果(同じ順番で並ぶ)
+const changes = [
+  { before: 'サービス名に根拠がない', after: 'サービス名' },
+  { before: '世界観が定まっていない', after: '世界観の構築' },
+  { before: 'Webサイトが構想段階', after: 'Webサイト' },
+];
+const colors = [
+  { hex: '#00AFFE', dark: true },
+  { hex: '#FFFFFF', dark: false },
+  { hex: '#FDE10C', dark: false },
+  { hex: '#1A1A1A', dark: true },
+];
+---
+
+<BeforeAfter id="pitatobi-before-after" projectTitle="ピタとび">
+  <Fragment slot="before">
+    <ChangeSummary phase="before" eyebrow="依頼前の課題" changes={changes} />
+    <div class="grid w-full items-center gap-[24px] lg:grid-cols-[928fr_303fr]">
+      <CoverImage src="/works/pitatobi-case/before-proposal.webp" alt="制作前のHPページ構成案(FV〜CTA)の資料" aspect="928 / 518" />
+      <div class="mx-auto flex w-full max-w-[303px] flex-col items-center gap-[24px]">
+        <img src="/works/pitatobi-case/before-sns-icon.webp" alt="制作前の留学NEXTのアイコン" loading="lazy" width="93" height="93" class="size-[93px] rounded-full object-cover" />
+        <CroppedImage src="/works/pitatobi-case/before-instagram.webp" alt="制作前のInstagramプロフィール(ryugaku.next)" aspect="302 / 211" class="w-full" crop={{ width: '100%', height: '311.18%', left: '-0.17%', top: '-21.19%' }} />
+        <CroppedImage src="/works/pitatobi-case/before-tiktok.webp" alt="制作前のTikTokプロフィール(ryugaku.next)" aspect="303 / 166" class="w-full" crop={{ width: '100%', height: '396.81%', left: '-0.66%', top: '-28.42%' }} />
+      </div>
+    </div>
+  </Fragment>
+
+  <div slot="after" class="flex flex-col items-center gap-[24px]">
+    <ChangeSummary phase="after" eyebrow="サービスの強みを分析して" changes={changes} />
+    <div class="w-full overflow-clip rounded-slide bg-linear-150 from-board-from from-[7%] to-pitatobi-glow to-[99%] px-[16px] py-[32px] md:px-[37px] md:py-[60px]">
+      <div class="mx-auto flex flex-col gap-[40px] lg:gap-[50px]">
+        <!-- ブランディング案資料(強みの分析から考えた過程を先に見せる) -->
+        <DeckViewer title="留学NEXT 新規デザイン案" pages={pitatobiDeck} caption="ブランディング案資料" theme="dark" />
+
+        <!-- Service Name / SNS -->
+        <div class="grid gap-[24px] lg:grid-cols-[885fr_476fr]">
+          <div class="flex flex-col gap-[12px]">
+            <CoverImage src="/works/pitatobi-case/after-service-name.webp" alt="ピタとびのサービス名とロゴ" aspect="885 / 498" class="rounded-slide" />
+            <AssetCaption>Service Name</AssetCaption>
+          </div>
+          <div class="flex flex-col gap-[12px]">
+            <div class="grid grid-cols-[233fr_227fr] gap-[16px]">
+              <div class="flex flex-col items-center gap-[22px]">
+                <img src="/works/pitatobi-case/after-sns-icon.webp" alt="ピタとびのSNSアイコン" loading="lazy" width="95" height="95" class="aspect-square w-[40%] max-w-[95px] object-cover" />
+                <div class="flex w-full flex-col gap-[20px]">
+                  <CroppedImage src="/works/pitatobi-case/after-sns-1.webp" alt="ピタとびのInstagramプロフィール" aspect="308 / 116" class="w-full" crop={{ width: '100%', height: '541.82%', left: '-0.22%', top: '-0.8%' }} />
+                  <CroppedImage src="/works/pitatobi-case/after-sns-2.webp" alt="ピタとびのTikTokプロフィール" aspect="233 / 131" class="w-full" crop={{ width: '100.12%', height: '387.18%', left: '-0.87%', top: '-29.19%' }} />
+                </div>
+              </div>
+              <CroppedImage src="/works/pitatobi-case/after-sns-3.webp" alt="ピタとびのSNS投稿一覧" aspect="227 / 452" class="w-full" crop={{ width: '100.12%', height: '109.41%', left: '-0.06%', top: '-5.1%' }} />
+            </div>
+            <AssetCaption>SNS</AssetCaption>
+          </div>
+        </div>
+
+        <!-- Website / Color -->
+        <div class="flex flex-col gap-[40px] lg:flex-row lg:justify-between">
+          <div class="flex flex-col gap-[16px] lg:flex-1">
+            <div class="grid grid-cols-[229fr_828fr] gap-[16px]">
+              <div class="relative overflow-clip" style="aspect-ratio: 229 / 497">
+                <video src="/works/pitatobi-case/pitatobi-sp-diagnosis.mp4" poster="/works/pitatobi-case/after-diagnosis.webp" aria-label="ピタとびの留学タイプ診断をスマートフォンで進める操作の様子" autoplay muted loop playsinline preload="metadata" class="absolute inset-0 size-full object-cover object-top select-none"></video>
+              </div>
+              <CroppedImage src="/works/pitatobi-case/after-home.webp" alt="ピタとびのPCトップページ" aspect="819 / 497" class="w-full" crop={{ width: '100.09%', height: '676.4%', left: '-0.08%', top: '0.17%' }} />
+            </div>
+            <div class="flex gap-[28px]"><AssetCaption>Website</AssetCaption><AssetCaption>pitatobi.com</AssetCaption></div>
+          </div>
+          <div class="flex flex-col gap-[16px] lg:w-[302px] lg:shrink-0 lg:justify-between">
+            <ul class="grid w-full max-w-[302px] grid-cols-2" aria-label="ブランドカラー">
+              {colors.map((color) => (
+                <li class:list={['flex aspect-square items-end px-[2px] text-meta', color.dark ? 'text-paper' : 'text-ink']} style={`background-color: ${color.hex}`}>{color.hex}</li>
+              ))}
+            </ul>
+            <AssetCaption>Color</AssetCaption>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BeforeAfter>

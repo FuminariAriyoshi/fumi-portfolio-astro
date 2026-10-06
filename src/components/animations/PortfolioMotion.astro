@@ -1,0 +1,216 @@
+<script>
+  /**
+   * トップのモーション。スクロールには連動させない。
+   * - 登場(読み込み時): expo.out
+   * - 流れ続ける文字: 等速(lib/marquee.ts)。ループに expo.out を使うと周期ごとに跳ねて止まって見えるため
+   * グラデーションはアニメーションさせない(ユーザー指定)。
+   * - スクロール: Lenis(マウスホイールもトラックパッドのように慣性を付ける)
+   * reduced-motion では何もしない(BaseLayout が html.motion を付けない。Lenis も使わず普通のスクロール)。
+   */
+  import gsap from 'gsap';
+  import { Flip } from 'gsap/Flip';
+  import { initMarquees } from '@/lib/marquee';
+  import Lenis from 'lenis';
+  import 'lenis/dist/lenis.css';
+
+  gsap.registerPlugin(Flip);
+  const media = gsap.matchMedia();
+
+  media.add('(prefers-reduced-motion: no-preference)', () => {
+    const root = document.querySelector<HTMLElement>('[data-workspace]');
+    if (!root) return;
+    initMarquees();
+
+    // --- 登場 ---
+    const q = <T extends Element = HTMLElement>(sel: string) => gsap.utils.toArray<T>(root.querySelectorAll(sel));
+    const hidden = 'inset(100% -20% -20% -20%)';
+    const shown = 'inset(-20% -20% -20% -20%)';
+    const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    intro
+      .fromTo(
+        q('[data-enter="row"]'),
+        { autoAlpha: 0, x: (_i, el: HTMLElement) => (el.dataset.from === 'left' ? -160 : 160) },
+        { autoAlpha: 0.5, x: 0, duration: 2.4 },
+        0,
+      )
+      .fromTo(q('[data-enter="avatar"]'), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 1.6 }, 0.2)
+      .fromTo(
+        q('[data-enter="line"]'),
+        { autoAlpha: 0, y: 28, clipPath: hidden },
+        { autoAlpha: 1, y: 0, clipPath: shown, duration: 1.4, stagger: 0.09 },
+        0.3,
+      )
+      .fromTo(
+        q('[data-enter="word"]'),
+        { autoAlpha: 0, y: 60, clipPath: hidden },
+        { autoAlpha: 1, y: 0, clipPath: shown, duration: 1.8, stagger: 0.06 },
+        0.5,
+      );
+
+    // --- 細部 ---
+    const cleanups: (() => void)[] = [];
+    const on = (target: EventTarget, type: string, callback: EventListener, capture = false) => {
+      target.addEventListener(type, callback, capture);
+      cleanups.push(() => target.removeEventListener(type, callback, capture));
+    };
+
+    // --- スクロール ---
+    // Lenis でホイールのスクロールに慣性を付ける(トラックパッドと同じ感触に)。GSAP の ticker で回す。
+    // サイドバーの中は data-lenis-prevent でサイドバー自体がスクロールする
+    const lenis = new Lenis({ lerp: 0.09, smoothWheel: true, autoRaf: false });
+    const raf = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(raf);
+    gsap.ticker.lagSmoothing(0);
+    window.portfolioLenis = lenis;
+
+    // ページ内リンクは expo.out で移動。着地点はサイドバーの揃え線(Workspace が --align-line に出す)
+    // ページ内移動とサイドバーの切り替えは同じ長さ・同じ ease で同時に動かす。ホイール等の操作をすると Lenis が中断する
+    const NAV_DURATION = 1.15;
+    const expoOut = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+    const scrollToTarget = (target: HTMLElement) => {
+      // 揃え線の分は CSS の scroll-margin-top(= --align-line)を Lenis が考慮するので offset は付けない
+      lenis.scrollTo(target, {
+        duration: NAV_DURATION,
+        easing: expoOut,
+        onComplete: () => {
+          target.setAttribute('tabindex', '-1');
+          target.focus({ preventScroll: true });
+        },
+      });
+    };
+    window.portfolioScrollTo = scrollToTarget;
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
+      on(link, 'click', (event) => {
+        const target = document.getElementById(link.hash.slice(1));
+        const e = event as MouseEvent;
+        if (!target || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
+        event.preventDefault();
+        history.pushState(null, '', link.hash);
+        scrollToTarget(target);
+      });
+    });
+
+    // マウス環境のみ: マウスを乗せたら、現在の項目と同じ色の層を透けさせて重ね、文字を白にする(現在の項目には何もしない)。
+    // 閉じている時は項目をラベルの高さまで広げ(data-peek。寸法は global.css)、ラベルを下から少し持ち上げて出す
+    const desktop = matchMedia('(min-width: 768px)');
+    const HOVER = { duration: 0.6, ease: 'expo.out', overwrite: 'auto' } as const;
+    const peek = (thumb: HTMLElement, show: boolean) => {
+      const from = thumb.offsetHeight;
+      gsap.set(thumb, { clearProps: 'height' });
+      thumb.toggleAttribute('data-peek', show);
+      const to = thumb.offsetHeight;
+      if (from !== to) gsap.fromTo(thumb, { height: from }, { height: to, ...HOVER, clearProps: 'height' });
+    };
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      q('[data-thumb]').forEach((thumb) => {
+        const label = thumb.querySelector('[data-thumb-label]');
+        const layer = thumb.querySelector('[data-thumb-hover]');
+        if (!label || !layer) return;
+        on(thumb, 'pointerenter', () => {
+          // いま開いているスライドの項目は何もしない
+          if (thumb.getAttribute('aria-current') === 'true') return;
+          gsap.to(layer, { opacity: 1, ...HOVER });
+          gsap.to(thumb, { color: '#fff', ...HOVER });
+          // 文字のアニメーションは、閉じていてラベルが新しく出てくる時だけ
+          if (root.dataset.sidebar === 'closed' && desktop.matches) {
+            peek(thumb, true);
+            gsap.fromTo(label, { y: 8, autoAlpha: 0.4 }, { y: 0, autoAlpha: 1, ...HOVER, delay: 0.04 });
+          }
+        });
+        on(thumb, 'pointerleave', () => {
+          if (thumb.hasAttribute('data-peek')) peek(thumb, false);
+          gsap.to(layer, { opacity: 0, duration: 0.5, ease: 'expo.out', overwrite: 'auto' });
+          // 文字色はクラス(現在の項目なら白、それ以外は黒)に戻す
+          gsap.to(thumb, { color: thumb.getAttribute('aria-current') === 'true' ? '#fff' : '#000', duration: 0.5, ease: 'expo.out', overwrite: 'auto', clearProps: 'color' });
+          gsap.to(label, { y: 0, autoAlpha: 1, duration: 0.5, ease: 'expo.out', overwrite: 'auto', clearProps: 'transform,opacity,visibility' });
+        });
+      });
+    }
+
+    // サイドバーの現在項目が変わったら、大きさを expo.out で切り替える。色はグラデーションさせず即座に変える。
+    // 位置を transform で動かすと、上の項目の高さ変化で押し下げられる分と二重になって重なるため、
+    // 各項目は寸法だけを動かし(位置は流れに任せる)、サイドバーのスクロール位置も同じ長さ・ease で動かす
+    const clearSize = (targets: Element[]) => gsap.set(targets, { clearProps: 'width,height' });
+    const nav = root.querySelector<HTMLElement>('#slide-list');
+    type Size = { w: number; h: number };
+    let before: { sizes: Size[]; top: number; left: number } | undefined;
+    let thumbTween: gsap.core.Timeline | undefined;
+    on(root, 'slidelist:beforechange', () => {
+      thumbTween?.progress(1);
+      const thumbs = q('[data-thumb]');
+      clearSize(thumbs);
+      before = {
+        sizes: thumbs.map((t) => ({ w: t.offsetWidth, h: t.offsetHeight })),
+        top: nav?.scrollTop ?? 0,
+        left: nav?.scrollLeft ?? 0,
+      };
+    });
+    on(root, 'slidelist:afterchange', () => {
+      if (!before || !nav) return;
+      const thumbs = q('[data-thumb]');
+      const after = thumbs.map((t) => ({ w: t.offsetWidth, h: t.offsetHeight }));
+      const scroll = { top: before.top, left: before.left };
+      const target = { top: nav.scrollTop, left: nav.scrollLeft };
+      const from = before.sizes;
+      before = undefined;
+      // 変化前の寸法とスクロール位置に戻してから、変化後へ同時に動かす
+      thumbs.forEach((t, i) => gsap.set(t, { width: from[i].w, height: from[i].h }));
+      nav.scrollTop = scroll.top;
+      nav.scrollLeft = scroll.left;
+      thumbTween = gsap.timeline({
+        defaults: { duration: NAV_DURATION, ease: 'expo.out' },
+        onComplete: () => clearSize(thumbs),
+      });
+      thumbs.forEach((t, i) => {
+        if (from[i].w === after[i].w && from[i].h === after[i].h) return;
+        thumbTween?.to(t, { width: after[i].w, height: after[i].h }, 0);
+      });
+      thumbTween.to(
+        scroll,
+        {
+          top: target.top,
+          left: target.left,
+          onUpdate: () => {
+            nav.scrollTop = scroll.top;
+            nav.scrollLeft = scroll.left;
+          },
+        },
+        0,
+      );
+    });
+
+    const clearFlip = (targets: Element[]) => gsap.set(targets, { clearProps: 'width,height,transform' });
+    // サイドバー開閉。連打時は前の Flip を終わらせてから次を始める
+    const toggle = root.querySelector('[data-sidebar-toggle]');
+    let flip: gsap.core.Timeline | undefined;
+    if (toggle) {
+      // ボタンの中の縦線(開 22px / 閉 13px)も同じ動きで動かす
+      const divider = toggle.querySelector<HTMLElement>('span');
+      on(toggle, 'click', () => {
+        flip?.progress(1);
+        const panels = q('main, #slide-list');
+        clearFlip(panels);
+        const state = Flip.getState(panels);
+        const dividerFrom = divider?.offsetWidth ?? 0;
+        requestAnimationFrame(() => {
+          flip = Flip.from(state, { duration: 0.8, ease: 'expo.out', absolute: false, scale: false, onComplete: () => clearFlip(panels) });
+          if (divider) {
+            gsap.set(divider, { clearProps: 'width' });
+            const dividerTo = divider.offsetWidth;
+            gsap.fromTo(divider, { width: dividerFrom }, { width: dividerTo, duration: 0.8, ease: 'expo.out', overwrite: 'auto', clearProps: 'width' });
+          }
+        });
+      }, true);
+    }
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup());
+      gsap.ticker.remove(raf);
+      lenis.destroy();
+      delete window.portfolioLenis;
+      delete window.portfolioScrollTo;
+    };
+  });
+
+  document.addEventListener('astro:before-swap', () => media.revert(), { once: true });
+</script>

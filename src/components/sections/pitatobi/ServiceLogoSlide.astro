@@ -1,0 +1,34 @@
+---
+/** ピタとび: サービスロゴ(Figma 193-35 を型に合わせて整理) */
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import { slideType as t } from '@/lib/slideType';
+
+const panels = [
+  { tone: 'bg-paper text-ink', shingo: '/works/pitatobi-story/logo-shingo-black.webp', final: '/works/pitatobi-story/logo-final-black.svg', finalH: 55.3109 },
+  { tone: 'bg-pitatobi-blue text-paper', shingo: '/works/pitatobi-story/logo-shingo-white.webp', final: '/works/pitatobi-story/logo-final-white.svg', finalH: 54.2673 },
+];
+// パネルの中身は pt-[40px] で 20px 下げる(キャプションが薄く小さいぶん下が空いて見えるため、見た目の中央にそろえる)
+---
+
+<ChapterSlide label="BrandSystem: サービスロゴ" chapter="BrandSystem">
+  <div slot="visual" class="grid h-[420px] w-full grid-cols-2 overflow-clip rounded-card">
+    {panels.map((panel) => (
+      <div class:list={['flex flex-col items-center justify-center gap-[40px] pt-[40px]', panel.tone]}>
+        <div class="flex flex-col items-start gap-[12px]">
+          <img src={panel.shingo} alt="新ゴで組んだ「ピタとび」" width="400" height="106" loading="lazy" class="h-[48px] w-[180px] object-cover" />
+          <p class={t.caption}>新ゴ</p>
+        </div>
+        <div class="flex flex-col items-start gap-[12px]">
+          <img src={panel.final} alt="最終的な「ピタとび」のロゴ" width="186.835" height={panel.finalH} loading="lazy" class="h-[53px] w-[180px]" />
+          <p class={t.caption}>最終ロゴ</p>
+        </div>
+      </div>
+    ))}
+  </div>
+  <h3 class={t.title}>サービスロゴ</h3>
+  <p class={t.lead}>サービスロゴもキーバリューに沿ってデザインを行った。</p>
+  <div class={t.body}>
+    <p>信頼性のあるカッチッとしたイメージとそれでも親しみのあるデザインを目指した。ロゴももう一人のデザイナーと共同で製作した。</p>
+    <p>モリサワフォントの新ゴを元に、角を少し落として表現した。また、びの点々に遊び心を持たせた</p>
+  </div>
+</ChapterSlide>

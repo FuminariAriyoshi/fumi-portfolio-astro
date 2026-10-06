@@ -1,0 +1,23 @@
+---
+/**
+ * 作品の概要スライド(Figma 428-2313)。1280×720 の資料型スライドで(中身は縦中央)、Introduction だけを載せる。
+ * (作品名と Client / Year / Role は WorkTitle、ロゴは SelectedWork の上部、キーワードは KeywordBand に分けた)
+ */
+import Slide from '../layout/Slide.astro';
+import type { Project } from './ProjectSlide.astro';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<Slide label={project.title}>
+  <div class="absolute inset-y-0 left-[38px] flex w-[1218px] flex-col justify-center gap-[51px]" data-reveal>
+    <div class="flex flex-col gap-[14px]">
+      <p class="font-serif text-body leading-auto">Introduction</p>
+      <p class="text-subtitle leading-body tracking-[-0.05em]">{project.intro}</p>
+    </div>
+  </div>
+</Slide>

@@ -1,0 +1,41 @@
+---
+/**
+ * 作品の章スライドの共通枠(1280×720 の資料型)。
+ * 章ラベルは本文と同じブロックに置く。章の一覧はサイドバーに出す(スライドには進捗バーも「→」も置かない)。
+ * layout='split': 左にビジュアル(slot="visual"、x=40〜616、高さ 560)、右に文章(既定の slot、x=672〜1240)。
+ * layout='text' : 右の文章だけ(左は空ける。ビジュアルはスライドの外に置く時)。
+ * layout='full' : 全幅(x=40〜1240)。
+ * ビジュアルと文章は、それぞれスライドの縦方向の中央にそろえる(上下 80px の間。キャンバスの高さが違っても中央)。
+ * full は上から(y=96)。
+ */
+import Slide from './Slide.astro';
+
+interface Props {
+  label: string;
+  chapter: string;
+  layout?: 'split' | 'text' | 'full';
+}
+
+const { label, chapter, layout = 'split' } = Astro.props;
+---
+
+<Slide label={label}>
+  {layout !== 'full' ? (
+    <>
+      {layout === 'split' && (
+        <div class="absolute top-[80px] bottom-[80px] left-[40px] flex w-[576px] items-center justify-center">
+          <slot name="visual" />
+        </div>
+      )}
+      <div class="absolute top-[80px] bottom-[80px] left-[672px] flex w-[568px] flex-col justify-center gap-[24px]">
+        <p class="font-serif text-body leading-auto opacity-50">{chapter}</p>
+        <slot />
+      </div>
+    </>
+  ) : (
+    <div class="absolute left-[40px] top-[96px] w-[1200px]">
+      <p class="mb-[24px] font-serif text-body leading-auto opacity-50">{chapter}</p>
+      <slot />
+    </div>
+  )}
+</Slide>

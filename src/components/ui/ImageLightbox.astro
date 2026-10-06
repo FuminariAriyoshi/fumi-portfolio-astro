@@ -1,0 +1,87 @@
+---
+/**
+ * 画像を大きく見せるオーバーレイ。ページに 1 つ置き、[data-lightbox-src] を持つボタンから開く。
+ * <dialog> の showModal を使うので、Esc で閉じ、フォーカスは中に閉じ込められ、閉じると元のボタンに戻る。
+ */
+---
+
+<dialog
+  data-lightbox
+  aria-label="画像の拡大表示"
+  class="m-auto max-h-[92dvh] max-w-[92vw] overflow-visible bg-transparent p-0 text-paper backdrop:bg-ink/75"
+>
+  <figure class="relative flex flex-col items-center gap-[12px]">
+    <img data-lightbox-image alt="" class="block max-h-[82dvh] w-auto max-w-[88vw] rounded-card object-contain" />
+    <figcaption data-lightbox-caption class="text-small leading-auto"></figcaption>
+    <button
+      type="button"
+      data-lightbox-close
+      aria-label="拡大表示を閉じる"
+      class="absolute top-[-16px] right-[-16px] flex size-[40px] items-center justify-center rounded-full bg-paper text-nav leading-none text-ink"
+    >
+      <span aria-hidden="true">×</span>
+    </button>
+  </figure>
+</dialog>
+
+<script>
+  import gsap from 'gsap';
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const image = dialog?.querySelector<HTMLImageElement>('[data-lightbox-image]');
+  const caption = dialog?.querySelector<HTMLElement>('[data-lightbox-caption]');
+  const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (dialog && image && caption) {
+    const content = dialog.querySelector('figure');
+
+    const open = (trigger: HTMLElement) => {
+      const { lightboxSrc, lightboxAlt, lightboxCaption, lightboxWidth, lightboxHeight } = trigger.dataset;
+      image.src = lightboxSrc ?? '';
+      image.alt = lightboxAlt ?? '';
+      if (lightboxWidth) image.width = Number(lightboxWidth);
+      if (lightboxHeight) image.height = Number(lightboxHeight);
+      caption.textContent = lightboxCaption ?? '';
+      dialog.showModal();
+      window.portfolioLenis?.stop();
+      if (!reduce()) gsap.fromTo(content, { autoAlpha: 0, scale: 0.92, y: 16 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, ease: 'expo.out' });
+    };
+
+    let closing = false;
+    const close = () => {
+      if (closing || !dialog.open) return;
+      if (reduce()) {
+        dialog.close();
+        return;
+      }
+      closing = true;
+      gsap.to(content, {
+        autoAlpha: 0,
+        scale: 0.96,
+        y: 8,
+        duration: 0.35,
+        ease: 'expo.out',
+        onComplete: () => {
+          closing = false;
+          dialog.close();
+          gsap.set(content, { clearProps: 'all' });
+        },
+      });
+    };
+
+    document.querySelectorAll<HTMLElement>('[data-lightbox-src]').forEach((trigger) => {
+      trigger.addEventListener('click', () => open(trigger));
+    });
+    dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
+    dialog.addEventListener('close', () => window.portfolioLenis?.start());
+    // 背景(画像の外)をクリックしたら閉じる
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
+    // Esc もアニメーションしてから閉じる
+    dialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      close();
+    });
+  }
+</script>

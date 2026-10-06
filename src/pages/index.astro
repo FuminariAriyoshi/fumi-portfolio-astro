@@ -4,9 +4,13 @@ import SiteHeader from '@/components/layout/SiteHeader.astro';
 import Workspace from '@/components/layout/Workspace.astro';
 import IntroSlide from '@/components/sections/IntroSlide.astro';
 import StatementSlide from '@/components/sections/StatementSlide.astro';
-import AboutSlide from '@/components/sections/AboutSlide.astro';
+import AboutProfileSlide from '@/components/sections/AboutProfileSlide.astro';
+import AboutExperienceSlide from '@/components/sections/AboutExperienceSlide.astro';
+import TestimonialsSlide from '@/components/sections/TestimonialsSlide.astro';
 import WorksSlide from '@/components/sections/WorksSlide.astro';
 import ContactSlide from '@/components/sections/ContactSlide.astro';
+import SelectedWork from '@/components/sections/SelectedWork.astro';
+import PortfolioMotion from '@/components/animations/PortfolioMotion.astro';
 import { slides } from '@/data/home';
 ---
 
@@ -14,9 +18,15 @@ import { slides } from '@/data/home';
   <SiteHeader />
   <Workspace slides={slides}>
     <IntroSlide />
+    <AboutProfileSlide />
     <StatementSlide words={['Think', 'Logically']} />
-    <AboutSlide />
+    <AboutExperienceSlide />
+    <TestimonialsSlide />
     <WorksSlide />
+    <SelectedWork id="pitatobi" index={0} />
+    <SelectedWork id="reikikkawa" index={1} />
+    <SelectedWork id="starweaving" index={2} />
     <ContactSlide />
   </Workspace>
+  <PortfolioMotion />
 </BaseLayout>

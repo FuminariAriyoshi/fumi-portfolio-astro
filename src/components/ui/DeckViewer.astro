@@ -1,0 +1,76 @@
+---
+/**
+ * 資料(PDF)をページ画像でめくって見るビューア(studio-fumi の deck-viewer を移植)。
+ * スマホでも見られるよう PDF は埋め込まず、書き出したページ画像を切り替える。
+ * 画像の左半分/右半分のクリック、下のボタン、フォーカス中の ←→ キーで送る。最後の次は最初に戻る(ループ)。
+ */
+interface Props {
+  title: string;
+  pages: string[];
+  caption?: string;
+  /** 置く場所の地の色。light = 白地(文字は黒) / dark = 暗い地(文字は白) */
+  theme?: 'light' | 'dark';
+}
+
+const { title, pages, caption, theme = 'light' } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const button = theme === 'light' ? 'bg-ink text-paper' : 'bg-paper text-ink';
+---
+
+<div
+  data-deck-viewer
+  data-pages={JSON.stringify(pages)}
+  class="flex w-full flex-col gap-[16px] outline-none"
+  role="region"
+  aria-roledescription="スライド"
+  aria-label={title}
+  tabindex="0"
+>
+  <div class="relative aspect-video w-full overflow-clip rounded-frame bg-paper">
+    <img data-deck-image src={pages[0]} alt={`${title} 1ページ目`} width="1600" height="900" loading="lazy" class="absolute inset-0 size-full object-cover select-none" />
+    <!-- 画像の左右をクリックしてもページを送れる(ボタンと同じ操作なので読み上げからは外す) -->
+    <button type="button" tabindex="-1" aria-hidden="true" data-deck-go="-1" class="absolute inset-y-0 left-0 w-1/2 cursor-w-resize"></button>
+    <button type="button" tabindex="-1" aria-hidden="true" data-deck-go="1" class="absolute inset-y-0 right-0 w-1/2 cursor-e-resize"></button>
+  </div>
+  <div class:list={['flex items-center justify-between gap-[16px]', theme === 'light' ? 'text-ink' : 'text-paper']}>
+    <p class="text-meta leading-auto opacity-60">{caption}</p>
+    <div class="flex items-center gap-[12px]">
+      <p class="text-body leading-auto tabular-nums" aria-live="polite">
+        <span data-deck-current>01</span><span class="opacity-50"> / {pad(pages.length)}</span>
+      </p>
+      <button type="button" data-deck-go="-1" aria-label="前のページ" class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>←</button>
+      <button type="button" data-deck-go="1" aria-label="次のページ" class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-deck-viewer]').forEach((viewer) => {
+    const pages: string[] = JSON.parse(viewer.dataset.pages ?? '[]');
+    const image = viewer.querySelector<HTMLImageElement>('[data-deck-image]');
+    const current = viewer.querySelector<HTMLElement>('[data-deck-current]');
+    const title = viewer.getAttribute('aria-label') ?? '';
+    if (!image || !pages.length) return;
+    let index = 0;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const prefetch = (i: number) => {
+      const img = new Image();
+      img.src = pages[(i + pages.length) % pages.length];
+    };
+    const go = (delta: number) => {
+      index = (index + delta + pages.length) % pages.length;
+      image.src = pages[index];
+      image.alt = `${title} ${index + 1}ページ目`;
+      if (current) current.textContent = pad(index + 1);
+      prefetch(index + 1);
+    };
+    viewer.querySelectorAll<HTMLElement>('[data-deck-go]').forEach((button) => {
+      button.addEventListener('click', () => go(Number(button.dataset.deckGo)));
+    });
+    viewer.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowRight') go(1);
+    });
+    prefetch(1);
+  });
+</script>

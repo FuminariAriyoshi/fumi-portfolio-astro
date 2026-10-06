@@ -1,0 +1,28 @@
+---
+import SlideCanvas from '../../layout/SlideCanvas.astro';
+import ChapterSlide from '../../layout/ChapterSlide.astro';
+import WorkGalleryImage from '../../ui/WorkGalleryImage.astro';
+import VimeoVideo from '../../ui/VimeoVideo.astro';
+import ProjectSiteLink from '../../ui/ProjectSiteLink.astro';
+import { starweavingSections } from '@/data/starweaving';
+import { slideType as t } from '@/lib/slideType';
+---
+
+<VimeoVideo videoId="1188937811" title="StarWeavingのインタラクティブ展示の記録映像" />
+{starweavingSections.map((section) => (
+  <>
+    <SlideCanvas id={section.id} height={584}>
+      <ChapterSlide label={`${section.chapter}: ${section.title}`} chapter={section.chapter} layout="text">
+        <h3 class={t.title}>{section.title}</h3>
+        <div class:list={[t.body, 'flex flex-col gap-4']}>
+          {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        {'href' in section && section.href && (
+          <ProjectSiteLink href={section.href} title="StarWeavingが掲載された学科紹介パンフレット" text="学科紹介パンフレット" />
+        )}
+      </ChapterSlide>
+    </SlideCanvas>
+    {section.images.map((image) => <WorkGalleryImage {...image} />)}
+    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title="StarWeavingのカラーグレーディングと映像編集" />}
+  </>
+))}
