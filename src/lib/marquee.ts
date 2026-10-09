@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
  * [data-marquee] の中身を無限ループで流す。
  * 中身は 2 回並べてあるので、半分ずらしたら先頭に戻す。
  * 親に [data-marquee-interactive] があれば、押したまま左右にドラッグして動かせる(ドラッグ中は止まる)。
+ * [data-marquee-ignore] の上で押した時はドラッグにしない(表紙の顔のクリックなどを生かす)。
  * ホバーでは止めない(ユーザー指定)。キーボードでフォーカスした時だけ止める(アクセシビリティ)。
  */
 export function initMarquees() {
@@ -43,7 +44,7 @@ function makeInteractive(area: HTMLElement, track: HTMLElement, tween: gsap.core
 
   // 押したまま左右に動かすと、指の動きに合わせて流れる位置を動かす(ループの継ぎ目はまたいで回り込む)
   area.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || (e.target as Element).closest('[data-marquee-ignore]')) return;
     drag = { x: e.clientX, progress: tween.progress(), id: e.pointerId };
     area.setPointerCapture(e.pointerId);
     area.dataset.dragging = '';

@@ -2,7 +2,7 @@
 /**
  * 表紙の顔(ミー文字)。まず写真を出し、写真の読み込みが終わってから顔のアニメーション動画を読み込み、
  * 再生できる状態になったら動画に切り替える。動画は写真より顔が小さく映っているので、拡大して大きさをそろえる。
- * 遊び(ユーザー指定):表紙の上でマウスを動かすと顔がそちらを少し向き、顔を押すと弾んで動画が少し速くなる。
+ * 遊び(ユーザー指定):マウスが顔の近くに来た時だけ、顔がそちらへ少し寄る(近いほど強く。回転はしない)。クリックしても何も起こらない。
  * reduced-motion では写真のまま・動かさない。登場アニメーション(data-enter)は外側、遊びは内側(data-memoji-face)に付ける。
  */
 interface Props {
@@ -13,7 +13,7 @@ interface Props {
 const { size = 118 } = Astro.props;
 ---
 
-<span data-enter="avatar" data-memoji class="relative block shrink-0 cursor-pointer" style={`width: ${size}px; height: ${size}px`}>
+<span data-enter="avatar" data-memoji class="relative block shrink-0" style={`width: ${size}px; height: ${size}px`}>
   <span data-memoji-face class="relative block size-full overflow-clip rounded-full">
     <img src="/slides/fumi-memoji.png" alt="Fumi のミー文字" width={size} height={size} class="size-full object-cover" data-memoji-image />
     <video
@@ -50,32 +50,25 @@ const { size = 118 } = Astro.props;
     if (image.complete && image.naturalWidth) loadVideo();
     else image.addEventListener('load', loadVideo, { once: true });
 
-    // --- マウスの方を向く(表紙の上だけ) ---
+    // --- マウスが近い時だけ、そちらを向く ---
     const area = root.closest<HTMLElement>('section') ?? document.body;
+    const NEAR = 300; // この距離(px)より遠いと追わない
     const FOLLOW = { duration: 0.8, ease: 'expo.out' };
     const toX = gsap.quickTo(face, 'x', FOLLOW);
     const toY = gsap.quickTo(face, 'y', FOLLOW);
-    const toRotate = gsap.quickTo(face, 'rotation', FOLLOW);
     const clamp = gsap.utils.clamp(-1, 1);
     area.addEventListener('pointermove', (event) => {
       const rect = root.getBoundingClientRect();
-      const dx = clamp((event.clientX - (rect.left + rect.width / 2)) / 400);
-      const dy = clamp((event.clientY - (rect.top + rect.height / 2)) / 400);
+      const offsetX = event.clientX - (rect.left + rect.width / 2);
+      const offsetY = event.clientY - (rect.top + rect.height / 2);
+      // 近いほど強く(顔の上で最大、NEAR で 0)
+      const strength = Math.max(0, 1 - Math.hypot(offsetX, offsetY) / NEAR);
+      const dx = clamp(offsetX / 150) * strength;
+      const dy = clamp(offsetY / 150) * strength;
       toX(dx * 14);
       toY(dy * 10);
-      toRotate(dx * 12);
     });
-    area.addEventListener('pointerleave', () => { toX(0); toY(0); toRotate(0); });
+    area.addEventListener('pointerleave', () => { toX(0); toY(0); });
 
-    // --- 押すと弾む(動画も少しの間だけ速く) ---
-    let rateTimer = 0;
-    root.addEventListener('click', () => {
-      gsap.timeline({ overwrite: 'auto' })
-        .to(face, { scale: 0.82, duration: 0.12, ease: 'power2.out' })
-        .to(face, { scale: 1, duration: 1.1, ease: 'elastic.out(1.1, 0.35)' });
-      video.playbackRate = 2.5;
-      clearTimeout(rateTimer);
-      rateTimer = window.setTimeout(() => { video.playbackRate = 1; }, 1200);
-    });
   });
 </script>

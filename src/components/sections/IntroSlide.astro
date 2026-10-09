@@ -11,20 +11,21 @@ import Slide from '../layout/Slide.astro';
 const topWords = ['花札', '京都', '英語オタク'];
 const bottomWords = ['Design', 'Tech', 'Japan', 'Claude'];
 // 列は同じ単語を 2 回並べて継ぎ目なく流す(lib/marquee.ts)。止まっている時の見た目は 1 列目と同じ
-const rowClass = 'absolute flex items-center whitespace-nowrap font-black leading-auto text-paper opacity-50 text-marquee';
+const rowClass = 'absolute flex cursor-grab items-center whitespace-nowrap font-black leading-auto text-paper opacity-50 text-marquee select-none touch-pan-y data-dragging:cursor-grabbing';
 ---
 
 <SlideCanvas id="top">
   <Slide label="Hi, I'm Fumi">
+    <!-- 単語の列は、押したまま左右にドラッグするとその列だけ動く(lib/marquee.ts。上下は連動させない。ユーザー指定) -->
     <div class="absolute inset-0 bg-tint-slide-fumi">
-      <p aria-hidden="true" data-enter="row" data-from="right" class:list={[rowClass, 'top-[-49px] left-[-153px]']}>
+      <p aria-hidden="true" data-enter="row" data-marquee-interactive data-from="right" class:list={[rowClass, 'top-[-49px] left-[-153px]']}>
         <span class="flex" data-marquee="reverse" data-duration="70">
           {[0, 1].map(() => (
             <span class="flex shrink-0 gap-[27px] pr-[27px]">{topWords.map((word) => <span>{word}</span>)}</span>
           ))}
         </span>
       </p>
-      <p aria-hidden="true" data-enter="row" data-from="left" class:list={[rowClass, 'top-[503px] left-[-167px]']}>
+      <p aria-hidden="true" data-enter="row" data-marquee-interactive data-from="left" class:list={[rowClass, 'top-[503px] left-[-167px]']}>
         <span class="flex" data-marquee="forward" data-duration="80">
           {[0, 1].map(() => (
             <span class="flex shrink-0 gap-[27px] pr-[27px]">{bottomWords.map((word) => <span>{word}</span>)}</span>
