@@ -1,0 +1,29 @@
+---
+/**
+ * Other Works の最後の行。作品の行(WorkRow)と同じ形で、サムネの代わりに矢印を置く。
+ * 押すと Other Works の一覧を新しいタブで開く。
+ */
+interface Props {
+  href: string;
+  count: number;
+}
+
+const { href, count } = Astro.props;
+---
+
+<li data-reveal-row>
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`すべての作品(${count}作品)を新しいタブで一覧表示する`}
+    class="group relative -mx-[12px] flex items-center gap-[16px] rounded-card px-[12px] py-[10px] leading-auto md:gap-[24px]"
+  >
+    <span class="pointer-events-none absolute inset-0 rounded-card bg-linear-to-br from-paper/5 to-paper/25 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"></span>
+    <span class="relative grid aspect-video w-[112px] shrink-0 place-items-center rounded-media border border-paper/30 text-nav md:w-[176px]" aria-hidden="true" data-reveal-part>→</span>
+    <span class="relative flex min-w-0 flex-col gap-[4px]">
+      <span class="text-nav font-semibold" data-reveal-part>See all works</span>
+      <span class="text-small opacity-60" data-reveal-part>{count} projects</span>
+    </span>
+  </a>
+</li>

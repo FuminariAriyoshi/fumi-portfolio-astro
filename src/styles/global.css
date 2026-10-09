@@ -40,6 +40,9 @@
   --color-slide-works-soft: #f3f3e4;
   --color-slide-contact: #f04fb0;
   --color-slide-contact-soft: #f8e9f2;
+  /* Other Works は色を付けない(グレーのグラデーションだけ) */
+  --color-slide-other: #a6a6a6;
+  --color-slide-other-soft: #efefef;
   --color-work-pitatobi: #00a0f0;
   --color-work-pitatobi-soft: #e6f4fb;
   /* 作品のキーワードの帯のグラデーション(黒 → この色) */
@@ -102,6 +105,11 @@
    作品のまとまりに work-tint-* を付けると、中の黒いスライド・ブロック(bg-(image:--work-tint))にだけ効く */
 @utility work-tint-* {
   --work-tint: linear-gradient(122.2deg, rgba(0, 0, 0, 0.2) 11.07%, color-mix(in srgb, --value(--color-*) 20%, transparent) 89.18%);
+}
+
+/* テーマカラーが淡く黒に埋もれる作品用(ReiKikkawa)。同じ形で色を 45% まで強める */
+@utility work-tint-vivid-* {
+  --work-tint: linear-gradient(122.2deg, rgba(0, 0, 0, 0.2) 11.07%, color-mix(in srgb, --value(--color-*) 45%, transparent) 89.18%);
 }
 
 /* Workspace のサイドバーを閉じた状態(data-sidebar="closed")のスタイル */
@@ -188,7 +196,7 @@
 /* 閉じたサイドバーで、マウスを乗せた項目(data-peek。PortfolioMotion が付ける)を大きくしてラベルを小さく出す */
 @media (min-width: 768px) {
   /* 高さはラベルに合わせる。上は番号と重ならないよう空ける */
-  [data-workspace][data-sidebar="closed"] [data-thumb][data-peek]:not([aria-current="true"]) { height: auto; min-height: max(64px, var(--thumb-h)); padding-top: 24px; padding-inline: 4px; }
+  [data-workspace][data-sidebar="closed"] [data-thumb][data-peek]:not([aria-current="true"]) { height: auto; min-height: max(64px, var(--thumb-h)); padding-top: 24px; }
   [data-workspace][data-sidebar="closed"] [data-thumb][data-peek] > [data-thumb-label] {
     display: block;
     padding-inline: 0;

@@ -1,0 +1,179 @@
+---
+/**
+ * 旧サイトの作品詳細(ProjectClient)。
+ * タイトル → メタ情報(Year/Client/Role/Tools/Link。値は英語版で統一) → カバー → Introduction → 動画 → ギャラリー(章ごと) → More Work
+ */
+import ProjectToc from './ProjectToc.astro';
+import ProjectVideo from './ProjectVideo.astro';
+import {
+  hasJapanese, otherWorksOf, imageAttrs, parseDesField, richTextHTML, titleOf, toUrlLang,
+  type Lang, type Portfolio,
+} from '@/lib/works';
+
+interface Props {
+  project: Portfolio;
+  /** メタ情報はこちら(英語版)の値を使う */
+  metaSource: Portfolio;
+  allPortfolios: Portfolio[];
+  lang: Lang;
+}
+
+const { project, metaSource, allPortfolios, lang } = Astro.props;
+const title = titleOf(project);
+const meta = metaSource.data;
+const metaItems = [
+  { label: 'Year', value: meta.year },
+  { label: 'Client', value: meta.client },
+  { label: 'Role', value: meta.role },
+  { label: 'Tools', value: meta.tools },
+].filter((item) => item.value);
+const link = meta.link?.url ? (meta.link.url as string) : null;
+
+const videos = [...((project.data.video ?? []) as any[])].reverse().filter((item) => item.video?.html);
+const photos = [...((project.data.portfoliophotos ?? []) as any[])].reverse().map((item, i) => ({
+  ...item,
+  ...parseDesField(item.des),
+  sectionId: `gallery-section-${i}`,
+}));
+const tocItems = [
+  { id: 'introduction', label: 'Introduction' },
+  ...photos.filter((item) => item.title).map((item) => ({ id: item.sectionId, label: item.title as string })),
+];
+
+// More Work：Other Works の並び(日付順)で、この作品の次の3つ
+const selected = otherWorksOf(allPortfolios);
+const currentIndex = selected.findIndex((p) => p.id === project.id);
+const moreProjects = currentIndex >= 0
+  ? [1, 2, 3].map((offset) => selected[(currentIndex + offset) % selected.length]).filter(Boolean)
+  : selected.slice(0, 3);
+const cover = imageAttrs(project.data.portfolio, '100vw');
+const descClass = 'project-description text-[1.0625rem] font-normal tracking-[-0.01em] leading-relaxed text-pretty lg:col-span-7 lg:col-start-5';
+---
+
+<main id="main-content" class="mx-auto pt-32 pb-32">
+  <div class="mb-32 flex flex-col gap-6">
+    <div class="mt-12 flex w-full flex-col gap-12 px-4">
+      <h1 class:list={['text-start font-serif text-[4rem] leading-tight font-normal md:text-9xl', hasJapanese(title) && 'font-jp-title']}>{title}</h1>
+    </div>
+
+    <div class="mt-12 flex w-full flex-col gap-12 px-4">
+      <dl class="grid w-full grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
+        {metaItems.map((item) => (
+          <div class="flex flex-col gap-1">
+            <dt class="text-base font-normal text-white/40">{item.label}</dt>
+            <dd class="text-xs font-normal md:text-xl">{item.value}</dd>
+          </div>
+        ))}
+        {link && (
+          <div class="flex flex-col gap-1">
+            <dt class="text-base font-normal text-white/40">Link</dt>
+            <dd>
+              <a href={link} target="_blank" rel="noopener noreferrer" aria-label={`${title}のサイトを見る(新しいタブで開く)`} class="flex items-center gap-1 text-xs font-normal transition-opacity md:text-xl">
+                Visit Site
+                <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-current stroke-2" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </a>
+            </dd>
+          </div>
+        )}
+      </dl>
+    </div>
+
+    <div class="aspect-video w-full overflow-hidden bg-[#111]">
+      {cover && <img {...cover} alt={`${title}のカバー画像`} class="h-full w-full object-cover" />}
+    </div>
+  </div>
+
+  <div class="relative grid w-full justify-items-center">
+    <ProjectToc items={tocItems} />
+
+    <div class="flex w-full min-w-0 flex-col" style="grid-column: 1; grid-row: 1">
+      <section id="introduction" class="toc-section mx-auto mb-32 w-full max-w-[1222px] scroll-mt-32 px-4 md:px-8 lg:grid lg:grid-cols-12">
+        <div class={descClass}>
+          <h2 class="mb-5 text-2xl font-normal">Introduction</h2>
+          <div class="text-white/85" set:html={richTextHTML(project.data.initial)} />
+        </div>
+      </section>
+
+      {videos.length > 0 && (
+        <div id="videos" class="mb-32 flex w-full scroll-mt-32 flex-col gap-16">
+          {videos.map((item) => <ProjectVideo html={item.video.html} class="aspect-video w-full overflow-hidden border-none bg-[#111]" />)}
+        </div>
+      )}
+
+      <div id="gallery" class="mx-auto w-full max-w-[1280px] px-0 md:px-4">
+        {photos.map((item) => {
+          const photo = item.photos?.url ? imageAttrs(item.photos, '100vw') : null;
+          return (
+            <>
+              {(item.title || item.bodyNodes.length > 0) && (
+                <section id={item.sectionId} class="toc-section reveal mx-auto mb-10 w-full max-w-[1222px] scroll-mt-32 px-4 md:px-8 lg:grid lg:grid-cols-12">
+                  <div class={descClass}>
+                    {item.title && <h2 class="mb-5 text-2xl font-normal">{item.title}</h2>}
+                    {item.bodyNodes.length > 0 && (
+                      <div class="flex flex-col gap-4 text-white/85 transition-opacity [&_a]:opacity-50 [&_a]:hover:opacity-100" set:html={richTextHTML(item.bodyNodes)} />
+                    )}
+                  </div>
+                </section>
+              )}
+              <div class="reveal reveal-delay mb-16 w-full overflow-hidden bg-[#111] p-0">
+                {item.video?.html ? (
+                  <ProjectVideo html={item.video.html} class="aspect-video w-full overflow-hidden" />
+                ) : photo ? (
+                  <div class="aspect-video w-full overflow-hidden">
+                    <img {...photo} alt={item.title ? `${title}：${item.title}` : `${title}の制作画像`} loading="lazy" class="h-full w-full object-cover" />
+                  </div>
+                ) : null}
+              </div>
+            </>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+
+  {moreProjects.length > 0 && (
+    <section class="mt-32 mb-16 w-full px-4 md:px-8" aria-labelledby="more-work">
+      <div class="mb-6 border-t border-white/20 pt-6">
+        <h2 id="more-work" class="text-sm text-white/50">More Work</h2>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {moreProjects.map((proj) => {
+          const image = imageAttrs(proj.data.portfolio, '(max-width: 768px) 100vw, 33vw');
+          return (
+            <a href={`/works/${proj.uid}/${toUrlLang(lang)}`} aria-label={`${titleOf(proj)}の詳細を見る`} class="flex flex-col transition-opacity hover:opacity-70">
+              <div class="pt-[50px]">
+                <div class="aspect-video overflow-hidden">
+                  {image && <img {...image} alt="" loading="lazy" class="h-full w-full object-cover" />}
+                </div>
+              </div>
+              <div class="pt-8">
+                <p class="text-xl text-white">{titleOf(proj)}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+</main>
+
+<style>
+  /* 旧サイトの whileInView(下から 20px フェードイン)。動きを減らす設定では出さない */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js-reveal) .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    :global(html.js-reveal) .reveal-delay { transition-delay: 0.1s; }
+    :global(html.js-reveal) .reveal.is-visible { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  document.documentElement.classList.add('js-reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+</script>

@@ -1,0 +1,52 @@
+---
+/**
+ * 旧サイト(FumiPortfolio)の works / 作品詳細を再現するページの枠。
+ * 黒背景・白文字、本文 Inter + Noto Sans JP、日本語タイトルは Shippori Mincho(.font-jp-title)。
+ */
+import '../styles/global.css';
+import SmoothScroll from '@/components/works/SmoothScroll.astro';
+
+interface Props {
+  title: string;
+  lang?: 'en' | 'ja';
+}
+
+const { title, lang = 'en' } = Astro.props;
+---
+
+<html lang={lang} class="works-theme">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon-fumi.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- 見出しの PP Migra を先に読み込む(読み込み前の代わりのフォントは幅が広く、一瞬大きく見えるため) -->
+    <link rel="preload" href="/fonts/PPMigra-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body class="works-body min-h-screen bg-ink text-paper antialiased selection:bg-neutral-800">
+    <a href="#main-content" class="portfolio-skip">本文へ移動</a>
+    <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-ink/80 px-4 py-4 backdrop-blur-md md:px-8">
+      <!-- Fumi は Other Works の一覧へ(このページ群のホーム) -->
+      <a href="/works/other" class="font-serif text-nav leading-none" aria-label="Fumi (Other Works の一覧へ)">Fumi</a>
+      <nav class="flex items-center gap-6 text-sm" aria-label="Works">
+        <a href="/#works" aria-label="ポートフォリオの Works に戻る">Back to portfolio</a>
+      </nav>
+    </header>
+    <slot />
+    <SmoothScroll />
+  </body>
+</html>
+
+<style is:global>
+  .works-body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+  .font-jp-title { font-family: 'Shippori Mincho', serif; font-weight: 500; letter-spacing: 0; }
+  /* 日本語の1文字だけの行(「た。」など)を出さない */
+  .project-description p { text-wrap: pretty; word-break: auto-phrase; overflow-wrap: anywhere; }
+</style>

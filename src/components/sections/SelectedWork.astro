@@ -1,6 +1,7 @@
 ---
 /**
  * Selected Works の 1 作品(Figma 427-350)。
+ * ReiKikkawa / StarWeaving は開閉するデッキ(StackedWorkDeck)。成果(推薦文・掲載)はデッキの外に置き、閉じていても見せる。
  * データがある作品: 作品名(白地)→ ロゴ → キーワードの帯 → (Before/After)→ 概要スライド → 章(ピタとびは PitatobiChapters)→ 推薦文。
  * データが無い作品は WorkPendingSlide。
  */
@@ -14,7 +15,6 @@ import WorkTitle from './WorkTitle.astro';
 import WorkTestimonial from './WorkTestimonial.astro';
 import ReikikkawaChapters from './reikikkawa/ReikikkawaChapters.astro';
 import StarWeavingChapters from './starweaving/StarWeavingChapters.astro';
-import ProjectSiteLink from '../ui/ProjectSiteLink.astro';
 import StackedWorkDeck from './StackedWorkDeck.astro';
 import { projects, projectTitles } from '@/data/projects';
 
@@ -27,36 +27,42 @@ const { id, index } = Astro.props;
 const title = projectTitles[index];
 const project = projects.find((p) => p.title === title);
 const stacked = id === 'reikikkawa' || id === 'starweaving';
-const previews = id === 'reikikkawa'
-  ? ['/works/reikikkawa/prototype.png', '/works/reikikkawa/mobile.png']
-  : ['/works/starweaving/exhibition.png', '/works/starweaving/implementation.png'];
 // キーワードの帯の色と章スライドがあるのは現状ピタとびのみ
 const bandColor: Record<string, string> = { ピタとび: 'to-work-pitatobi-deep' };
 // 作品ごとの背景グラデーション(サイドバーと同じテーマカラー)
 const tintClass: Record<string, string> = {
   pitatobi: 'work-tint-work-pitatobi',
-  reikikkawa: 'work-tint-work-reikikkawa',
+  // ReiKikkawa はテーマカラーが淡いグレーで黒に埋もれるので、グラデーションの色を強める
+  reikikkawa: 'work-tint-vivid-work-reikikkawa',
   starweaving: 'work-tint-work-starweaving',
 };
 ---
 
-<div id={id} class:list={['flex w-full shrink-0 flex-col gap-[14px]', tintClass[id]]}>
-  {project && stacked ? (
-    <StackedWorkDeck project={project} id={id} previews={previews}>
-      {id === 'reikikkawa' && <ProjectSiteLink href={project.href} title={project.title} />}
+{/* 作品と作品の間は、作品の中(14px)より広く空けてまとまりを見せる */}
+<div id={id} class:list={['flex w-full shrink-0 flex-col gap-[14px]', index > 0 && 'mt-[48px]', tintClass[id]]}>
+  {project && stacked && (
+    <StackedWorkDeck
+      project={project}
+      id={id}
+      coverVideoId={id === 'reikikkawa' ? '1188937366' : '1188937811'}
+      revealTitle
+    >
       <KeywordBand words={project.keywords} toClass="to-ink-soft" label={`${title} のキーワード`} />
       <SlideCanvas id={`${id}-intro`}><ProjectIntroSlide project={project} /></SlideCanvas>
-      {id === 'reikikkawa' ? (
-        <>
-          <ReikikkawaChapters />
-          <WorkTestimonial name="吉川 伶" />
-        </>
-      ) : <StarWeavingChapters />}
+      {id === 'reikikkawa' ? <ReikikkawaChapters /> : <StarWeavingChapters />}
     </StackedWorkDeck>
-  ) : project ? (
+  )}
+  {/* 成果はデッキを開かなくても見せる */}
+  {project && id === 'reikikkawa' && (
     <>
-      <WorkTitle project={project} compactTitle={id === 'reikikkawa'} responsiveTitle={id === 'starweaving'} />
-      {id === 'reikikkawa' && <ProjectSiteLink href={project.href} title={project.title} />}
+      <WorkTestimonial name="吉川 伶" />
+    </>
+  )}
+  {project && id === 'starweaving' && <StarWeavingChapters part="outcome" />}
+  {!stacked && (project ? (
+    <>
+      {/* 作品名はロゴ画像で見せ、テキストの作品名は出さない。Client / Year / Role はロゴの下 */}
+      <h2 class="sr-only">{project.title}</h2>
       <div class:list={['relative w-full overflow-clip rounded-frame', id === 'pitatobi' ? 'aspect-[1182/451]' : 'aspect-video']}>
         <img
           src={project.image.src}
@@ -67,6 +73,7 @@ const tintClass: Record<string, string> = {
           class="absolute inset-0 size-full object-cover object-[50%_45%]"
         />
       </div>
+      <WorkTitle project={project} showTitle={false} />
       <KeywordBand words={project.keywords} toClass={bandColor[title] ?? 'to-ink-soft'} label={`${title} のキーワード`} />
       {title === 'ピタとび' && <PitatobiBeforeAfter />}
       <SlideCanvas id={`${id}-intro`}>
@@ -77,7 +84,7 @@ const tintClass: Record<string, string> = {
     <SlideCanvas>
       <WorkPendingSlide title={title} index={index} projectTitles={projectTitles} />
     </SlideCanvas>
-  )}
+  ))}
 
 
   {title === 'ピタとび' && (

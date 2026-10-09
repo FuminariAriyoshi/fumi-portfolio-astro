@@ -1,0 +1,25 @@
+---
+/**
+ * トップの Other Works。トップの Works と同じ形の行を縦に積む(異なれ。→ VoiceCast → PrismFont)。
+ * 最後の行(See all works)も同じ形。作品は詳細ページ、最後の行は Other Works の一覧を、どちらも新しいタブで開く。
+ */
+import SlideFrame from '../layout/SlideFrame.astro';
+import SlideHeading from '../ui/SlideHeading.astro';
+import WorkRow from '../ui/WorkRow.astro';
+import SeeAllRow from '../ui/SeeAllRow.astro';
+import { getAllPortfolios, otherWorksOf } from '@/lib/works';
+
+// 見せる作品(Prismic の uid)
+const SHOWCASE_UIDS = ['15', '8', '6']; // 異なれ。One of a kind BX / VoiceCast WEBSITE / PrismFont & Asset
+
+const { ja } = await getAllPortfolios();
+const works = SHOWCASE_UIDS.map((uid) => ja.find((work) => work.uid === uid)).filter((work) => work !== undefined);
+---
+
+<SlideFrame id="other-works" label="Other Works" tone="ink">
+  <SlideHeading title="Other Works" />
+  <ol class="mt-auto flex flex-col gap-[4px] pt-[24px]">
+    {works.map((work) => <WorkRow work={work} />)}
+    <SeeAllRow href="/works/other" count={otherWorksOf(ja).length} />
+  </ol>
+</SlideFrame>

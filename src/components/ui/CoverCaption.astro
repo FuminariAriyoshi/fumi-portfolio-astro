@@ -1,0 +1,24 @@
+---
+/** 表紙の映像に重ねる作品名・紹介文・Client / Year / Role。下から黒のグラデーションを敷いて白文字で読ませる */
+import MetaItem from './MetaItem.astro';
+import type { Project } from '../sections/ProjectSlide.astro';
+
+interface Props {
+  project: Project;
+  /** 作品名を PP Migra(font-serif)にする */
+  serif?: boolean;
+  class?: string;
+}
+const { project, serif = false, class: className } = Astro.props;
+---
+
+<div class:list={['absolute inset-x-0 bottom-0 flex flex-col gap-[16px] bg-linear-to-t from-ink/80 to-transparent px-[40px] pt-[160px] pb-[40px] text-paper', className]}>
+  <h2 class:list={['text-greeting-lg leading-auto', serif ? 'font-serif font-normal' : 'font-semibold tracking-tighter']}>{project.title}</h2>
+  <p class="max-w-[720px] text-meta leading-body">{project.intro}</p>
+  <div class="flex flex-wrap items-start gap-x-[24px] gap-y-[8px] text-meta">
+    {project.client && <MetaItem label="Client"><p class="leading-body">{project.client}</p></MetaItem>}
+    <MetaItem label="Year"><p class="leading-body">{project.year}</p></MetaItem>
+    <MetaItem label="Role"><p class="leading-body">{project.role}</p></MetaItem>
+    {project.team && <MetaItem label="Team"><p class="leading-body">{project.team}</p></MetaItem>}
+  </div>
+</div>

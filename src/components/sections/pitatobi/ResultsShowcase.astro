@@ -11,8 +11,8 @@ const channels = [
 ];
 // 成果の数字(帯で出す)
 const stats = [
-  { label: '診断完了率', value: '90.9%', note: '2026年8月30日~2026年9月26日(28日計測)・診断を開始した11人中' },
-  { label: 'LINE登録者数', value: '0→87', unit: '人', note: '2026年8月4日~2026年9月26日' },
+  { label: '診断完了率', value: '90.9', unit: '%', basis: '開始した11人中10人が最後まで回答', period: '2026年8月30日〜9月26日(28日間)' },
+  { label: 'LINE登録者数', from: '0', value: '87', unit: '人', period: '2026年8月4日〜9月26日' },
 ];
 ---
 
@@ -28,7 +28,6 @@ const stats = [
               <img src={ch.src} alt={ch.alt} width="240" height="522" loading="lazy" class:list={['absolute left-0 w-full max-w-none', ch.img]} />
             </div>
             <figcaption class={t.caption}>{ch.label}</figcaption>
-            {ch.label === 'Line' && <p class="text-micro leading-auto text-center opacity-40">*リッチメニューは制作していません。</p>}
           </figure>
         ))}
       </div>

@@ -1,0 +1,53 @@
+---
+/**
+ * 旧サイトの CategoryFilter。PC はピルを横に並べ、スマホは右寄せのドロップダウン。
+ * 押したジャンルを data-filter-root の data-active に入れる(絞り込みは WorksIndex の script)。
+ */
+import { specialties } from '@/lib/works';
+---
+
+<div class="sticky top-[64px] z-40 -mx-4 px-4 py-3 md:-mx-8 md:px-8" data-category-filter>
+  <!-- スマホ -->
+  <div class="relative ml-auto flex w-1/2 flex-col md:hidden" data-filter-dropdown>
+    <button
+      type="button"
+      class="flex w-full items-center justify-between rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm text-white backdrop-blur-md"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      data-filter-toggle
+    >
+      <span class="whitespace-nowrap" data-filter-current>ALL</span>
+      <svg viewBox="0 0 24 24" class="h-4 w-4 fill-none stroke-white/60 stroke-2" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+    <ul class="absolute top-full right-0 left-0 z-50 mt-2 hidden overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/75 py-1.5 backdrop-blur-md" role="listbox" aria-label="Category" data-filter-menu>
+      {specialties.map((spec) => (
+        <li>
+          <button type="button" role="option" class="flex w-full items-center justify-between px-5 py-3 text-left text-sm text-white/60" data-filter-option={spec}>
+            <span>{spec}</span>
+            <svg viewBox="0 0 24 24" class="hidden h-4 w-4 fill-none stroke-current stroke-2" aria-hidden="true" data-check><path d="m5 12 5 5 9-10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- PC -->
+  <div class="hidden w-full flex-wrap items-center gap-2 md:flex" role="group" aria-label="Category">
+    {specialties.map((spec) => (
+      <button
+        type="button"
+        class="filter-pill rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm whitespace-nowrap text-white backdrop-blur-md transition-all duration-300 md:text-base"
+        aria-pressed="false"
+        data-filter-option={spec}
+      >
+        {spec}
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .filter-pill:hover { background: rgb(255 255 255 / 0.1); border-color: rgb(255 255 255 / 0.8); box-shadow: 0 0 12px rgb(255 255 255 / 0.15); }
+  .filter-pill[aria-pressed='true'] { background: #fff; color: #18181b; border-color: #fff; box-shadow: none; }
+  [data-filter-menu] [aria-selected='true'] { background: #fff; color: #18181b; }
+</style>

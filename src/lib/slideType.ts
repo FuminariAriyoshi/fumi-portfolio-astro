@@ -15,3 +15,6 @@ export const slideType = {
   /** ビジュアルを包む白いカード */
   card: 'overflow-clip rounded-card bg-paper text-ink',
 };
+
+/** 文字だけの章スライド(ReiKikkawa / StarWeaving)のキャンバスの高さ。ChapterSlide の compact と組み合わせる */
+export const chapterTextHeight = 440;

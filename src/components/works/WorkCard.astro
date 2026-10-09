@@ -1,0 +1,29 @@
+---
+/** 旧サイトの WorksGrid の1枚。動画があればミュートの背景再生(画面に近づいてから読み込む)、なければカバー画像 */
+import { buildMutedEmbedSrc, genresOf, imageAttrs, titleOf, toUrlLang, type Lang, type Portfolio } from '@/lib/works';
+
+interface Props {
+  project: Portfolio;
+  lang: Lang;
+  class?: string;
+}
+
+const { project, lang, class: className } = Astro.props;
+const title = titleOf(project);
+const genres = genresOf(project);
+const firstVideoHtml = (project.data.video as any[] | undefined)?.find((item) => item.video?.html)?.video?.html;
+const videoSrc = firstVideoHtml ? buildMutedEmbedSrc(firstVideoHtml) : null;
+const image = imageAttrs(project.data.portfolio, '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw');
+---
+
+<a href={`/works/${project.uid}/${toUrlLang(lang)}`} aria-label={`${title}の詳細を見る`} class={className} data-work-card data-genres={JSON.stringify(genres)}>
+  <div class="group flex h-full cursor-pointer flex-col gap-2">
+    <div class="relative aspect-video overflow-hidden rounded-[4px] bg-zinc-900" data-lazy-video={videoSrc ?? undefined}>
+      {image && <img {...image} alt="" loading="lazy" class="h-full w-full object-cover" />}
+    </div>
+    <div>
+      <h3 class="text-xl font-medium tracking-tight">{title}</h3>
+      <p class="text-sm font-normal text-neutral-500">{genres.join(', ')}</p>
+    </div>
+  </div>
+</a>

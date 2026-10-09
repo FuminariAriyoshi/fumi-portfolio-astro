@@ -1,0 +1,95 @@
+---
+/**
+ * Other Works の一覧(旧サイトの /works をもとに)。トップでケーススタディにしている作品は出さない。
+ * 最初は ALL(全作品を3カラム)、ジャンルを選ぶと絞り込む。
+ * en / ja を両方出しておき、?lang= かブラウザの言語で片方だけ見せる(旧サイトと同じ判定)。
+ */
+import CategoryFilter from './CategoryFilter.astro';
+import WorkCard from './WorkCard.astro';
+import { getAllPortfolios, otherWorksOf, type Lang } from '@/lib/works';
+
+const all = await getAllPortfolios();
+const langs: Lang[] = ['en', 'ja'];
+---
+
+<main id="main-content" class="pt-20 pb-32 md:pt-24" data-filter-root data-active="">
+  <div class="mx-auto flex w-full max-w-[1685px] flex-col gap-8 px-4 md:px-8">
+    <CategoryFilter />
+
+    {langs.map((lang) => (
+      <div data-lang-block={lang} hidden={lang !== 'en'}>
+        <div class="grid grid-cols-1 gap-8 gap-y-[48px] md:grid-cols-2 lg:grid-cols-3">
+          {otherWorksOf(all[lang].length ? all[lang] : all.en).map((project) => <WorkCard project={project} lang={lang} />)}
+        </div>
+      </div>
+    ))}
+  </div>
+</main>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-filter-root]');
+  if (root) {
+    // 言語：?lang= → ブラウザの言語(旧サイトと同じ)
+    const urlLang = new URLSearchParams(location.search).get('lang');
+    const lang = urlLang === 'ja' || urlLang === 'en'
+      ? urlLang
+      : navigator.language.startsWith('ja') || navigator.languages?.some((l) => l.startsWith('ja')) ? 'ja' : 'en';
+    if (!urlLang) history.replaceState(null, '', `${location.pathname}?lang=${lang}${location.hash}`);
+    root.querySelectorAll<HTMLElement>('[data-lang-block]').forEach((block) => { block.hidden = block.dataset.langBlock !== lang; });
+    document.documentElement.lang = lang;
+
+    // 画面に近づいたら動画を読み込む(見えていない言語・絞り込みで隠れた動画は読み込まない)
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const box = entry.target as HTMLElement;
+        videoObserver.unobserve(box);
+        const iframe = document.createElement('iframe');
+        iframe.src = box.dataset.lazyVideo!;
+        iframe.className = 'pointer-events-none absolute inset-0 h-full w-full border-0';
+        iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+        iframe.title = '';
+        iframe.tabIndex = -1;
+        iframe.setAttribute('aria-hidden', 'true');
+        box.append(iframe);
+      });
+    }, { rootMargin: '200px' });
+    root.querySelectorAll<HTMLElement>('[data-lazy-video]').forEach((box) => videoObserver.observe(box));
+
+    // 絞り込み
+    const options = [...root.querySelectorAll<HTMLButtonElement>('[data-filter-option]')];
+    const current = root.querySelector<HTMLElement>('[data-filter-current]');
+    const menu = root.querySelector<HTMLElement>('[data-filter-menu]');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-filter-toggle]');
+    const setMenu = (open: boolean) => {
+      menu?.classList.toggle('hidden', !open);
+      toggle?.setAttribute('aria-expanded', String(open));
+    };
+
+    const apply = (spec: string) => {
+      const active = spec === 'ALL' ? '' : spec;
+      root.dataset.active = active;
+      options.forEach((option) => {
+        const on = option.dataset.filterOption === (active || 'ALL');
+        if (option.getAttribute('role') === 'option') {
+          option.setAttribute('aria-selected', String(on));
+          option.classList.toggle('text-white/60', !on);
+          option.querySelector('[data-check]')?.classList.toggle('hidden', !on);
+        } else {
+          option.setAttribute('aria-pressed', String(on));
+        }
+      });
+      if (current) current.textContent = active || 'ALL';
+      root.querySelectorAll<HTMLElement>('[data-work-card]').forEach((card) => {
+        card.hidden = Boolean(active) && !(JSON.parse(card.dataset.genres ?? '[]') as string[]).includes(active);
+      });
+    };
+
+    options.forEach((option) => option.addEventListener('click', () => { apply(option.dataset.filterOption!); setMenu(false); }));
+    toggle?.addEventListener('click', (event) => { event.stopPropagation(); setMenu(menu?.classList.contains('hidden') ?? false); });
+    document.addEventListener('click', (event) => {
+      if (!root.querySelector('[data-filter-dropdown]')?.contains(event.target as Node)) setMenu(false);
+    });
+    apply('ALL');
+  }
+</script>

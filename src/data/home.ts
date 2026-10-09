@@ -1,5 +1,5 @@
 // トップのスライド構成。サイドバーのサムネイルもここから作る。後で Prismic に差し替える
-export type SlideColor = 'fumi' | 'about' | 'works' | 'contact' | 'pitatobi' | 'reikikkawa' | 'starweaving';
+export type SlideColor = 'fumi' | 'about' | 'works' | 'other' | 'contact' | 'pitatobi' | 'reikikkawa' | 'starweaving';
 
 export interface SlideMeta {
   id: string;
@@ -56,6 +56,7 @@ export const slides: SlideMeta[] = [
       { id: 'starweaving-recognition', label: 'Recognition' },
     ],
   },
+  { id: 'other-works', label: 'Other Works', color: 'other' },
   { id: 'contact', label: 'Contact', color: 'contact' },
 ];
 

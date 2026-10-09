@@ -1,0 +1,62 @@
+---
+/**
+ * 旧サイトの ScrollPassthroughVideo。音声ありで自動再生し、映像のどこかを押すと音声のオン/オフ。
+ * 画面外に出たらミュート、戻ったら再生し直す(postMessage で YouTube / Vimeo を操作)。
+ */
+import { buildNormalizedEmbedSrc } from '@/lib/works';
+
+interface Props {
+  html: string;
+  class?: string;
+}
+
+const { html, class: className } = Astro.props;
+const src = buildNormalizedEmbedSrc(html);
+---
+
+<div class:list={['relative', className]} data-project-video>
+  {src ? (
+    <iframe src={src} class="h-full w-full border-0" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="Project video"></iframe>
+  ) : (
+    <div class="h-full w-full [&>iframe]:h-full [&>iframe]:w-full" set:html={html} />
+  )}
+  <button type="button" class="absolute inset-0 z-10 cursor-default" aria-label="動画の音声をオン/オフする" data-sound-toggle></button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-project-video]').forEach((wrapper) => {
+    let soundEnabled = true;
+    const send = (iframe: HTMLIFrameElement, message: object) => iframe.contentWindow?.postMessage(JSON.stringify(message), '*');
+    const isYouTube = (iframe: HTMLIFrameElement) => /youtube\.com|youtu\.be/.test(iframe.src);
+    const isVimeo = (iframe: HTMLIFrameElement) => iframe.src.includes('vimeo.com');
+
+    const syncSound = (enabled: boolean) => {
+      const iframe = wrapper.querySelector('iframe');
+      if (!iframe?.contentWindow) return;
+      soundEnabled = enabled;
+      const command = () => {
+        if (isYouTube(iframe)) {
+          send(iframe, { event: 'command', func: enabled ? 'unMute' : 'mute', args: '' });
+          send(iframe, { event: 'command', func: 'setVolume', args: [100] });
+          send(iframe, { event: 'command', func: 'playVideo', args: '' });
+        } else if (isVimeo(iframe)) {
+          send(iframe, { method: 'setMuted', value: !enabled });
+          send(iframe, { method: 'setVolume', value: enabled ? 1 : 0 });
+          send(iframe, { method: 'play' });
+        }
+      };
+      command();
+      setTimeout(command, 250);
+      setTimeout(command, 750);
+    };
+
+    const play = () => syncSound(soundEnabled);
+    wrapper.querySelector('iframe')?.addEventListener('load', play);
+    wrapper.querySelector('[data-sound-toggle]')?.addEventListener('click', () => syncSound(!soundEnabled));
+    new IntersectionObserver(([entry]) => {
+      // 画面外に出たらミュート。戻ってきてもミュートのまま再生する(旧サイトと同じ)
+      if (!entry.isIntersecting) syncSound(false);
+      else play();
+    }, { threshold: 0 }).observe(wrapper);
+  });
+</script>

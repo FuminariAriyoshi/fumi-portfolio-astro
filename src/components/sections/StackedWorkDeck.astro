@@ -1,58 +1,119 @@
 ---
 import WorkTitle from './WorkTitle.astro';
+import CoverCaption from '../ui/CoverCaption.astro';
+import ProjectSiteLink from '../ui/ProjectSiteLink.astro';
 import type { Project } from './ProjectSlide.astro';
 
 interface Props {
   project: Project;
   id: string;
-  previews: string[];
+  /** 表紙を Vimeo の自動再生(背景モード)にする */
+  coverVideoId?: string;
+  /** 作品名・紹介文・Client / Year / Role・サイトへのリンクを表紙に重ねる(モバイルは表紙の上) */
+  revealTitle?: boolean;
 }
-const { project, id, previews } = Astro.props;
+const { project, id, coverVideoId, revealTitle = false } = Astro.props;
+// 後ろの紙は作品のテーマカラーのグラデーション(SelectedWork が付ける --work-tint。推薦文の箱などと同じ)
+const sheets = ['work-deck-sheet-back', 'work-deck-sheet-middle'];
+const titleProps = { project, responsiveTitle: true, serif: true };
+// 表紙の動画は scale-[1.02] で枠より少し大きくして端を切る(等倍だと縁で下地の黒が 1px 透けて線に見える)
+// 外部サイトがある作品だけ「Visit Site」を出す
+const siteHref = project.href?.startsWith('http') ? project.href : undefined;
 ---
 
+<div class="work-deck-wrap relative w-full">
 <details class="work-deck w-full" data-work-deck>
   <summary class="work-deck-summary cursor-pointer list-none" aria-label={`${project.title}のスライドを開閉`} aria-controls={`${id}-slides`}>
-    <WorkTitle project={project} compactTitle={id === 'reikikkawa'} responsiveTitle={id === 'starweaving'} />
+    {revealTitle ? (
+      <div class="md:hidden"><WorkTitle {...titleProps} intro={project.intro} /></div>
+    ) : <WorkTitle {...titleProps} />}
     <div class="work-deck-stack relative isolate">
-      {previews.map((src, index) => (
-        <div class:list={['work-deck-sheet absolute inset-0 overflow-clip rounded-frame bg-ink', index === 0 ? 'work-deck-sheet-back' : 'work-deck-sheet-middle']} aria-hidden="true">
-          <img src={src} alt="" width="1920" height="1080" loading="lazy" class="size-full object-cover" />
-        </div>
+      {sheets.map((sheet) => (
+        <div class:list={['work-deck-sheet absolute inset-0 rounded-frame bg-ink bg-(image:--work-tint)', sheet]} aria-hidden="true"></div>
       ))}
       <div class="relative aspect-video overflow-clip rounded-frame bg-ink">
-        <img src={project.image.src} alt={project.image.alt} width="1920" height="1080" loading="lazy" class="size-full object-cover" />
+        {coverVideoId ? (
+          <iframe
+            src={`https://player.vimeo.com/video/${coverVideoId}?background=1&autoplay=1&loop=1&muted=1&playsinline=1`}
+            title={`${project.title}の表紙動画`}
+            tabindex="-1"
+            allow="autoplay"
+            class="pointer-events-none size-full scale-[1.02] border-0"
+            data-deck-cover
+          ></iframe>
+        ) : (
+          <img src={project.image.src} alt={project.image.alt} width="1920" height="1080" loading="lazy" class="size-full object-cover" />
+        )}
+        {revealTitle && <CoverCaption project={project} serif={titleProps.serif} class="hidden md:flex" />}
       </div>
-    </div>
-    <div class="flex items-center justify-between py-6 text-meta">
-      <span class="work-deck-open-label">スライドを開く</span>
-      <span class="work-deck-close-label">スライドを閉じる</span>
-      <span aria-hidden="true" class="text-nav"><span class="work-deck-open-label">＋</span><span class="work-deck-close-label">−</span></span>
     </div>
   </summary>
   <div id={`${id}-slides`} class="flex w-full flex-col gap-4">
+    {revealTitle && siteHref && <ProjectSiteLink href={siteHref} title={project.title} class="md:hidden" />}
     <slot />
-    <button type="button" data-work-deck-close aria-label={`${project.title}のスライドを閉じる`} class="self-center rounded-card border border-ink/20 px-6 py-4 text-meta">スライドを閉じる −</button>
   </div>
 </details>
+{/* リンクは summary(ボタン)の中に置けず、閉じた details の中身は描画されないので、details の外に表紙と同じ位置・大きさの枠を重ねて右下に置く(md 以上) */}
+{revealTitle && siteHref && (
+  <div class="pointer-events-none absolute inset-x-0 top-(--deck-top) z-10 hidden aspect-video md:block">
+    <ProjectSiteLink href={siteHref} title={project.title} class="pointer-events-auto absolute right-[40px] bottom-[40px] text-paper" />
+  </div>
+)}
+</div>
 
 <style>
   .work-deck-summary::-webkit-details-marker { display: none; }
   .work-deck-summary:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 4px; border-radius: var(--radius-frame); }
-  .work-deck-stack { margin: 24px 16px 32px; }
-  .work-deck-sheet-back { transform: translateY(-16px) rotate(-2deg); z-index: -2; }
-  .work-deck-sheet-middle { transform: translateY(-8px) rotate(1deg); z-index: -1; }
-  .work-deck-close-label { display: none; }
-  .work-deck[open] .work-deck-close-label { display: inline; }
-  .work-deck[open] .work-deck-open-label { display: none; }
-  .work-deck[open] .work-deck-sheet { display: none; }
-  .work-deck[open] .work-deck-stack { margin: 0; }
+  /* 表紙はほかのスライドと同じ幅で傾けない。後ろの紙は少し小さくして、ずらし・傾けて上にのぞかせる。小さくしてあるので傾けても角は表紙の幅の内側に収まる(ユーザー指定) */
+  .work-deck-wrap { --deck-top: 32px; }
+  .work-deck-wrap:has(> .work-deck[open]) { --deck-top: 0px; }
+  .work-deck-stack { margin-top: var(--deck-top); }
+  /* 開く間は表紙を中のスライドより手前に(スライドが表紙の下から出てくる) */
+  .work-deck.is-dealing .work-deck-stack { z-index: 10; }
+  .work-deck-sheet { transform-origin: top center; }
+  .work-deck-sheet-back { transform: translate(-12px, -20px) rotate(-2.5deg) scale(0.92); z-index: -2; }
+  .work-deck-sheet-middle { transform: translate(10px, -10px) rotate(1.5deg) scale(0.96); z-index: -1; }
+  .work-deck[open]:not(.is-dealing) .work-deck-sheet { display: none; }
 </style>
 
 <script>
+  /**
+   * 開閉のモーション(ユーザー指定): 束が広がる。中の最初のスライド数枚が、少し傾いた状態で表紙の真下(表紙の上端)に重なった所から、
+   * 傾きを戻しながら本来の位置まで順に下へ広がる(表紙が手前、表紙に近いスライドほど手前)。のぞいていた紙は表紙の後ろへ戻って消える。
+   * 閉じるときはスライドを上へ畳み、紙はまた表紙の後ろに重なる。
+   * reduced-motion と、章リンク・直接URLから開いたときはアニメーションしない。
+   */
+  import gsap from 'gsap';
+
+  const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // CSS の .work-deck-sheet-back / -middle と同じ重なり方
+  const sheetRest = [
+    { x: -12, y: -20, rotation: -2.5, scale: 0.92, opacity: 1 },
+    { x: 10, y: -10, rotation: 1.5, scale: 0.96, opacity: 1 },
+  ];
+  const stackMarginTop = 32;
+  // ホバーで「開くそぶり」: 紙が少し持ち上がって扇状に開き、表紙もわずかに浮く
+  const sheetPeek = [
+    { x: -20, y: -30, rotation: -4, scale: 0.92, opacity: 1 },
+    { x: 16, y: -16, rotation: 2.5, scale: 0.96, opacity: 1 },
+  ];
+  // 開閉でスライドに付ける inline の値(終わったらこれだけ消す)
+  const dealtProps = 'transform,transformOrigin,position,zIndex,opacity,visibility';
+  const canHover = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
+
   document.querySelectorAll<HTMLDetailsElement>('[data-work-deck]').forEach((deck) => {
     const summary = deck.querySelector<HTMLElement>('summary');
-    // 閉じたデッキの映像は読み込まず、閉じると再生も止める。
-    const frames = [...deck.querySelectorAll<HTMLIFrameElement>('iframe')];
+    const stack = deck.querySelector<HTMLElement>('.work-deck-stack');
+    const sheets = [...deck.querySelectorAll<HTMLElement>('.work-deck-sheet')];
+    const cover = stack?.querySelector<HTMLElement>(':scope > .relative');
+    const slides = deck.querySelector<HTMLElement>(':scope > [id$="-slides"]');
+    // 表紙の上余白(--deck-top)は外側の枠に置く(表紙に重ねたリンクの枠と共有するため)
+    const wrap = deck.parentElement as HTMLElement;
+    let instant = false;
+    let animating = false;
+
+    // 閉じたデッキの映像は読み込まず、閉じると再生も止める(表紙の動画と、自分で読み込みを管理する VimeoVideo は除く)。
+    const frames = [...deck.querySelectorAll<HTMLIFrameElement>('iframe:not([data-deck-cover])')].filter((frame) => !frame.closest('[data-vimeo]'));
     frames.forEach((frame) => { frame.dataset.deckSrc = frame.getAttribute('src') ?? ''; });
     const syncMedia = () => {
       frames.forEach((frame) => {
@@ -61,10 +122,101 @@ const { project, id, previews } = Astro.props;
       });
       if (!deck.open) deck.querySelectorAll('video').forEach((video) => video.pause());
     };
-    deck.addEventListener('toggle', syncMedia);
+
+    // 最初に見えるスライド数枚だけを順に出す(全部をずらすと後半が長く待たされる)
+    const leadSlides = () => [...(slides?.children ?? [])].slice(0, 4) as HTMLElement[];
+
+    const playOpen = () => {
+      if (!stack || !slides || !cover) return;
+      animating = true;
+      deck.classList.add('is-dealing');
+      gsap.killTweensOf([cover, ...sheets]);
+      gsap.set(cover, { clearProps: 'transform' });
+      const lead = leadSlides();
+      // 開き終わった位置で測り、各スライドを「表紙の真下(表紙の上端)」から本来の位置へ広げる
+      wrap.style.setProperty('--deck-top', '0px');
+      const coverTop = cover.getBoundingClientRect().top;
+      const tl = gsap.timeline({
+        defaults: { ease: 'expo.out' },
+        onComplete: () => {
+          deck.classList.remove('is-dealing');
+          wrap.style.removeProperty('--deck-top');
+          gsap.set(sheets, { clearProps: 'all' });
+          // スライド側は自分の inline style(SlideCanvas の aspect-ratio など)を持つので、付けた値だけ消す
+          gsap.set(lead, { clearProps: dealtProps });
+          animating = false;
+        },
+      });
+      tl.fromTo(wrap, { '--deck-top': `${stackMarginTop}px` }, { '--deck-top': '0px', duration: 0.8 }, 0)
+        // 後ろの紙は表紙の後ろへ戻りながら消え、代わりに本物のスライドが出てくる
+        .to(sheets, { x: 0, y: 0, rotation: 0, scale: 1, autoAlpha: 0, duration: 0.4, ease: 'power2.out' }, 0);
+      lead.forEach((el, i) => {
+        const dy = coverTop - el.getBoundingClientRect().top;
+        const tilt = sheetRest[i % sheetRest.length]?.rotation ?? 0;
+        // 表紙に近いスライドほど手前に重ねる(束の上から順に配る)
+        tl.set(el, { position: 'relative', zIndex: lead.length - i, transformOrigin: 'top center' }, 0)
+          .fromTo(el, { y: dy, rotation: tilt, scale: 0.94 }, { y: 0, rotation: 0, scale: 1, duration: 1.3 }, 0.05 + i * 0.07);
+      });
+    };
+
+    const playRestack = () => {
+      if (!stack) return;
+      gsap.fromTo(wrap, { '--deck-top': '0px' }, { '--deck-top': `${stackMarginTop}px`, duration: 0.6, ease: 'expo.out', onComplete: () => wrap.style.removeProperty('--deck-top') });
+      gsap.fromTo(
+        sheets,
+        { x: 0, y: 0, rotation: 0, scale: 1, autoAlpha: 0 },
+        { x: (i) => sheetRest[i]?.x ?? 0, y: (i) => sheetRest[i]?.y ?? 0, rotation: (i) => sheetRest[i]?.rotation ?? 0, scale: (i) => sheetRest[i]?.scale ?? 1, autoAlpha: (i) => sheetRest[i]?.opacity ?? 1, duration: 0.6, stagger: 0.06, ease: 'expo.out', clearProps: 'all' },
+      );
+    };
+
+    const close = () => {
+      const finish = () => {
+        instant = true;
+        deck.open = false;
+        syncMedia();
+        if (!reduceMotion()) playRestack();
+        animating = false;
+      };
+      if (reduceMotion()) return finish();
+      animating = true;
+      gsap.to(leadSlides(), {
+        y: -24, autoAlpha: 0, duration: 0.3, stagger: 0.03, ease: 'power2.in',
+        onComplete: () => { gsap.set(leadSlides(), { clearProps: dealtProps }); finish(); },
+      });
+    };
+
+    deck.addEventListener('toggle', () => {
+      syncMedia();
+      const skip = instant;
+      instant = false;
+      if (deck.open && !skip && !reduceMotion()) playOpen();
+    });
+
+    // summary で閉じるときは、ネイティブの即時の閉じを止めて畳んでから閉じる
+    // 開くそぶり(閉じている時・マウス環境のみ。キーボードのフォーカスでも同じ)
+    const hint = (show: boolean) => {
+      if (deck.open || animating || reduceMotion()) return;
+      const pose = show ? sheetPeek : sheetRest;
+      sheets.forEach((sheet, i) => {
+        const { opacity, ...transform } = pose[i] ?? {};
+        gsap.to(sheet, { ...transform, opacity, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
+      });
+      if (cover) gsap.to(cover, { y: show ? -4 : 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
+    };
+    summary?.addEventListener('pointerenter', () => { if (canHover()) hint(true); });
+    summary?.addEventListener('pointerleave', () => hint(false));
+    summary?.addEventListener('focus', () => { if (summary.matches(':focus-visible')) hint(true); });
+    summary?.addEventListener('blur', () => hint(false));
+
+    summary?.addEventListener('click', (event) => {
+      if (animating) { event.preventDefault(); return; }
+      if (deck.open) { event.preventDefault(); close(); }
+    });
+
     const openForTarget = (hash: string) => {
       const target = document.getElementById(hash.slice(1));
       if (!target || !deck.contains(target) || summary?.contains(target)) return false;
+      if (!deck.open) instant = true;
       deck.open = true;
       syncMedia();
       return true;
@@ -78,11 +230,5 @@ const { project, id, previews } = Astro.props;
       requestAnimationFrame(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start', behavior: 'instant' }));
     }
     syncMedia();
-    deck.querySelector('[data-work-deck-close]')?.addEventListener('click', () => {
-      deck.open = false;
-      syncMedia();
-      deck.closest<HTMLElement>('[id]')?.scrollIntoView({ block: 'start', behavior: 'instant' });
-      summary?.focus({ preventScroll: true });
-    });
   });
 </script>

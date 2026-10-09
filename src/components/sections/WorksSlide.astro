@@ -1,32 +1,120 @@
 ---
+/**
+ * 02 Works。各作品の行に写真/動画のサムネ・ジャンル、右に成果と推薦の言葉(あるものだけ)。クライアント名・期間は出さない。
+ * 推薦の言葉は data/about.ts の原文から一文を抜き出したもの(顔写真も about.ts)。成果には写真を添える。
+ * 最後に Other Works の行(→ Other Works のスライド)。
+ */
 import SlideFrame from '../layout/SlideFrame.astro';
 import SlideHeading from '../ui/SlideHeading.astro';
-import { projects, projectTitles } from '@/data/projects';
+import MediaThumb from '../ui/MediaThumb.astro';
+import { projects } from '@/data/projects';
+import { testimonials } from '@/data/about';
+import { buildMutedEmbedSrc, getAllPortfolios, imageAttrs } from '@/lib/works';
 
-// 個別ページがある作品だけリンクにする
-const items = projectTitles.map((title) => {
-  const project = projects.find((p) => p.title === title);
-  return { title, href: ['#pitatobi', '#reikikkawa', '#starweaving'][projectTitles.indexOf(title)], meta: project ? [project.client ?? project.team, project.year].filter(Boolean).join(' — ') : 'Case study in preparation' };
+const personOf = (name: string) => testimonials.find((t) => t.name === name);
+
+// ケーススタディの映像(Vimeo の背景再生)。ピタとびは動画が無いので写真
+const vimeo = (id: string) => `https://player.vimeo.com/video/${id}?background=1&autoplay=1&loop=1&dnt=1`;
+const imageOf = (title: string) => {
+  const src = projects.find((p) => p.title === title)?.image?.src;
+  return src ? { src } : null;
+};
+
+const items = [
+  {
+    title: 'ピタとび',
+    href: '#pitatobi',
+    genre: 'Rebranding / UIUX / Development',
+    // ホバーで出す、作品の色のグラデーション(クラス名は Tailwind が拾えるよう省略しない)
+    tint: 'bg-tint-strong-work-pitatobi',
+    result: null,
+    // ブランディングの視点のコメント
+    quote: { text: 'Webサイトの UI/UX はもちろん、サービス名の検討からキャラクター制作、ブランドカラーの策定まで、ピタとびのブランディング全体に幅広く携わってくれました。', name: '中嶋 来門' },
+    image: imageOf('ピタとび'),
+    videoSrc: null,
+  },
+  {
+    title: 'ReiKikkawa Graduation Work',
+    href: '#reikikkawa',
+    genre: 'Web / UIUX / Client Work',
+    tint: 'bg-tint-strong-work-reikikkawa',
+    result: null,
+    quote: { text: 'Webサイトが実現するなんて思っていなかったので、こんなにかっこよく作ってもらえて嬉しかったです！', name: '吉川 伶' },
+    image: imageOf('ReiKikkawa Graduation Work'),
+    videoSrc: vimeo('1188937366'),
+  },
+  {
+    title: 'StarWeaving',
+    href: '#starweaving',
+    genre: 'Interactive / Experimental',
+    tint: 'bg-tint-strong-work-starweaving',
+    result: { text: '学科紹介パンフレット(2026)に掲載', image: '/works/starweaving/recognition.png', alt: 'StarWeavingが掲載された武蔵野美術大学の2026年学科紹介パンフレット' },
+    quote: null,
+    image: imageOf('StarWeaving'),
+    videoSrc: vimeo('1188937811'),
+  },
+];
+
+// Other Works：サムネは PrismFont & Asset(uid 6)の映像
+const { ja } = await getAllPortfolios();
+const otherThumb = ja.find((work) => work.uid === '6');
+const otherVideo = (otherThumb?.data.video as any[] | undefined)?.find((item) => item.video?.html)?.video?.html;
+items.push({
+  title: 'Other Works',
+  href: '/works/other',
+  newTab: true,
+  genre: 'Branding / Web / Graphic / Typeface / Drawing',
+  // Other Works は色を付けず、白をうっすら重ねるだけ(目立たせない)
+  tint: 'bg-linear-to-br from-paper/5 to-paper/25',
+  result: null,
+  quote: null,
+  image: otherThumb ? imageAttrs(otherThumb.data.portfolio, '176px') : null,
+  videoSrc: otherVideo ? buildMutedEmbedSrc(otherVideo) : null,
 });
 ---
 
 <SlideFrame id="works" label="Works" tone="ink">
   <SlideHeading title="Works" />
-  <ol class="mt-auto flex flex-col pt-[32px]">
-    {items.map((item) => {
-      const Tag = item.href ? 'a' : 'div';
-      return (
-        <li class="border-t border-paper/30 last:border-b">
-          <Tag
-            href={item.href}
-            aria-label={item.href ? `View case study: ${item.title}` : undefined}
-            class="flex flex-col gap-[4px] py-[16px] leading-auto md:flex-row md:items-baseline md:justify-between"
-          >
-            <span class="text-nav font-semibold">{item.title}</span>
-            <span class="text-meta opacity-60">{item.meta}</span>
-          </Tag>
-        </li>
-      );
-    })}
+  <ol class="mt-auto flex flex-col gap-[4px] pt-[24px]">
+    {items.map((item) => (
+      <li data-reveal-row>
+        <a
+          href={item.href}
+          target={'newTab' in item && item.newTab ? '_blank' : undefined}
+          rel={'newTab' in item && item.newTab ? 'noopener noreferrer' : undefined}
+          aria-label={'newTab' in item && item.newTab ? `${item.title}の一覧を新しいタブで開く` : `View case study: ${item.title}`} class="group relative -mx-[12px] flex items-center gap-[16px] rounded-card px-[12px] py-[10px] leading-auto md:gap-[24px]">
+          {item.tint && <span class:list={['pointer-events-none absolute inset-0 rounded-card opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100', item.tint]} aria-hidden="true"></span>}
+          <span class="relative w-[112px] shrink-0 md:w-[176px]" data-reveal-part><MediaThumb image={item.image} videoSrc={item.videoSrc} /></span>
+          <span class="relative grid min-w-0 flex-1 grid-cols-1 gap-x-[24px] gap-y-[6px] md:grid-cols-2 md:items-center">
+            <span class="flex flex-col gap-[4px]">
+              <span class="text-nav font-semibold" data-reveal-part>{item.title}</span>
+              <span class="text-small opacity-60" data-reveal-part>{item.genre}</span>
+            </span>
+            {(item.result || item.quote) && (
+              <span class="flex flex-col gap-[4px]">
+                {item.result && (
+                  <span class="flex items-center gap-[10px]" data-reveal-part>
+                    {item.result.image && <img src={item.result.image} alt={item.result.alt} loading="lazy" class="h-[40px] w-[56px] shrink-0 rounded-[4px] bg-paper object-cover" />}
+                    <span class="text-small leading-[1.6] opacity-80">{item.result.text}</span>
+                  </span>
+                )}
+                {item.quote && (() => {
+                  const person = personOf(item.quote.name);
+                  return (
+                    <span class="flex items-start gap-[10px]" data-reveal-part>
+                      {person && <img src={person.avatar} alt={`${person.name}さんの顔写真`} loading="lazy" class="size-[32px] shrink-0 rounded-full object-cover" />}
+                      <span class="flex min-w-0 flex-col gap-[4px]">
+                        <span class="text-small leading-[1.6] opacity-80">“{item.quote.text}”</span>
+                        <span class="flex flex-wrap gap-x-[8px] text-micro leading-auto opacity-50"><span>{item.quote.name}</span>{person && <span>{person.role}</span>}</span>
+                      </span>
+                    </span>
+                  );
+                })()}
+              </span>
+            )}
+          </span>
+        </a>
+      </li>
+    ))}
   </ol>
 </SlideFrame>

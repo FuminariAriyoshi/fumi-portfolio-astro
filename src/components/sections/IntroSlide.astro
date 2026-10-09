@@ -4,6 +4,7 @@
  * 1280×720 の固定キャンバス(SlideCanvas)に組み、列幅に合わせて丸ごと拡大縮小する(どの画面幅でも同じ構図)。
  * 座標は Figma 420-199(幅 1142)を 1280 に拡大したもの。
  */
+import MemojiAvatar from '../ui/MemojiAvatar.astro';
 import SlideCanvas from '../layout/SlideCanvas.astro';
 import Slide from '../layout/Slide.astro';
 
@@ -32,14 +33,7 @@ const rowClass = 'absolute flex items-center whitespace-nowrap font-black leadin
       </p>
 
       <div class="absolute top-[271px] left-[377px] flex items-center gap-[25px]">
-        <img
-          data-enter="avatar"
-          src="/slides/fumi-memoji.png"
-          alt="Fumi のミー文字"
-          width="118"
-          height="118"
-          class="size-[118px] shrink-0 rounded-full object-cover"
-        />
+        <MemojiAvatar size={118} />
         <h1 class="flex flex-col items-start leading-auto text-paper">
           <span data-enter="line" class="mb-[-12px] text-greeting">Hi!</span>
           <span class="flex items-center gap-[12px] whitespace-nowrap">

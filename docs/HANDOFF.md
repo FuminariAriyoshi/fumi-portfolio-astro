@@ -177,7 +177,7 @@ src/
 - サイドバー(開)のスクロールは **最後の項目 Contact の下(上余白と同じ 26px)で止める**。現在項目を揃え線へ寄せるのは下に空白ができない範囲だけで、末尾近くの項目はスクロールの限界で止まる(ユーザー指定)。
 - 現在項目の切り替えアニメーションは **Flip をやめ、各サムネイルの寸法(width/height)とサイドバーのスクロール位置を同じ 1.15s expo.out で同時にトゥイーン**。transform で位置を動かすと、上の項目の高さ変化による押し下げと二重になって重なっていたため。位置は流れに任せる。終了時に寸法の inline を消す。
 - **閉じたサイドバーは縦をちょうど埋める**: サイドバーを縦いっぱいにし、Workspace の measure() が (高さ − 上下余白 − 隙間) を「現在の項目 = 3 : 他 = 1」で割って `--thumb-h` / `--thumb-current-h` に出す(リサイズ・開閉で再計算、最小 24px)。ホバーで広げるのはラベルが入らない時だけ(min-height: max(64px, --thumb-h))。
-- サイドバーのラベルは **単語の途中で改行しない**(`overflow-wrap: normal; word-break: keep-all`)。開いた状態の作品(入れ子)ラベルは `text-meta`(16px)で正式名でも1行。閉じた状態は左右余白 6px(ホバー中 4px)。「Graduation」など幅 47px に入らない長い単語は数 px 切れる(ユーザー了承済み)。
+- サイドバーのラベルは **単語の途中で改行しない**(`overflow-wrap: normal; word-break: keep-all`)。開いた状態の作品(入れ子)ラベルは `text-meta`(16px)で正式名でも1行。閉じた状態は左右余白 6px(ホバー中も同じ。現在項目と揃える)。「Graduation」など幅 47px に入らない長い単語は数 px 切れる(ユーザー了承済み)。
 - **サイドバーの既定は閉じた状態**(`data-sidebar="closed"`)。localStorage が 'open' の人だけ開いて復元。
 - 現在項目の切り替え: 開閉どちらでも **全項目同時**(1.15s expo.out)。時間差を付ける案は試したが不採用(ユーザー判断)。開閉ボタンの帯は下に 12px 空け、サイドバーはその下から(揃え線 ≒ 149px)。ボタンの縦線(22/13px)も開閉時に expo.out で動く。
 - **Lenis 導入**(PortfolioMotion。`lerp: 0.09`、GSAP ticker で raf)。ホイールにもトラックパッドのような慣性。reduced-motion では使わない。ページ内リンク・資料型スライドの「→」は `window.portfolioScrollTo`(= `lenis.scrollTo`、1.15s expo.out)。**揃え線は CSS の scroll-margin-top を Lenis が考慮するので offset を付けない**(付けると二重になる)。GSAP ScrollToPlugin は撤去。サイドバーは `data-lenis-prevent`、画像拡大中は `lenis.stop()`。
@@ -235,3 +235,17 @@ src/
 - web-home-lg.webp: ユーザー添付の最新ホーム画像、1255×5892。
 - web-blog-lg.webp: ユーザー添付の留学体験記一覧、1143×1891。ファイル名は指定どおり維持。
 - 画像参照の寸法とaltを更新。画像単体の配信確認・npm run build成功。
+
+## Claude 更新(2026-10-07)
+- 成果の数字(`StatBand`): 1行に1つ。左に見出し・注記(母数 basis / 期間 period)、右に `text-stat`(180px)の数字。`from` があれば「0 → 87」で変化前を薄く、矢印は SVG。帯幅 48rem 未満は縦積み・`text-title`。
+- 閉じたサイドバーのホバー時の左右余白 4px を廃止し、現在項目と同じ 6px に統一。
+- ReiKikkawa / StarWeaving の成果はデッキ(`StackedWorkDeck`)の外に出し、閉じていても見せる(ReiKikkawa = 吉川さんの推薦文のみ。CSSWinner の画像はデッキの中の最後 / StarWeaving = Recognition のパンフレット掲載。`StarWeavingChapters part="outcome"`。画像と文章を1枚の split スライドにまとめる = data の `imageInSlide`)。StarWeaving の推薦文は無い。
+- 両作品の作品名は PP Migra(font-serif)。表紙に重ねる作品名は `text-greeting-lg`(64px)、モバイル/開いた後の WorkTitle は `text-subtitle md:text-title`。
+- ReiKikkawa / StarWeaving の文字だけの章スライドは高さ 440(`chapterTextHeight`、旧 584)+ `ChapterSlide compact`(上下 48px)。最長の文章で 325/344px に収まることを確認済み。ピタとびの Strategy(584)は変更なし。
+- 閉じたデッキの表紙はほかのスライドと同じ幅(横の余白 0)、傾けない(ユーザー指定)。後ろの紙は scale 0.96 / 0.92・ずらし(+10,-10 / -12,-20)・傾き(1.5° / -2.5°)で上にのぞかせる(小さくしてあるので角は表紙の幅の内側。ユーザー指定)。束の上余白 32px・下余白 0(表紙と推薦文は関連があるので詰める = 14px)。作品と作品の間は mt 48px(+ main の gap 14px)。
+- デッキを開くモーションは「束が広がる」(ユーザー指定「もう少しつながって」): 中の先頭4枚が、少し傾いて縮んだ状態で表紙の上端(表紙の真下に隠れた位置)から本来の位置へ順に下りてくる(1.3s expo.out、0.07s ずらし)。開く間は表紙が最前面(z 10)、表紙に近いスライドほど手前。のぞいていた紙は表紙の後ろへ戻って消える。終了時は付けた inline の値だけ消す(`dealtProps`。'all' にすると SlideCanvas の aspect-ratio まで消えて高さ 0 になる)。
+- 閉じたデッキにホバー(マウス環境のみ)/キーボードのフォーカスで「開くそぶり」: 後ろの紙が少し持ち上がり扇状に開く(傾き -4° / 2.5°)、表紙が 4px 浮く。0.6s expo.out。reduced-motion では動かない。開くモーションはそぶりの位置からそのまま続く。
+- ReiKikkawa / StarWeaving の Client / Year / Role は表紙(`CoverCaption`)に入れた。モバイルは表紙の上の WorkTitle に。開いた中の WorkTitle は削除。ReiKikkawa の「Visit Site」は表紙の右下: summary(ボタン)の中にリンクは置けず、閉じた details の中身は描画されないので、details の外(`.work-deck-wrap` の中)に表紙と同じ位置・大きさの枠を重ねて置く。表紙の上余白は `--deck-top`(wrap に置き、枠と共有)。モバイルは開いた中の先頭に Visit Site。
+- デッキの後ろの紙は画像をやめ、作品のテーマカラーのグラデーション(bg-ink + bg-(image:--work-tint)。推薦文の箱と同じ)。previews prop は削除。表紙の動画は scale-[1.02](縁に下地の黒が 1px 透けて線に見えたため)。
+- 後ろの紙は半透明をやめて黒地(不透明)+ グラデーション(ユーザー指定)。
+- Contact スライドも黒 + Contact の色(slide-contact)のグラデーション(SlideFrame tone="contact"。ユーザー指定)。

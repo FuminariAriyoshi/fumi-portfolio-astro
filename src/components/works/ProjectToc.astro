@@ -1,0 +1,62 @@
+---
+/**
+ * 旧サイトの Table of Contents(PC のみ、左に sticky)。
+ * 今読んでいる章に白い点を付け、下にスクロール中は隠して上に戻すと出す。
+ */
+interface Props {
+  items: { id: string; label: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="pointer-events-none z-10 hidden h-full w-full lg:block" style="grid-column: 1; grid-row: 1">
+  <div class="relative mx-auto h-full w-full max-w-[1222px] px-4 md:px-8">
+    <nav class="pointer-events-auto sticky top-40 mt-2 flex w-[200px] flex-col gap-4 transition-opacity duration-300" aria-label="Table of Contents" data-toc>
+      <div class="mb-2 text-xs font-medium text-white">Table of Contents</div>
+      {items.map((item) => (
+        <a href={`#${item.id}`} class="toc-link flex items-center gap-3 text-sm text-white/40 transition-all duration-300 hover:text-white/70" data-toc-link={item.id}>
+          <span class="toc-dot hidden aspect-square h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white" aria-hidden="true"></span>
+          <span class="toc-label ml-[18px]">{item.label}</span>
+        </a>
+      ))}
+    </nav>
+  </div>
+</div>
+
+<style>
+  .toc-link[aria-current='true'] { color: #fff; font-weight: 500; }
+  .toc-link[aria-current='true'] .toc-dot { display: block; }
+  .toc-link[aria-current='true'] .toc-label { margin-left: 0; }
+</style>
+
+<script>
+  const toc = document.querySelector<HTMLElement>('[data-toc]');
+  if (toc) {
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+    const setActive = (id: string) => links.forEach((link) => link.setAttribute('aria-current', String(link.dataset.tocLink === id)));
+    setActive(links[0]?.dataset.tocLink ?? '');
+
+    links.forEach((link) => link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const target = document.getElementById(link.dataset.tocLink!);
+      if (!target) return;
+      // Lenis が動いている時は Lenis でスクロールする(scrollIntoView だと Lenis とずれる)
+      const lenis = (window as Window & { lenis?: { scrollTo: (el: HTMLElement) => void } }).lenis;
+      if (lenis) lenis.scrollTo(target);
+      else target.scrollIntoView({ behavior: 'smooth' });
+    }));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { rootMargin: '0px 0px -50% 0px', threshold: 0 });
+    document.querySelectorAll('.toc-section').forEach((section) => observer.observe(section));
+
+    let lastY = scrollY;
+    addEventListener('scroll', () => {
+      if (scrollY > lastY) toc.style.opacity = '0';
+      else if (scrollY < lastY) toc.style.opacity = '1';
+      lastY = scrollY;
+    }, { passive: true });
+  }
+</script>

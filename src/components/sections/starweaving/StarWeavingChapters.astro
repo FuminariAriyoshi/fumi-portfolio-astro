@@ -5,14 +5,27 @@ import WorkGalleryImage from '../../ui/WorkGalleryImage.astro';
 import VimeoVideo from '../../ui/VimeoVideo.astro';
 import ProjectSiteLink from '../../ui/ProjectSiteLink.astro';
 import { starweavingSections } from '@/data/starweaving';
-import { slideType as t } from '@/lib/slideType';
+import { slideType as t, chapterTextHeight } from '@/lib/slideType';
+
+interface Props {
+  /** story = 開いた中の章 / outcome = デッキを開かなくても見せる成果(Recognition) */
+  part?: 'story' | 'outcome';
+}
+const { part = 'story' } = Astro.props;
+const isOutcome = (id: string) => id === 'starweaving-recognition';
+const sections = starweavingSections.filter((section) => isOutcome(section.id) === (part === 'outcome'));
 ---
 
-<VimeoVideo videoId="1188937811" title="StarWeavingのインタラクティブ展示の記録映像" />
-{starweavingSections.map((section) => (
+{part === 'story' && <VimeoVideo videoId="1188937811" title="StarWeavingのインタラクティブ展示の記録映像" bare sound />}
+{sections.map((section) => {
+  const merged = 'imageInSlide' in section && section.imageInSlide;
+  return (
   <>
-    <SlideCanvas id={section.id} height={584}>
-      <ChapterSlide label={`${section.chapter}: ${section.title}`} chapter={section.chapter} layout="text">
+    <SlideCanvas id={section.id} height={chapterTextHeight}>
+      <ChapterSlide label={`${section.chapter}: ${section.title}`} chapter={section.chapter} layout={merged ? 'split' : 'text'} compact>
+        {merged && section.images[0] && (
+          <img slot="visual" src={section.images[0].src} alt={section.images[0].alt} width="1920" height="1080" loading="lazy" class="h-auto w-full rounded-media" />
+        )}
         <h3 class={t.title}>{section.title}</h3>
         <div class:list={[t.body, 'flex flex-col gap-4']}>
           {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
@@ -22,7 +35,8 @@ import { slideType as t } from '@/lib/slideType';
         )}
       </ChapterSlide>
     </SlideCanvas>
-    {section.images.map((image) => <WorkGalleryImage {...image} />)}
-    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title="StarWeavingのカラーグレーディングと映像編集" />}
+    {!merged && section.images.map((image) => <WorkGalleryImage {...image} />)}
+    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title="StarWeavingのカラーグレーディングと映像編集" bare />}
   </>
-))}
+  );
+})}

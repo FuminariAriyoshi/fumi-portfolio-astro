@@ -1,0 +1,19 @@
+---
+/**
+ * works ページの慣性スクロール(Lenis)。旧サイトの SmoothScroll と同じ設定で、GSAP の ticker で回す。
+ * 動きを減らす設定の時は入れない。目次などからは window.lenis で使う。
+ */
+---
+
+<script>
+  import Lenis from 'lenis';
+  import 'lenis/dist/lenis.css';
+  import { gsap } from 'gsap';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const lenis = new Lenis({ lerp: 0.09, duration: 1.5, smoothWheel: true, autoRaf: false });
+    (window as Window & { lenis?: Lenis }).lenis = lenis;
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+</script>

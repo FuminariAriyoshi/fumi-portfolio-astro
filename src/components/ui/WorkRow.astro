@@ -1,0 +1,33 @@
+---
+/**
+ * Other Works の1作品の行(トップの Works の行と同じ形：サムネ・作品名・ジャンル)。
+ * 押すと作品の詳細を新しいタブで開く。ホバーは色を付けず、白をうっすら重ねるだけ。
+ */
+import MediaThumb from './MediaThumb.astro';
+import { genreLabel, genresOf, imageAttrs, titleOf, type Portfolio } from '@/lib/works';
+
+interface Props {
+  work: Portfolio;
+}
+
+const { work } = Astro.props;
+const title = titleOf(work);
+const genre = genresOf(work).map(genreLabel).join(' / ');
+---
+
+<li data-reveal-row>
+  <a
+    href={`/works/${work.uid}/jp`}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`${title}の詳細を新しいタブで開く`}
+    class="group relative -mx-[12px] flex items-center gap-[16px] rounded-card px-[12px] py-[10px] leading-auto md:gap-[24px]"
+  >
+    <span class="pointer-events-none absolute inset-0 rounded-card bg-linear-to-br from-paper/5 to-paper/25 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"></span>
+    <span class="relative w-[112px] shrink-0 md:w-[176px]" data-reveal-part><MediaThumb image={imageAttrs(work.data.portfolio, '176px')} /></span>
+    <span class="relative flex min-w-0 flex-col gap-[4px]">
+      <span class="text-nav font-semibold" data-reveal-part>{title}</span>
+      {genre && <span class="text-small opacity-60" data-reveal-part>{genre}</span>}
+    </span>
+  </a>
+</li>

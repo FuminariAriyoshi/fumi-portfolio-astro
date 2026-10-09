@@ -1,0 +1,24 @@
+---
+import WorksLayout from '@/layouts/WorksLayout.astro';
+import ProjectDetail from '@/components/works/ProjectDetail.astro';
+import { CASE_STUDY_UIDS, fromUrlLang, getAllPortfolios, titleOf, type UrlLang } from '@/lib/works';
+
+export async function getStaticPaths() {
+  const all = await getAllPortfolios();
+  // ケーススタディ(トップに載せている作品)は Other Works に出さないので、詳細ページも作らない
+  const uids = [...new Set([...all.en, ...all.ja].map((p) => p.uid).filter((uid) => uid && !CASE_STUDY_UIDS.has(uid)))] as string[];
+  return uids.flatMap((id) => (['en', 'jp'] as UrlLang[]).map((lang) => ({ params: { id, lang } })));
+}
+
+const { id, lang: urlLang } = Astro.params as { id: string; lang: UrlLang };
+const lang = fromUrlLang(urlLang);
+const all = await getAllPortfolios();
+const projectEn = all.en.find((p) => p.uid === id);
+const projectJa = all.ja.find((p) => p.uid === id);
+const project = (lang === 'ja' ? projectJa : projectEn) ?? projectEn ?? projectJa!;
+const allPortfolios = all[lang].length ? all[lang] : all.en;
+---
+
+<WorksLayout title={`${titleOf(project)} — Fumi`} lang={lang}>
+  <ProjectDetail project={project} metaSource={projectEn ?? project} allPortfolios={allPortfolios} lang={lang} />
+</WorksLayout>

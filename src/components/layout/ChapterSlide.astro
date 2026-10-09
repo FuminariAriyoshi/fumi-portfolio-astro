@@ -7,6 +7,7 @@
  * layout='full' : 全幅(x=40〜1240)。
  * ビジュアルと文章は、それぞれスライドの縦方向の中央にそろえる(上下 80px の間。キャンバスの高さが違っても中央)。
  * full は上から(y=96)。
+ * compact: 上下の余白を 48px に詰める(高さを低くしたキャンバス用)。
  */
 import Slide from './Slide.astro';
 
@@ -14,20 +15,22 @@ interface Props {
   label: string;
   chapter: string;
   layout?: 'split' | 'text' | 'full';
+  compact?: boolean;
 }
 
-const { label, chapter, layout = 'split' } = Astro.props;
+const { label, chapter, layout = 'split', compact = false } = Astro.props;
+const inset = compact ? 'top-[48px] bottom-[48px]' : 'top-[80px] bottom-[80px]';
 ---
 
 <Slide label={label}>
   {layout !== 'full' ? (
     <>
       {layout === 'split' && (
-        <div class="absolute top-[80px] bottom-[80px] left-[40px] flex w-[576px] items-center justify-center">
+        <div class:list={['absolute left-[40px] flex w-[576px] items-center justify-center', inset]}>
           <slot name="visual" />
         </div>
       )}
-      <div class="absolute top-[80px] bottom-[80px] left-[672px] flex w-[568px] flex-col justify-center gap-[24px]">
+      <div class:list={['absolute left-[672px] flex w-[568px] flex-col justify-center gap-[24px]', inset]}>
         <p class="font-serif text-body leading-auto opacity-50">{chapter}</p>
         <slot />
       </div>

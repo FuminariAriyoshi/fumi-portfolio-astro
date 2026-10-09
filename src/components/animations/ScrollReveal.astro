@@ -1,0 +1,171 @@
+---
+/**
+ * トップのスクロール連動の文字アニメーション(ユーザー指定)。
+ * スライドが画面に入ったら、見出し → 小見出し/項目名 → 本文 の順に expo.out + stagger で下から出す。
+ * 出る順番で「どこから読むか」の優先順位を伝える。
+ * 行(data-reveal-row)がある所は、行ごとに中の部品(data-reveal-part)を分解して stagger で出し、行どうしもずらす。
+ * 文字は SplitText で「行」ごとに切り抜き(mask)、1文字ずつ下から stagger で出す。写真を含むものは clip-path で開く。
+ * 行の折り返しはフォント読み込み後でないと決まらないので、分割はスライドが画面に入った時に行い、出し終えたら元に戻す。
+ * 1枚目(#top)は PortfolioMotion の登場アニメーションがあるので外す。Testimonials も動かさない。reduced-motion では何もしない。
+ */
+---
+
+<style is:global>
+  /* 出現前は最初から見えないようにする(スクリプトが動くまでのチラつき防止)。
+     html.motion は BaseLayout が付ける(reduced-motion では付かず、JS が動かなくても 3 秒で外れる)。
+     スクリプトが動いたら、対象には .reveal-managed を付けて GSAP に引き継ぐ */
+  .motion [data-workspace] main section[id]:not(#top, #about-testimonials) :is(h1, h2, h3, h4, h5, dt, figcaption, p, dd, blockquote, [data-reveal], [data-reveal-part]):not(.reveal-managed) {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  // 優先順位(数字が小さいほど先に出る)
+  const TIERS: [string, number][] = [
+    ['h1, h2, h3', 0],
+    ['h4, h5, dt, figcaption, [data-reveal="title"]', 1],
+    ['p, dd, blockquote, [data-reveal="body"]', 2],
+  ];
+  const TARGETS = TIERS.map(([selector]) => selector).join(', ');
+  // CSS で最初に隠しているもの(上の style と同じ範囲)
+  const PRE_HIDDEN = 'h1, h2, h3, h4, h5, dt, figcaption, p, dd, blockquote, [data-reveal], [data-reveal-part]';
+  // 出現アニメーションを付けないスライド(#top は登場アニメーションがある。Testimonials はユーザー指定で動かさない)
+  const SKIP_SLIDES = '#top, #about-testimonials';
+  const TIER_DELAY = 0.18; // 段ごとの開始のずれ
+  const STAGGER = 0.06; // 同じ段の中のずれ
+  const MAX_STAGGER_TOTAL = 0.6; // 項目が多い段でも長く待たせない
+  const PART_STAGGER = 0.07; // 行の中の部品のずれ
+  const ROW_STAGGER = 0.12; // 行どうしのずれ
+  // 下から切り抜き(clip-path)が開いて出てくる。文字の上下がはみ出しても切れないよう、開いた状態は少し外側まで(PortfolioMotion と同じ)
+  const HIDDEN = 'inset(100% -20% -20% -20%)';
+  const SHOWN = 'inset(-20% -20% -20% -20%)';
+  const FROM = { autoAlpha: 0, y: 32, clipPath: HIDDEN };
+  // fromTo では immediateRender と clearProps は「終わりの状態」側に書く(始まり側に書くと、隠した直後に消えてしまう)
+  const TO = { y: 0, clipPath: SHOWN, immediateRender: true, clearProps: 'transform,opacity,visibility,clipPath' };
+  const CHAR_STAGGER = 0.012; // 1文字ずつのずれ
+  const CHAR_TOTAL = 0.9; // 長い段落でも、最後の文字が出始めるまでの上限
+  // 日本語はスペースが無く、そのままだと文全体が1つの「単語」になって改行位置が変わる。
+  // 和文の文字の前後に幅ゼロの区切りを入れ、それで単語を分ける(区切り自体は出さない)。英語はスペースで今まで通り
+  const CJK = '\\u3000-\\u30ff\\u3400-\\u9fff\\uff00-\\uffef';
+  const ZWSP = '\u200B'; // 幅ゼロのスペース(1文字)
+  const prepareText = (text: string) =>
+    text
+      .replace(new RegExp(`([${CJK}])`, 'g'), `$1${ZWSP}`)
+      .replace(new RegExp(`([^${ZWSP}${CJK}])(?=[${CJK}])`, 'g'), `$1${ZWSP}`);
+  const SPLIT_VARS = { type: 'lines,chars', mask: 'lines' as const, prepareText, wordDelimiter: { delimiter: new RegExp(ZWSP), replaceWith: '' } };
+  const isMedia = (el: Element) => el.matches('img') || !!el.querySelector('img, iframe, video, [data-media-thumb]');
+
+  const tierOf = (el: Element) => TIERS.find(([selector]) => el.matches(selector))?.[1] ?? 2;
+
+  gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+    const main = document.querySelector<HTMLElement>('[data-workspace] main') ?? document.querySelector('main');
+    if (!main) return;
+
+    // スライドごとにまとめる(入れ子の対象は外側だけ動かす。登場アニメーション・iframe・サイドバーは外す)
+    const groups = new Map<Element, HTMLElement[]>();
+    main.querySelectorAll<HTMLElement>(TARGETS).forEach((el) => {
+      if (el.closest(`[data-enter], ${SKIP_SLIDES}, [aria-hidden="true"], nav, [data-reveal-row]`)) return;
+      if (el.parentElement?.closest(TARGETS)) return;
+      if (!el.textContent?.trim()) return;
+      const slide = el.closest('section[id]');
+      if (!slide) return;
+      if (!groups.has(slide)) groups.set(slide, []);
+      groups.get(slide)!.push(el);
+    });
+
+    // 行がある所は、行の入ったスライドもまとめる対象にする
+    main.querySelectorAll<HTMLElement>('[data-reveal-row]').forEach((row) => {
+      const slide = row.closest('section[id]');
+      if (slide && !slide.closest(SKIP_SLIDES) && !groups.has(slide)) groups.set(slide, []);
+    });
+
+    // CSS の仮隠しを先に外す(同じ処理の中ですぐ GSAP が隠すので画面には出ない)。外してから元の濃さを読む
+    main.querySelectorAll(PRE_HIDDEN).forEach((el) => el.classList.add('reveal-managed'));
+
+    // 元の濃さ(opacity-50 などのクラス)。隠す前に読んでおき、そこまで戻す
+    const natural = new Map<Element, number>();
+    const naturalOf = (_i: number, el: Element) => {
+      if (!natural.has(el)) natural.set(el, Number(getComputedStyle(el).opacity) || 1);
+      return natural.get(el)!;
+    };
+    groups.forEach((elements, slide) => {
+      [...elements, ...slide.querySelectorAll('[data-reveal-part]')].forEach((el) => naturalOf(0, el));
+    });
+
+    // 出す前は要素ごと隠しておく
+    groups.forEach((elements, slide) => gsap.set([...elements, ...slide.querySelectorAll('[data-reveal-part]')], { autoAlpha: 0 }));
+
+    // 1つの要素を出す。文字は行で切り抜いて1文字ずつ、写真を含むものは clip-path で開く
+    const addReveal = (tl: gsap.core.Timeline, el: HTMLElement, at: number) => {
+      if (isMedia(el)) {
+        tl.fromTo(el, FROM, { ...TO, autoAlpha: naturalOf }, at);
+        return;
+      }
+      const split = SplitText.create(el, SPLIT_VARS);
+      tl.set(el, { autoAlpha: naturalOf(0, el) }, at).fromTo(
+        split.chars,
+        { yPercent: 110 },
+        {
+          yPercent: 0,
+          immediateRender: true,
+          stagger: Math.min(CHAR_STAGGER, CHAR_TOTAL / Math.max(split.chars.length, 1)),
+          onComplete: () => {
+            split.revert();
+            gsap.set(el, { clearProps: 'opacity,visibility' });
+          },
+        },
+        at,
+      );
+    };
+
+    // 画面内かどうかの判定は、画像・フォントが読み込まれてレイアウトが決まってから付ける(早すぎると下のスライドまで出てしまう)
+    const triggers: (() => void)[] = [];
+    groups.forEach((elements, slide) => {
+      const build = () => {
+        const byTier = [0, 1, 2].map((tier) => elements.filter((el) => tierOf(el) === tier));
+        const tl = gsap.timeline({ defaults: { ease: 'expo.out', duration: 1.2 } });
+        let at = 0;
+        byTier.forEach((list) => {
+          if (!list.length) return;
+          const stagger = Math.min(STAGGER, MAX_STAGGER_TOTAL / list.length);
+          list.forEach((el, i) => addReveal(tl, el, at + i * stagger));
+          at += TIER_DELAY;
+        });
+        // 行：見出しのあとに、行ごとに部品を順に出す
+        const rows = [...slide.querySelectorAll<HTMLElement>('[data-reveal-row]')];
+        const rowStart = byTier[0].length ? TIER_DELAY : 0;
+        rows.forEach((row, i) => {
+          row.querySelectorAll<HTMLElement>('[data-reveal-part]').forEach((part, j) => addReveal(tl, part, rowStart + i * ROW_STAGGER + j * PART_STAGGER));
+        });
+      };
+      triggers.push(() => ScrollTrigger.create({ trigger: slide, start: 'top 75%', once: true, onEnter: build }));
+    });
+
+    const startTriggers = () => {
+      triggers.forEach((create) => create());
+      ScrollTrigger.refresh();
+    };
+    if (document.readyState === 'complete') startTriggers();
+    else addEventListener('load', startTriggers, { once: true });
+
+    // Lenis(PortfolioMotion が作る)のスクロールに合わせて位置を更新する
+    const hookLenis = () => {
+      const lenis = (window as Window & { portfolioLenis?: { on: (e: string, cb: () => void) => void } }).portfolioLenis;
+      if (lenis) lenis.on('scroll', ScrollTrigger.update);
+      else requestAnimationFrame(hookLenis);
+    };
+    hookLenis();
+
+    // 作品のデッキ(details)を開閉すると高さが変わるので、位置を測り直す
+    const refresh = () => ScrollTrigger.refresh();
+    document.querySelectorAll('details').forEach((d) => d.addEventListener('toggle', refresh));
+
+    return () => document.querySelectorAll('details').forEach((d) => d.removeEventListener('toggle', refresh));
+  });
+</script>

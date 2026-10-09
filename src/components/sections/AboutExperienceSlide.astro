@@ -42,7 +42,7 @@ const columns = credentials.map((c) => `${c.column}fr`).join(' ');
             </li>
           ))}
         </ul>
-        <ul class="mt-[10px] grid items-end gap-[10px]" style={`grid-template-columns: ${columns}`}>
+        <ul class="mt-[10px] grid gap-x-[10px] gap-y-[8px]" style={`grid-template-columns: ${columns}`}>
           {credentials.map((c) => <CredentialCard item={c.item} boxAspect={c.boxAspect} fit={c.fit} />)}
         </ul>
       </InfoBlock>

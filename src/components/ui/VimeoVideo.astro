@@ -1,7 +1,163 @@
 ---
-interface Props { videoId: string; title: string; }
-const { videoId, title } = Astro.props;
+/**
+ * Vimeo の埋め込み。Vimeo 標準の操作 UI は隠し(controls=0)、自作の操作バーを Player API で動かす。
+ * 画面に入ったときに初めて読み込み(閉じたデッキの中では読み込まない)、ミュートで自動再生する。画面外に出たら止める。
+ */
+interface Props {
+  videoId: string;
+  title: string;
+  /** 操作バーを出さず、映像だけを流す。端の黒い線が出ないよう白地にして少し拡大して切る */
+  bare?: boolean;
+  /** bare でも音声のオン/オフボタンだけは出す */
+  sound?: boolean;
+}
+const { videoId, title, bare = false, sound = false } = Astro.props;
+const muteLabels = { mute: `${title}をミュートする`, unmute: `${title}の音声をオンにする` };
 ---
-<div class="aspect-video w-full overflow-clip rounded-frame bg-ink">
-  <iframe src={`https://player.vimeo.com/video/${videoId}?autoplay=0&muted=1&playsinline=1&title=0&byline=0&portrait=0`} title={title} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen class="size-full border-0"></iframe>
+<div class:list={['relative aspect-video w-full overflow-clip rounded-frame text-paper', bare ? 'bg-paper' : 'bg-ink']} data-vimeo>
+  <iframe
+    data-src={`https://player.vimeo.com/video/${videoId}?controls=0&autoplay=1&muted=1&loop=1&autopause=0&playsinline=1&title=0&byline=0&portrait=0&dnt=1`}
+    title={title}
+    allow="autoplay; fullscreen; picture-in-picture"
+    class:list={['pointer-events-none size-full border-0', bare && 'scale-[1.02]']}
+  ></iframe>
+  {!bare && (<>
+  <!-- 映像のどこを押しても再生/一時停止(キーボードは操作バーの再生ボタンで行う) -->
+  <button type="button" tabindex="-1" aria-hidden="true" class="absolute inset-0 cursor-pointer" data-vimeo-surface></button>
+
+  <div class="absolute inset-x-0 bottom-0 flex items-center gap-[12px] bg-linear-to-t from-ink/70 to-transparent px-[16px] pt-[40px] pb-[12px]">
+    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={`${title}を一時停止`} data-vimeo-play data-label-play={`${title}を再生`} data-label-pause={`${title}を一時停止`}>
+      <svg data-icon-pause viewBox="0 0 24 24" class="size-[20px] fill-current" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+      <svg data-icon-play viewBox="0 0 24 24" class="hidden size-[20px] fill-current" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" /></svg>
+    </button>
+    <input type="range" min="0" max="1000" step="1" value="0" class="vimeo-seek h-[4px] min-w-0 flex-1 cursor-pointer" aria-label={`${title}の再生位置`} data-vimeo-seek />
+    <span class="shrink-0 text-small tabular-nums" data-vimeo-time>0:00</span>
+    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={muteLabels.unmute} data-vimeo-mute data-label-mute={muteLabels.mute} data-label-unmute={muteLabels.unmute}>
+      <svg data-icon-muted viewBox="0 0 24 24" class="size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>
+      <svg data-icon-sound viewBox="0 0 24 24" class="hidden size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" stroke-linecap="round" /></svg>
+    </button>
+    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={`${title}を全画面表示`} data-vimeo-fullscreen>
+      <svg viewBox="0 0 24 24" class="size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+  </div>
+  </>)}
+  {bare && sound && (<>
+    <!-- 映像のどこを押しても音声のオン/オフ(キーボードは右下のボタンで行う) -->
+    <button type="button" tabindex="-1" aria-hidden="true" class="absolute inset-0 cursor-pointer" data-vimeo-mute-surface></button>
+    <button type="button" class="absolute right-[12px] bottom-[12px] grid size-[40px] place-items-center rounded-full bg-ink/60" aria-label={muteLabels.unmute} data-vimeo-mute data-label-mute={muteLabels.mute} data-label-unmute={muteLabels.unmute}>
+      <svg data-icon-muted viewBox="0 0 24 24" class="size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>
+      <svg data-icon-sound viewBox="0 0 24 24" class="hidden size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" stroke-linecap="round" /></svg>
+    </button>
+  </>)}
 </div>
+
+<style>
+  .vimeo-seek { appearance: none; background: transparent; }
+  .vimeo-seek::-webkit-slider-runnable-track { height: 4px; border-radius: 9999px; background: linear-gradient(to right, var(--color-paper) var(--progress, 0%), rgb(255 255 255 / 0.3) var(--progress, 0%)); }
+  .vimeo-seek::-webkit-slider-thumb { appearance: none; width: 12px; height: 12px; margin-top: -4px; border-radius: 9999px; background: var(--color-paper); }
+  .vimeo-seek::-moz-range-track { height: 4px; border-radius: 9999px; background: rgb(255 255 255 / 0.3); }
+  .vimeo-seek::-moz-range-progress { height: 4px; border-radius: 9999px; background: var(--color-paper); }
+  .vimeo-seek::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 9999px; background: var(--color-paper); }
+  .vimeo-seek:focus-visible { outline: 2px solid var(--color-paper); outline-offset: 4px; }
+  [data-vimeo] button:focus-visible { outline: 2px solid var(--color-paper); outline-offset: 2px; border-radius: 4px; }
+</style>
+
+<script>
+  import Player from '@vimeo/player';
+
+  const format = (seconds: number) => {
+    const s = Math.max(0, Math.floor(seconds));
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-vimeo]').forEach((root) => {
+    const iframe = root.querySelector('iframe')!;
+    // bare(操作バーなし)は読み込みと画面内外の再生/停止だけ行う(sound なら音声ボタンも)
+    const playButton = root.querySelector<HTMLButtonElement>('[data-vimeo-play]');
+    const muteButton = root.querySelector<HTMLButtonElement>('[data-vimeo-mute]');
+    const seek = root.querySelector<HTMLInputElement>('[data-vimeo-seek]');
+    const time = root.querySelector<HTMLElement>('[data-vimeo-time]');
+    let player: Player | null = null;
+    let visible = false;
+    let bindPlayer = (_player: Player) => {};
+
+    // 音声ボタンは操作バー付きと bare+sound の両方で使う
+    if (muteButton) {
+      const setMuted = (muted: boolean) => {
+        root.querySelector('[data-icon-muted]')!.classList.toggle('hidden', !muted);
+        root.querySelector('[data-icon-sound]')!.classList.toggle('hidden', muted);
+        muteButton.setAttribute('aria-label', (muted ? muteButton.dataset.labelUnmute : muteButton.dataset.labelMute) ?? '');
+      };
+      const bindOthers = bindPlayer;
+      bindPlayer = (p) => {
+        bindOthers(p);
+        p.getMuted().then(setMuted).catch(() => {});
+        p.on('volumechange', () => p.getMuted().then(setMuted).catch(() => {}));
+      };
+      const toggleMute = () => {
+        player?.getMuted().then((muted) => player?.setMuted(!muted)).catch(() => {});
+      };
+      muteButton.addEventListener('click', toggleMute);
+      root.querySelector('[data-vimeo-mute-surface]')?.addEventListener('click', toggleMute);
+    }
+
+    if (playButton && seek && time) {
+      let duration = 0;
+      let seeking = false;
+      const setPaused = (paused: boolean) => {
+        root.querySelector('[data-icon-play]')!.classList.toggle('hidden', !paused);
+        root.querySelector('[data-icon-pause]')!.classList.toggle('hidden', paused);
+        playButton.setAttribute('aria-label', (paused ? playButton.dataset.labelPlay : playButton.dataset.labelPause) ?? '');
+      };
+      const setProgress = (seconds: number) => {
+        const ratio = duration ? seconds / duration : 0;
+        if (!seeking) seek.value = String(Math.round(ratio * 1000));
+        seek.style.setProperty('--progress', `${ratio * 100}%`);
+        time.textContent = format(duration - seconds);
+      };
+      const bindMute = bindPlayer;
+      bindPlayer = (p) => {
+        bindMute(p);
+        p.getDuration().then((d) => { duration = d; setProgress(0); }).catch(() => {});
+        p.on('play', () => setPaused(false));
+        p.on('pause', () => setPaused(true));
+        p.on('timeupdate', ({ seconds, duration: d }) => { duration = d; setProgress(seconds); });
+      };
+
+      const togglePlay = () => {
+        player?.getPaused().then((paused) => (paused ? player?.play() : player?.pause())).catch(() => {});
+      };
+      playButton.addEventListener('click', togglePlay);
+      root.querySelector('[data-vimeo-surface]')?.addEventListener('click', togglePlay);
+      seek.addEventListener('input', () => {
+        seeking = true;
+        seek.style.setProperty('--progress', `${Number(seek.value) / 10}%`);
+      });
+      seek.addEventListener('change', () => {
+        seeking = false;
+        player?.setCurrentTime((Number(seek.value) / 1000) * duration).catch(() => {});
+      });
+      root.querySelector('[data-vimeo-fullscreen]')?.addEventListener('click', () => {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else root.requestFullscreen?.();
+      });
+    }
+
+    const connect = () => {
+      player = new Player(iframe);
+      bindPlayer(player);
+      if (!visible) player.pause().catch(() => {});
+    };
+
+    // 画面に入ったら(初回は読み込んで)再生、出たら一時停止
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible && !iframe.src && iframe.dataset.src) {
+        iframe.addEventListener('load', connect, { once: true });
+        iframe.src = iframe.dataset.src;
+      }
+      if (!player) return;
+      (visible ? player.play() : player.pause()).catch(() => {});
+    }, { threshold: 0.25 }).observe(root);
+  });
+</script>

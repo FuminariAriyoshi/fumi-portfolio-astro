@@ -9,10 +9,10 @@ interface Props {
 const { item } = Astro.props;
 ---
 
-<li class="grid grid-cols-[104px_1fr] items-start gap-x-[16px] leading-auto">
-  <span class="text-kicker opacity-60">{item.period}</span>
+<li class="grid grid-cols-[104px_1fr] items-start gap-x-[16px] leading-auto" data-reveal-row>
+  <span class="text-kicker opacity-60" data-reveal-part>{item.period}</span>
   <span class="flex flex-col gap-[8px]">
-    <span class="text-meta">{item.title}</span>
-    <span class="text-kicker opacity-60">{item.role}</span>
+    <span class="text-meta" data-reveal-part>{item.title}</span>
+    <span class="text-kicker opacity-60" data-reveal-part>{item.role}</span>
   </span>
 </li>

@@ -1,0 +1,37 @@
+---
+/**
+ * 作品の写真/動画のサムネ(文字なし)。写真を敷き、動画があれば画面に入ってからミュートのループ再生を重ねる。
+ * 動画は飾りなので操作できない(aria-hidden)。
+ */
+interface Props {
+  image?: { src: string; srcset?: string; sizes?: string; width?: number; height?: number } | null;
+  /** ミュート・ループの埋め込み URL(Vimeo background / YouTube mute) */
+  videoSrc?: string | null;
+  class?: string;
+}
+
+const { image, videoSrc, class: className } = Astro.props;
+---
+
+<div class:list={['relative aspect-video overflow-clip rounded-media bg-track', className]} data-media-thumb={videoSrc ?? undefined}>
+  {image && <img {...image} alt="" loading="lazy" class="size-full object-cover" />}
+</div>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const box = entry.target as HTMLElement;
+      observer.unobserve(box);
+      const iframe = document.createElement('iframe');
+      iframe.src = box.dataset.mediaThumb!;
+      iframe.className = 'pointer-events-none absolute inset-0 size-full border-0';
+      iframe.allow = 'autoplay; picture-in-picture';
+      iframe.title = '';
+      iframe.tabIndex = -1;
+      iframe.setAttribute('aria-hidden', 'true');
+      box.append(iframe);
+    });
+  }, { rootMargin: '200px' });
+  document.querySelectorAll<HTMLElement>('[data-media-thumb]').forEach((box) => observer.observe(box));
+</script>

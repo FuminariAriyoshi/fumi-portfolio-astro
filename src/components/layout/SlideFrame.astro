@@ -3,7 +3,7 @@
 interface Props {
   id: string;
   label: string;
-  tone?: 'accent' | 'ink' | 'light' | 'about';
+  tone?: 'accent' | 'ink' | 'light' | 'about' | 'contact';
   class?: string;
 }
 
@@ -14,6 +14,7 @@ const toneClass = {
   light: 'bg-thumb-3 text-ink',
   // 表紙と同じ作り(黒 + About の色のグラデーション)
   about: 'bg-ink bg-tint-slide-about text-paper',
+  contact: 'bg-ink bg-tint-slide-contact text-paper',
 }[tone];
 ---
 

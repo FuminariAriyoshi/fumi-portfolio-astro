@@ -56,6 +56,8 @@ export const starweavingSections = [
   },
   {
     id: 'starweaving-recognition', chapter: 'Recognition', title: '2026年の学科紹介パンフレットに掲載。',
+    /** 画像をスライドの左に入れて1枚にまとめる */
+    imageInSlide: true,
     paragraphs: ['武蔵野美術大学の2026年学科紹介パンフレットに、StarWeavingが掲載された。'],
     images: [{ src: '/works/starweaving/recognition.png', alt: 'StarWeavingが掲載された武蔵野美術大学の2026年学科紹介パンフレット' }],
     href: 'https://www.musabi.ac.jp/pdf/catalog_scd/8-9/',

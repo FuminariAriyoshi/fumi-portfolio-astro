@@ -63,7 +63,7 @@
     gsap.ticker.lagSmoothing(0);
     window.portfolioLenis = lenis;
 
-    // ページ内リンクは expo.out で移動。着地点はサイドバーの揃え線(Workspace が --align-line に出す)
+    // ページ内リンクは expo.out で移動(URL に #〜 は付けない)。着地点はサイドバーの揃え線(Workspace が --align-line に出す)
     // ページ内移動とサイドバーの切り替えは同じ長さ・同じ ease で同時に動かす。ホイール等の操作をすると Lenis が中断する
     const NAV_DURATION = 1.15;
     const expoOut = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
@@ -85,7 +85,6 @@
         const e = event as MouseEvent;
         if (!target || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
         event.preventDefault();
-        history.pushState(null, '', link.hash);
         scrollToTarget(target);
       });
     });

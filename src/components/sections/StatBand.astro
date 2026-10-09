@@ -1,13 +1,22 @@
 ---
 /**
- * 作品の成果の数字を、大きな打ち抜き文字で横に流す帯(KeywordBand と同じ扱い。枠なし)。
- * 各数字の前に小さな見出し、帯の下に期間などの注記を置く。lib/marquee.ts の等速ループ。
+ * 作品の成果の数字を、大きな打ち抜き文字で並べる帯(枠なし)。流さずに固定で見せる。
+ * 上に細い線。注記は母数(basis)と期間(period)。
+ * 1行に1つ。左に見出し(上)と注記(下)、右に大きな数字(text-stat)。帯の幅が 48rem 未満なら縦に積んで数字を小さく。
+ * from がある数字は「from → value」で、変化前を薄く、矢印は SVG(フォントの → は字面の高さが揃わないため)。
  */
+import { slideType as t } from '@/lib/slideType';
+
 interface Stat {
   label: string;
   value: string;
+  /** 変化前の値(例: LINE登録者数 0 → 87) */
+  from?: string;
   unit?: string;
-  note: string;
+  /** 母数・内訳(例: 診断を開始した11人のうち10人が完了) */
+  basis?: string;
+  /** 計測期間 */
+  period: string;
 }
 
 interface Props {
@@ -21,29 +30,31 @@ const { stats, toClass, label } = Astro.props;
 const textClass = ['bg-linear-to-b from-ink from-[10%] to-80% bg-clip-text text-transparent', toClass];
 ---
 
-<section aria-label={label} class="flex w-full shrink-0 flex-col gap-[8px]">
-  <!-- 読み上げ用(流れる帯は aria-hidden) -->
-  <ul class="sr-only">
-    {stats.map((stat) => <li>{stat.label} {stat.value}{stat.unit}({stat.note})</li>)}
-  </ul>
-  <div class="overflow-clip" aria-hidden="true">
-    <div class="flex w-max" data-marquee="forward" data-duration="60">
-      {[0, 1].map(() => (
-        <div class="flex shrink-0 items-end gap-[64px] pr-[64px]">
-          {stats.map((stat) => (
-            <div class="flex items-end gap-[16px]">
-              <span class="pb-[40px] text-meta leading-auto whitespace-nowrap">{stat.label}</span>
-              <span class="flex items-end whitespace-nowrap font-black leading-auto text-title md:text-marquee-jp">
-                <span class:list={textClass}>{stat.value}</span>
-                {stat.unit && <span class="pb-[40px] text-meta font-normal">{stat.unit}</span>}
+<section aria-label={label} class="@container w-full shrink-0 px-[24px] md:px-[40px]">
+  <dl class="flex flex-col">
+    {stats.map((stat) => (
+      <div class="grid grid-cols-1 gap-y-[12px] border-t border-ink/15 py-[24px] @3xl:grid-cols-[1fr_auto] @3xl:grid-rows-[auto_1fr] @3xl:gap-x-[40px]">
+        <dt class="text-meta leading-auto @3xl:col-start-1 @3xl:row-start-1">{stat.label}</dt>
+        <dd class="flex items-baseline whitespace-nowrap font-black leading-none text-title @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-center @3xl:text-stat">
+          {stat.from && (
+            <>
+              <span class="sr-only">{stat.from}{stat.unit}から</span>
+              <span aria-hidden="true" class="flex items-center gap-[12px] self-center pr-[12px] opacity-25 @3xl:gap-[24px] @3xl:pr-[24px]">
+                <span>{stat.from}</span>
+                <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-auto w-[48px] @3xl:w-[88px]">
+                  <path d="M2 12h42M34 3l10 9-10 9" />
+                </svg>
               </span>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  </div>
-  <ul class="flex flex-wrap gap-x-[24px] gap-y-[4px] px-[24px] text-small leading-body opacity-60 md:px-[40px]">
-    {stats.map((stat) => <li>{stat.label}: {stat.note}</li>)}
-  </ul>
+            </>
+          )}
+          <span class:list={textClass}>{stat.value}</span>
+          {stat.unit && <span class="pl-[6px] text-subtitle font-bold @3xl:pl-[12px] @3xl:text-greeting-lg">{stat.unit}</span>}
+        </dd>
+        <dd class="flex flex-col @3xl:col-start-1 @3xl:row-start-2 @3xl:self-end">
+          {stat.basis && <span class="text-small leading-body">{stat.basis}</span>}
+          <span class={t.note}>{stat.period}</span>
+        </dd>
+      </div>
+    ))}
+  </dl>
 </section>
