@@ -8,6 +8,7 @@ import SmoothScroll from '@/components/works/SmoothScroll.astro';
 import FumiLogo from '@/components/ui/FumiLogo.astro';
 import LangToggle from '@/components/works/LangToggle.astro';
 
+import Analytics from '@/components/layout/Analytics.astro';
 interface Props {
   title: string;
   lang?: 'en' | 'ja';
@@ -52,6 +53,7 @@ const { title, lang = 'en', fumiHref = '/works/other', langMode = 'switch' } = A
         })();
       </script>
     )}
+    <Analytics />
   </head>
   <body class="works-body min-h-screen bg-ink text-paper antialiased selection:bg-neutral-800">
     <a href="#main-content" class="portfolio-skip">本文へ移動</a>

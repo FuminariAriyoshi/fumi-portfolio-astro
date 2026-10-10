@@ -172,8 +172,9 @@ const { slides } = Astro.props;
     let unlockTimer: number | undefined;
     const currentAtLine = () => {
       let id = thumbs[0]?.dataset.thumb;
-      // スライドの上端が画面の中央まで来たら、その項目に切り替える(ユーザー指定)
-      const line = innerHeight / 2;
+      // スライドの上端が画面の中央まで来たら、その項目に切り替える(ユーザー指定)。
+      // スマホはスライドが低く(表紙は 200px ほど)、中央だと次のスライドがすぐ線を越えてしまうので、揃え線のすぐ下にする
+      const line = desktop.matches ? innerHeight / 2 : alignLine + 100;
       thumbs.forEach((thumb) => {
         const target = document.getElementById(thumb.dataset.thumb ?? '');
         if (target && target.getBoundingClientRect().top <= line) id = thumb.dataset.thumb;
