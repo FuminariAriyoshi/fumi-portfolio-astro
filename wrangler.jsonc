@@ -1,0 +1,11 @@
+// Cloudflare Workers の静的アセットとして dist/ をそのまま配信する(サイトは完全な静的ビルド)。
+// この設定が無いと `wrangler deploy` が @astrojs/cloudflare アダプターを自動で入れようとし、
+// Astro 7 と合わずにビルドが落ちるため、アダプターは使わずにここで配信先だけ指定する。
+{
+  "name": "fumi-portfolio-astro",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
