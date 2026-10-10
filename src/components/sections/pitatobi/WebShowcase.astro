@@ -7,9 +7,9 @@ const lang = getLang(Astro);
 const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<figure class="relative w-full shrink-0 overflow-clip rounded-frame bg-paper ring-1 ring-ink/10" style="aspect-ratio: 1250 / 1216" aria-label={$($('ピタとびの本番Webサイトの画面', 'Screens from the live Pitatobi website'), 'Screens from the live Pitatobi website')}>
-  <img src="/works/pitatobi-story/web-home-lg.webp" alt={$($('ピタとびのホームページ(PC)', 'Pitatobi homepage (desktop)'), 'Pitatobi homepage (desktop)')} width="1255" height="5892" loading="lazy" class="absolute top-[1.68%] left-[2.19%] w-[44.72%] max-w-none" />
-  <img src="/works/pitatobi-story/web-blog-lg.webp" alt={$($('留学体験記の一覧ページ', 'List of study-abroad stories'), 'List of study-abroad stories')} width="1143" height="1891" loading="lazy" class="absolute top-[1.68%] left-[51.23%] h-[46.63%] w-[44.64%] object-cover object-top" />
-  <ScreenVideo src="/works/pitatobi-case/pitatobi-sp-diagnosis.mp4" poster="/works/pitatobi-story/web-diag-lg.webp" label={$($('留学タイプ診断をスマートフォンで進める操作の様子', 'Going through the study-abroad type quiz on a smartphone'), 'Going through the study-abroad type quiz on a smartphone')} class="absolute top-[52.75%] left-[51.23%] h-[48.52%] w-[21.2%]" />
-  <ScreenVideo src="/works/pitatobi-case/pitatobi-sp-menu.mp4" label={$($('スマートフォンでメニューを開き、留学体験記を見る操作の様子', 'Opening the menu on a smartphone and browsing study-abroad stories'), 'Opening the menu on a smartphone and browsing study-abroad stories')} class="absolute top-[52.75%] left-[74.59%] h-[48.52%] w-[21.28%]" />
+<figure class="relative w-full shrink-0 overflow-clip rounded-frame bg-paper ring-1 ring-ink/10" style="aspect-ratio: 1250 / 1216" aria-label={$('ピタとびの本番Webサイトの画面', 'Screens from the live Pitatobi website')}>
+  <img src="/works/pitatobi-story/web-home-lg.webp" alt={$('ピタとびのホームページ(PC)', 'Pitatobi homepage (desktop)')} width="1255" height="5892" loading="lazy" class="absolute top-[1.68%] left-[2.19%] w-[44.72%] max-w-none" />
+  <img src="/works/pitatobi-story/web-blog-lg.webp" alt={$('留学体験記の一覧ページ', 'List of study-abroad stories')} width="1143" height="1891" loading="lazy" class="absolute top-[1.68%] left-[51.23%] h-[46.63%] w-[44.64%] object-cover object-top" />
+  <ScreenVideo src="/works/pitatobi-case/pitatobi-sp-diagnosis.mp4" poster="/works/pitatobi-story/web-diag-lg.webp" label={$('留学タイプ診断をスマートフォンで進める操作の様子', 'Going through the study-abroad type quiz on a smartphone')} class="absolute top-[52.75%] left-[51.23%] h-[48.52%] w-[21.2%]" />
+  <ScreenVideo src="/works/pitatobi-case/pitatobi-sp-menu.mp4" label={$('スマートフォンでメニューを開き、留学体験記を見る操作の様子', 'Opening the menu on a smartphone and browsing study-abroad stories')} class="absolute top-[52.75%] left-[74.59%] h-[48.52%] w-[21.28%]" />
 </figure>

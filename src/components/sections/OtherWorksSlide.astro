@@ -25,6 +25,6 @@ const works = SHOWCASE_UIDS.map((uid) => list.find((work) => work.uid === uid)).
   <SlideHeading title="Other Works" />
   <ol class="mt-auto flex flex-col gap-[4px] pt-[24px]">
     {works.map((work) => <WorkRow work={work} />)}
-    <SeeAllRow href={`/works/other?lang=${lang}`} count={otherWorksOf(list).length} />
+    <SeeAllRow href="/works/other" count={otherWorksOf(list).length} />
   </ol>
 </SlideFrame>

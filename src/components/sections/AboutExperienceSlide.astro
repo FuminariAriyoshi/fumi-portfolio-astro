@@ -29,21 +29,22 @@ const columns = credentials.map((c) => `${c.column}fr`).join(' ');
 ---
 
 <SlideFrame id="about-experience" label="About: Experience and Education" tone="about" class="md:py-[32px]">
-  <!-- 4 分割(左上 Education / 右上 Experience / 左下 Language… / 右下 Workshop) -->
+  <!-- 4 分割(左上 Education / 右上 Experience / 左下 Language… / 右下 Workshop)。
+       スマホ(1 列)では Experience → Workshop → Education → Language の順 -->
   <div class="grid flex-1 grid-cols-1 gap-x-[40px] gap-y-[24px] md:grid-cols-2 md:grid-rows-[auto_1fr]">
-    <InfoBlock label="Education">
+    <InfoBlock label="Education" class="max-md:order-3">
       <ul class="flex flex-col gap-[20px]">
         {education.map((item) => <CareerRow item={item} />)}
       </ul>
     </InfoBlock>
 
-    <InfoBlock label="Experience">
+    <InfoBlock label="Experience" class="max-md:order-1">
       <ul class="flex flex-col gap-[14px]">
         {work.map((item) => <ExperienceItem item={item} />)}
       </ul>
     </InfoBlock>
 
-    <InfoBlock label="Language & Certifications & Awards">
+    <InfoBlock label="Language & Certifications & Awards" class="max-md:order-4">
       <ul class="flex flex-wrap gap-x-[24px] gap-y-[4px] leading-auto">
         {languages.map((item) => (
           <li class="flex items-baseline gap-[8px]">
@@ -57,7 +58,7 @@ const columns = credentials.map((c) => `${c.column}fr`).join(' ');
       </ul>
     </InfoBlock>
 
-    <InfoBlock label="Workshop & short-term intern">
+    <InfoBlock label="Workshop & short-term intern" class="max-md:order-2">
       <ul class="flex flex-col gap-[14px]">
         {workshop.map((item) => <ExperienceItem item={item} />)}
       </ul>

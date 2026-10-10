@@ -19,6 +19,6 @@ const project = (lang === 'ja' ? projectJa : projectEn) ?? projectEn ?? projectJ
 const allPortfolios = all[lang].length ? all[lang] : all.en;
 ---
 
-<WorksLayout title={`${titleOf(project)} — Fumi`} lang={lang}>
+<WorksLayout title={`${titleOf(project)} — Fumi`} lang={lang} langMode={{ en: `/works/${id}/en`, ja: `/works/${id}/jp` }}>
   <ProjectDetail project={project} metaSource={projectEn ?? project} allPortfolios={allPortfolios} lang={lang} />
 </WorksLayout>

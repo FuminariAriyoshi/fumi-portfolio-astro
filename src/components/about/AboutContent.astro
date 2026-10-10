@@ -25,7 +25,7 @@ const textClass = ['text-xs leading-tight', ja ? 'font-medium' : 'font-normal'];
   <!-- 顔・名前と推薦文の帯 -->
   <div class="flex w-full flex-col justify-between gap-6 md:flex-row md:items-center md:gap-12">
     <div class="flex shrink-0 items-center gap-6 md:gap-8" data-about-in>
-      <MemojiAvatar size={120} />
+      <MemojiAvatar size={72} />
       <div class="flex flex-col gap-1">
         <h1 class="font-serif text-[clamp(1.25rem,3.5vh,2.25rem)] font-medium tracking-[-0.04em]">{a.name}</h1>
         {ja && <p class="mt-1 text-sm tracking-wide text-white/50 md:text-base">{a.nameJa}</p>}
@@ -36,6 +36,8 @@ const textClass = ['text-xs leading-tight', ja ? 'font-medium' : 'font-normal'];
     </div>
   </div>
 
+  <!-- 3 列とホームへの誘導の間は 36px(gap-9) -->
+  <div class="flex w-full flex-col gap-9">
   <div class="grid w-full grid-cols-1 gap-[clamp(1rem,4vh,3rem)] md:grid-cols-3">
     <!-- 1 列目 -->
     <div class="flex min-h-0 flex-col gap-8">
@@ -92,7 +94,7 @@ const textClass = ['text-xs leading-tight', ja ? 'font-medium' : 'font-normal'];
         </div>
       </AboutBlock>
       <!-- 旧サイトの Interests 枠(中身は見せず、高さだけ残す) -->
-      <AboutBlock label="Interests" number="07" invisible>
+      <AboutBlock label="Interests" number="07" invisible class="max-md:hidden">
         <ul aria-hidden="true" class="invisible grid grid-cols-2 gap-x-4 gap-y-1">
           {(ja ? ['UI/UXデザイン', '3D', 'Web開発', 'ブランディング', 'AI', 'Design Thinking', 'UX5Layers'] : ['UI/UX DESIGN', '3D', 'WEB DEV', 'BRANDING', 'AI', 'DESIGN THINKING', 'UX5LAYERS']).map((cap) => (
             <li class="text-micro whitespace-nowrap text-white/60">{cap}</li>
@@ -102,5 +104,6 @@ const textClass = ['text-xs leading-tight', ja ? 'font-medium' : 'font-normal'];
     </div>
   </div>
 
-  <HomeCta label={ja ? 'ホームへ' : 'Back to Home'} />
+  <HomeCta />
+  </div>
 </div>

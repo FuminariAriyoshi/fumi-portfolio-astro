@@ -14,16 +14,16 @@ const panels = [
 // パネルの中身は pt-[40px] で 20px 下げる(キャプションが薄く小さいぶん下が空いて見えるため、見た目の中央にそろえる)
 ---
 
-<ChapterSlide label={$($('BrandSystem: サービスロゴ', 'BrandSystem: service logo'), 'BrandSystem: service logo')} chapter="BrandSystem">
+<ChapterSlide label={$('BrandSystem: サービスロゴ', 'BrandSystem: service logo')} chapter="BrandSystem">
   <div slot="visual" class="grid h-[420px] w-full grid-cols-2 overflow-clip rounded-card">
     {panels.map((panel) => (
       <div class:list={['flex flex-col items-center justify-center gap-[40px] pt-[40px]', panel.tone]}>
         <div class="flex flex-col items-start gap-[12px]">
-          <img src={panel.shingo} alt={$($('新ゴで組んだ「ピタとび」', '“Pitatobi” set in Shin Go'), '“Pitatobi” set in Shin Go')} width="400" height="106" loading="lazy" class="h-[48px] w-[180px] object-cover" />
+          <img src={panel.shingo} alt={$('新ゴで組んだ「ピタとび」', '“Pitatobi” set in Shin Go')} width="400" height="106" loading="lazy" class="h-[48px] w-[180px] object-cover" />
           <p class={t.caption}>{$('新ゴ', 'Shin Go')}</p>
         </div>
         <div class="flex flex-col items-start gap-[12px]">
-          <img src={panel.final} alt={$($('最終的な「ピタとび」のロゴ', 'The final “Pitatobi” logo'), 'The final “Pitatobi” logo')} width="186.835" height={panel.finalH} loading="lazy" class="h-[53px] w-[180px]" />
+          <img src={panel.final} alt={$('最終的な「ピタとび」のロゴ', 'The final “Pitatobi” logo')} width="186.835" height={panel.finalH} loading="lazy" class="h-[53px] w-[180px]" />
           <p class={t.caption}>{$('最終ロゴ', 'Final logo')}</p>
         </div>
       </div>

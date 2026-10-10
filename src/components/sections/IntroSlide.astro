@@ -8,13 +8,19 @@ import MemojiAvatar from '../ui/MemojiAvatar.astro';
 import SlideCanvas from '../layout/SlideCanvas.astro';
 import Slide from '../layout/Slide.astro';
 
+interface Props {
+  /** ほかのページで表紙を縮めて見せる時(About のホームへの誘導)。id="top" を付けず、顔も動かさない */
+  preview?: boolean;
+}
+
+const { preview = false } = Astro.props;
 const topWords = ['花札', '京都', '英語オタク'];
 const bottomWords = ['Design', 'Tech', 'Japan', 'Claude'];
 // 列は同じ単語を 2 回並べて継ぎ目なく流す(lib/marquee.ts)。止まっている時の見た目は 1 列目と同じ
 const rowClass = 'absolute flex cursor-grab items-center whitespace-nowrap font-black leading-auto text-paper opacity-50 text-marquee select-none touch-pan-y data-dragging:cursor-grabbing';
 ---
 
-<SlideCanvas id="top">
+<SlideCanvas id={preview ? undefined : 'top'}>
   <Slide label="Hi, I'm Fumi">
     <!-- 単語の列は、押したまま左右にドラッグするとその列だけ動く(lib/marquee.ts。上下は連動させない。ユーザー指定) -->
     <div class="absolute inset-0 bg-tint-slide-fumi">
@@ -34,7 +40,7 @@ const rowClass = 'absolute flex cursor-grab items-center whitespace-nowrap font-
       </p>
 
       <div class="absolute top-[271px] left-[377px] flex items-center gap-[25px]">
-        <MemojiAvatar size={118} />
+        <MemojiAvatar size={118} still={preview} />
         <h1 class="flex flex-col items-start leading-auto text-paper">
           <span data-enter="line" class="mb-[-12px] text-greeting">Hi!</span>
           <span class="flex items-center gap-[12px] whitespace-nowrap">

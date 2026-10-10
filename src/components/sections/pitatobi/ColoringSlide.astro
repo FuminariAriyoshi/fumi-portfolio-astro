@@ -9,25 +9,25 @@ const lang = getLang(Astro);
 const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<ChapterSlide label={$($('BrandSystem: カラーリング', 'BrandSystem: color'), 'BrandSystem: color')} chapter="BrandSystem">
+<ChapterSlide label={$('BrandSystem: カラーリング', 'BrandSystem: color')} chapter="BrandSystem">
   <!-- 上: 3色の比較(資料の見出しが映らないよう下寄せで切り抜く) / 下: 採用した青 と アイコンの変更 を同じ高さで2枚 -->
   <div slot="visual" class="flex w-full flex-col gap-[16px]">
     <div class:list={[t.card, 'relative aspect-[576/240] w-full']}>
-      <img src="/works/pitatobi-story/color-study.webp" alt={$($('赤・青・黄の3色で塗り分けたキャラクターの比較', 'The character colored in red, blue and yellow, side by side'), 'The character colored in red, blue and yellow, side by side')} width="800" height="450" loading="lazy" class="absolute inset-0 size-full object-cover object-[50%_70%]" />
+      <img src="/works/pitatobi-story/color-study.webp" alt={$('赤・青・黄の3色で塗り分けたキャラクターの比較', 'The character colored in red, blue and yellow, side by side')} width="800" height="450" loading="lazy" class="absolute inset-0 size-full object-cover object-[50%_70%]" />
     </div>
     <div class="grid grid-cols-2 gap-[16px]">
       <figure class:list={[t.card, 'flex h-[220px] flex-col items-center justify-center gap-[16px]']}>
-        <img src="/works/pitatobi-story/character-blue.svg" alt={$($('青に決めたキャラクター', 'The character in the chosen blue'), 'The character in the chosen blue')} width="133" height="140.261" loading="lazy" class="h-[132px] w-auto" />
+        <img src="/works/pitatobi-story/character-blue.svg" alt={$('青に決めたキャラクター', 'The character in the chosen blue')} width="133" height="140.261" loading="lazy" class="h-[132px] w-auto" />
         <figcaption class={t.note}>{$('採用した青', 'The chosen blue')}</figcaption>
       </figure>
       <div class:list={[t.card, 'flex h-[220px] items-center justify-center gap-[20px]']}>
         <figure class="flex flex-col items-center gap-[12px]">
-          <img src="/works/pitatobi-story/icon-old.webp" alt={$($('留学NEXT の元のアイコン', 'Ryugaku NEXT’s original icon'), 'Ryugaku NEXT’s original icon')} width="200" height="200" loading="lazy" class="size-[88px] rounded-full object-cover ring-1 ring-ink/10" />
+          <img src="/works/pitatobi-story/icon-old.webp" alt={$('留学NEXT の元のアイコン', 'Ryugaku NEXT’s original icon')} width="200" height="200" loading="lazy" class="size-[88px] rounded-full object-cover ring-1 ring-ink/10" />
           <figcaption class={t.note}>{$('元アイコン', 'Original icon')}</figcaption>
         </figure>
         <span class="pb-[32px] font-serif text-nav opacity-40" aria-hidden="true">→</span>
         <figure class="flex flex-col items-center gap-[12px]">
-          <img src="/works/pitatobi-story/icon-new.webp" alt={$($('ピタとびの新しいアイコン', 'Pitatobi’s new icon'), 'Pitatobi’s new icon')} width="200" height="200" loading="lazy" class="size-[88px] object-cover" />
+          <img src="/works/pitatobi-story/icon-new.webp" alt={$('ピタとびの新しいアイコン', 'Pitatobi’s new icon')} width="200" height="200" loading="lazy" class="size-[88px] object-cover" />
           <figcaption class={t.note}>{$('新規アイコン', 'New icon')}</figcaption>
         </figure>
       </div>

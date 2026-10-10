@@ -6,15 +6,21 @@
 import '../styles/global.css';
 import SmoothScroll from '@/components/works/SmoothScroll.astro';
 import FumiLogo from '@/components/ui/FumiLogo.astro';
+import LangToggle from '@/components/works/LangToggle.astro';
 
 interface Props {
   title: string;
   lang?: 'en' | 'ja';
   /** ヘッダーの「Fumi」の行き先(既定は Other Works の一覧) */
   fumiHref?: string;
+  /**
+   * 日英の切り替え。'switch' = 日英の中身を両方持つページ(一覧・About。[data-lang-block] を <html lang> で出し分け)
+   * { en, ja } = 日英でページが分かれている(作品詳細)
+   */
+  langMode?: 'switch' | { en: string; ja: string };
 }
 
-const { title, lang = 'en', fumiHref = '/works/other' } = Astro.props;
+const { title, lang = 'en', fumiHref = '/works/other', langMode = 'switch' } = Astro.props;
 ---
 
 <html lang={lang} class="works-theme">
@@ -32,14 +38,29 @@ const { title, lang = 'en', fumiHref = '/works/other' } = Astro.props;
       rel="stylesheet"
     />
     <title>{title}</title>
+    <!-- 日英の中身を両方持つページは、描く前に言語を決める:選んだ言語(トップと共通の localStorage)→ 無ければブラウザで一番上に設定した言語 -->
+    {langMode === 'switch' && (
+      <script is:inline>
+        (function () {
+          var lang = 'en';
+          try {
+            var pref = localStorage.getItem('fumi-lang');
+            var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+            lang = pref || (/^ja/i.test(langs[0] || '') ? 'ja' : 'en');
+          } catch (e) {}
+          document.documentElement.lang = lang;
+        })();
+      </script>
+    )}
   </head>
   <body class="works-body min-h-screen bg-ink text-paper antialiased selection:bg-neutral-800">
     <a href="#main-content" class="portfolio-skip">本文へ移動</a>
     <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-ink/80 px-4 py-4 backdrop-blur-md md:px-8">
       <!-- Fumi は既定で Other Works の一覧へ(このページ群のホーム)。About ではトップへ -->
-      <a href={fumiHref} class="block text-paper" aria-label={fumiHref === '/' ? 'FumiStudio (ホームへ)' : 'FumiStudio (Other Works の一覧へ)'}><FumiLogo class="h-[20px] w-auto" /></a>
+      <a href={fumiHref} class="block text-paper" aria-label={fumiHref === '/' ? 'FumiStudio (ホームへ)' : 'FumiStudio (Other Works の一覧へ)'}><FumiLogo class="h-[14px] w-auto" /></a>
       <nav class="flex items-center gap-6 text-sm" aria-label="Works">
-        <a href="/#works" aria-label="ポートフォリオの Works に戻る">Back to portfolio</a>
+        <a href="/#works" aria-label="Back to the portfolio’s Works">Back to portfolio</a>
+        <LangToggle mode={langMode} current={lang} />
       </nav>
     </header>
     <slot />
@@ -48,6 +69,9 @@ const { title, lang = 'en', fumiHref = '/works/other' } = Astro.props;
 </html>
 
 <style is:global>
+  /* 日英の中身を両方持つページは、<html lang> に合わない方を隠す(描く前に決めるのでちらつかない) */
+  html[lang='en'] [data-lang-block='ja'],
+  html[lang='ja'] [data-lang-block='en'] { display: none; }
   .works-body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
   .font-jp-title { font-family: 'Shippori Mincho', serif; font-weight: 500; letter-spacing: 0; }
   /* 日本語の1文字だけの行(「た。」など)を出さない */

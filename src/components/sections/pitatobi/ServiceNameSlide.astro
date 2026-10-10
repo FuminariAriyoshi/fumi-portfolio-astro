@@ -8,7 +8,7 @@ const lang = getLang(Astro);
 const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<ChapterSlide label={$($('BrandSystem: サービス名', 'BrandSystem: service name'), 'BrandSystem: service name')} chapter="BrandSystem">
+<ChapterSlide label={$('BrandSystem: サービス名', 'BrandSystem: service name')} chapter="BrandSystem">
   <!-- 「ピタとび」をカードの縦の中心に置き、由来はその下にぶら下げる(由来の分だけ上にずれないよう absolute) -->
   <div slot="visual" class:list={[t.card, 'flex h-[420px] w-full items-center justify-center']}>
     <div class="relative">

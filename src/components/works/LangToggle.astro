@@ -1,0 +1,53 @@
+---
+/**
+ * works / About ページのヘッダーの EN / JP。選んだ言語はトップと同じ localStorage('fumi-lang')に覚える。
+ * mode='switch' : 日英の中身を両方持つページ(一覧・About)。押すとその場で <html lang> を切り替える(表示は WorksLayout の CSS)
+ * mode={ en, ja }: 日英でページが分かれている時(作品詳細)。それぞれのページへのリンク
+ */
+interface Props {
+  mode: 'switch' | { en: string; ja: string };
+  /** mode が { en, ja } の時の、今のページの言語 */
+  current?: 'en' | 'ja';
+}
+
+const { mode, current } = Astro.props;
+const langs = [
+  { code: 'en', label: 'EN', name: 'English' },
+  { code: 'ja', label: 'JP', name: '日本語' },
+] as const;
+---
+
+<span class="flex items-center gap-[6px]">
+  {langs.map((l, i) => (
+    <>
+      {i > 0 && <span class="opacity-30" aria-hidden="true">/</span>}
+      {mode === 'switch' ? (
+        <button type="button" lang={l.code} aria-label={l.name} data-lang-toggle={l.code} class="lang-toggle">{l.label}</button>
+      ) : (
+        <a href={mode[l.code]} hreflang={l.code} lang={l.code} aria-label={l.name} aria-current={current === l.code ? 'true' : undefined} data-lang-link={l.code} class:list={['lang-toggle', current === l.code && 'is-current']}>{l.label}</a>
+      )}
+    </>
+  ))}
+</span>
+
+<style>
+  .lang-toggle { opacity: 0.4; }
+  .lang-toggle.is-current,
+  :global(html[lang='en']) [data-lang-toggle='en'],
+  :global(html[lang='ja']) [data-lang-toggle='ja'] { opacity: 1; }
+</style>
+
+<script>
+  const remember = (lang: string) => { try { localStorage.setItem('fumi-lang', lang); } catch {} };
+  document.querySelectorAll<HTMLButtonElement>('[data-lang-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const lang = button.dataset.langToggle!;
+      remember(lang);
+      document.documentElement.lang = lang;
+      document.dispatchEvent(new CustomEvent('fumi:langchange', { detail: lang }));
+    });
+  });
+  document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]').forEach((link) => {
+    link.addEventListener('click', () => remember(link.dataset.langLink!));
+  });
+</script>

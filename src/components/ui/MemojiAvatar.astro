@@ -11,15 +11,17 @@ const lang = getLang(Astro);
 interface Props {
   /** 枠の大きさ(px) */
   size?: number;
+  /** 写真のまま止めておく(動画・マウスの追従なし) */
+  still?: boolean;
 }
 
-const { size = 118 } = Astro.props;
+const { size = 118, still = false } = Astro.props;
 ---
 
-<span data-enter="avatar" data-memoji class="relative block shrink-0" style={`width: ${size}px; height: ${size}px`}>
+<span data-enter="avatar" data-memoji={still ? undefined : ''} class="relative block shrink-0" style={`width: ${size}px; height: ${size}px`}>
   <span data-memoji-face class="relative block size-full overflow-clip rounded-full">
     <img src="/slides/fumi-memoji.png" alt={lang === 'en' ? 'Fumi’s Memoji' : 'Fumi のミー文字'} width={size} height={size} class="size-full object-cover" data-memoji-image />
-    <video
+    {!still && <video
       data-src="/memoji-compressed.mp4"
       muted
       loop
@@ -28,7 +30,7 @@ const { size = 118 } = Astro.props;
       aria-hidden="true"
       class="absolute inset-0 size-full scale-[1.27] object-cover opacity-0"
       data-memoji-video
-    ></video>
+    ></video>}
   </span>
 </span>
 

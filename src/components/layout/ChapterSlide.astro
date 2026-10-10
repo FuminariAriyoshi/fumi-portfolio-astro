@@ -8,6 +8,9 @@
  * ビジュアルと文章は、それぞれスライドの縦方向の中央にそろえる(上下 80px の間。キャンバスの高さが違っても中央)。
  * full は上から(y=96)。
  * compact: 上下の余白を 48px に詰める(高さを低くしたキャンバス用)。
+ *
+ * スマホ(md 未満)ではキャンバスを縮めずに縦に積む(ビジュアル → 文字)。本文は 16px のまま読める大きさで出し、
+ * ビジュアルだけは元の組み(幅 576px)を画面幅に合わせて縮める。キャンバス側の切り替えは global.css([data-chapter])。
  */
 import Slide from './Slide.astro';
 
@@ -19,26 +22,56 @@ interface Props {
 }
 
 const { label, chapter, layout = 'split', compact = false } = Astro.props;
-const inset = compact ? 'top-[48px] bottom-[48px]' : 'top-[80px] bottom-[80px]';
+const inset = compact ? 'md:top-[48px] md:bottom-[48px]' : 'md:top-[80px] md:bottom-[80px]';
+const chapterLabel = 'font-serif text-body leading-auto opacity-50';
 ---
 
 <Slide label={label}>
-  {layout !== 'full' ? (
-    <>
-      {layout === 'split' && (
-        <div class:list={['absolute left-[40px] flex w-[576px] items-center justify-center', inset]}>
-          <slot name="visual" />
+  <div data-chapter class="flex flex-col gap-[28px] px-[20px] py-[32px] md:contents">
+    {layout !== 'full' ? (
+      <>
+        <div class:list={['flex flex-col justify-center gap-[24px] md:absolute md:left-[672px] md:w-[568px]', inset]}>
+          <p class={chapterLabel}>{chapter}</p>
+          <slot />
         </div>
-      )}
-      <div class:list={['absolute left-[672px] flex w-[568px] flex-col justify-center gap-[24px]', inset]}>
-        <p class="font-serif text-body leading-auto opacity-50">{chapter}</p>
+        {layout === 'split' && (
+          <div class:list={['relative -order-1 w-full overflow-hidden md:order-none md:absolute md:left-[40px] md:flex md:w-[576px] md:items-center md:justify-center md:overflow-visible', inset]} data-chapter-visual>
+            <div class="max-md:absolute max-md:top-0 max-md:left-0 max-md:flex max-md:w-[576px] max-md:origin-top-left max-md:justify-center md:contents" data-chapter-visual-inner>
+              <slot name="visual" />
+            </div>
+          </div>
+        )}
+      </>
+    ) : (
+      <div class="md:absolute md:top-[96px] md:left-[40px] md:w-[1200px]">
+        <p class:list={[chapterLabel, 'mb-[24px]']}>{chapter}</p>
         <slot />
       </div>
-    </>
-  ) : (
-    <div class="absolute left-[40px] top-[96px] w-[1200px]">
-      <p class="mb-[24px] font-serif text-body leading-auto opacity-50">{chapter}</p>
-      <slot />
-    </div>
-  )}
+    )}
+  </div>
 </Slide>
+
+<script>
+  // スマホではビジュアル(元の幅 576px で組んである)を画面幅に合わせて縮め、縮めた後の高さを枠に入れる
+  const mobile = matchMedia('(max-width: 767px)');
+  const boxes = [...document.querySelectorAll<HTMLElement>('[data-chapter-visual]')];
+  const fit = () => {
+    boxes.forEach((box) => {
+      const inner = box.querySelector<HTMLElement>('[data-chapter-visual-inner]');
+      if (!inner) return;
+      if (!mobile.matches) {
+        inner.style.transform = '';
+        box.style.height = '';
+        return;
+      }
+      const scale = box.clientWidth / 576;
+      inner.style.transform = `scale(${scale})`;
+      box.style.height = `${inner.offsetHeight * scale}px`;
+    });
+  };
+  const observer = new ResizeObserver(fit);
+  boxes.forEach((box) => observer.observe(box));
+  mobile.addEventListener('change', fit);
+  addEventListener('load', fit, { once: true });
+  fit();
+</script>

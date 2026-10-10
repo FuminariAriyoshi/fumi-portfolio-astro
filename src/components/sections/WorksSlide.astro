@@ -66,14 +66,14 @@ const otherThumb = ja.find((work) => work.uid === '6');
 const otherVideo = (otherThumb?.data.video as any[] | undefined)?.find((item) => item.video?.html)?.video?.html;
 items.push({
   title: 'Other Works',
-  href: `/works/other?lang=${lang}`,
+  href: '/works/other',
   newTab: true,
   genre: 'Branding / Web / Graphic / Typeface / Drawing',
   // Other Works は色を付けず、白をうっすら重ねるだけ(目立たせない)
   tint: 'bg-linear-to-br from-paper/5 to-paper/25',
   result: null,
   quote: null,
-  image: otherThumb ? imageAttrs(otherThumb.data.portfolio, '176px') : null,
+  image: otherThumb ? imageAttrs(otherThumb.data.portfolio, '(max-width: 767px) 100vw, 176px') : null,
   videoSrc: otherVideo ? buildMutedEmbedSrc(otherVideo) : null,
 });
 ---
@@ -87,9 +87,9 @@ items.push({
           href={item.href}
           target={'newTab' in item && item.newTab ? '_blank' : undefined}
           rel={'newTab' in item && item.newTab ? 'noopener noreferrer' : undefined}
-          aria-label={'newTab' in item && item.newTab ? $(`${item.title}の一覧を新しいタブで開く`, `Open ${item.title} in a new tab`) : `View case study: ${'label' in item && item.label ? item.label : item.title}`} class="group relative -mx-[12px] flex items-center gap-[16px] rounded-card px-[12px] py-[10px] leading-auto md:gap-[24px]">
-          {item.tint && <span class:list={['pointer-events-none absolute inset-0 rounded-card opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100', item.tint]} aria-hidden="true"></span>}
-          <span class="relative w-[112px] shrink-0 md:w-[176px]" data-reveal-part><MediaThumb image={item.image} videoSrc={item.videoSrc} /></span>
+          aria-label={'newTab' in item && item.newTab ? $(`${item.title}の一覧を新しいタブで開く`, `Open ${item.title} in a new tab`) : `View case study: ${'label' in item && item.label ? item.label : item.title}`} class="group relative -mx-[12px] flex flex-col items-stretch gap-[12px] rounded-card px-[12px] py-[10px] leading-auto md:flex-row md:items-center md:gap-[24px]">
+          {item.tint && <span class:list={['pointer-events-none absolute inset-0 rounded-card opacity-100 transition-opacity duration-500 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100', item.tint]} aria-hidden="true"></span>}
+          <span class="relative w-full shrink-0 md:w-[176px]" data-reveal-part><MediaThumb image={item.image} videoSrc={item.videoSrc} /></span>
           <span class="relative grid min-w-0 flex-1 grid-cols-1 gap-x-[24px] gap-y-[6px] md:grid-cols-2 md:items-center">
             <span class="flex flex-col gap-[4px]">
               <span class="text-nav font-semibold" data-reveal-part>{'label' in item && item.label ? item.label : item.title}</span>

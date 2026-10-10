@@ -3,7 +3,8 @@
  * 章ラベル(左上) / 見出し 36px / リード 20px / 本文 16px / 注釈 14px / キャプション 12px
  */
 export const slideType = {
-  title: 'text-subtitle font-semibold leading-[1.35] tracking-[-0.02em]',
+  /** スマホでは 24px(章スライドは縮めずに表示するため) */
+  title: 'text-nav font-semibold leading-[1.35] tracking-[-0.02em] md:text-subtitle',
   lead: 'text-body leading-body',
   body: 'text-meta leading-body',
   note: 'text-small leading-body opacity-60',

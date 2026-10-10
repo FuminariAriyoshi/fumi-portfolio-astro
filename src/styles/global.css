@@ -241,3 +241,21 @@
     word-break: keep-all; /* 単語の途中では改行しない(日本語も)。枠に入りきらない長い単語だけは折り返す */
   }
 }
+
+/* スマホ(md 未満)のトップは角丸を半分にする(画面が狭いので丸みが目立ちすぎるため) */
+@media (max-width: 767px) {
+  [data-workspace] {
+    --radius-slide: 12px;
+    --radius-frame: 8px;
+    --radius-card: 8px;
+    --radius-media: 4px;
+  }
+}
+
+/* スマホ(md 未満)の章スライド(ChapterSlide)はキャンバスを縮めずに縦に積む。
+   固定の 1280px キャンバスと絶対配置をやめ、中身の高さに合わせる */
+@media (max-width: 767px) {
+  [data-canvas]:has([data-chapter]) { aspect-ratio: auto !important; }
+  [data-canvas]:has([data-chapter]) > div { position: static !important; width: auto !important; height: auto !important; transform: none !important; }
+  [data-canvas]:has([data-chapter]) [data-slide] { position: relative !important; inset: auto; }
+}

@@ -27,13 +27,13 @@ const lang = getLang(Astro);
     <title>{title}</title>
     <link rel="alternate" hreflang="ja" href="/" />
     <link rel="alternate" hreflang="en" href="/en/" />
-    <!-- 言語の振り分け:ヘッダーで選んだ言語(localStorage)→ 無ければブラウザの言語。合わない方のページに来たら移す -->
+    <!-- 言語の振り分け:ヘッダーで選んだ言語(localStorage)→ 無ければブラウザで一番上に設定した言語。合わない方のページに来たら移す -->
     <script is:inline>
       (function () {
         try {
           var pref = localStorage.getItem('fumi-lang');
           var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
-          var want = pref || (langs.some(function (l) { return /^ja/i.test(l); }) ? 'ja' : 'en');
+          var want = pref || (/^ja/i.test(langs[0] || '') ? 'ja' : 'en');
           var isEn = location.pathname.indexOf('/en') === 0;
           if (want === 'en' && !isEn) location.replace('/en/' + location.search + location.hash);
           else if (want === 'ja' && isEn) location.replace('/' + location.search + location.hash);

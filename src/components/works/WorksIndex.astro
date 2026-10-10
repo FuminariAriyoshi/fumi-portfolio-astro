@@ -2,7 +2,7 @@
 /**
  * Other Works の一覧(旧サイトの /works をもとに)。トップでケーススタディにしている作品は出さない。
  * 最初は ALL(全作品を3カラム)、ジャンルを選ぶと絞り込む。
- * en / ja を両方出しておき、?lang= かブラウザの言語で片方だけ見せる(旧サイトと同じ判定)。
+ * en / ja を両方出しておき、ヘッダーの EN / JP(WorksLayout の <html lang>)で片方だけ見せる。
  */
 import CategoryFilter from './CategoryFilter.astro';
 import WorkCard from './WorkCard.astro';
@@ -17,7 +17,7 @@ const langs: Lang[] = ['en', 'ja'];
     <CategoryFilter />
 
     {langs.map((lang) => (
-      <div data-lang-block={lang} hidden={lang !== 'en'}>
+      <div data-lang-block={lang}>
         <div class="grid grid-cols-1 gap-8 gap-y-[48px] md:grid-cols-2 lg:grid-cols-3">
           {otherWorksOf(all[lang].length ? all[lang] : all.en).map((project) => <WorkCard project={project} lang={lang} />)}
         </div>
@@ -29,15 +29,6 @@ const langs: Lang[] = ['en', 'ja'];
 <script>
   const root = document.querySelector<HTMLElement>('[data-filter-root]');
   if (root) {
-    // 言語：?lang= → ブラウザの言語(旧サイトと同じ)
-    const urlLang = new URLSearchParams(location.search).get('lang');
-    const lang = urlLang === 'ja' || urlLang === 'en'
-      ? urlLang
-      : navigator.language.startsWith('ja') || navigator.languages?.some((l) => l.startsWith('ja')) ? 'ja' : 'en';
-    if (!urlLang) history.replaceState(null, '', `${location.pathname}?lang=${lang}${location.hash}`);
-    root.querySelectorAll<HTMLElement>('[data-lang-block]').forEach((block) => { block.hidden = block.dataset.langBlock !== lang; });
-    document.documentElement.lang = lang;
-
     // 画面に近づいたら動画を読み込む(見えていない言語・絞り込みで隠れた動画は読み込まない)
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {

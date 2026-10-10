@@ -33,15 +33,15 @@ const issues = [
 ];
 ---
 
-<ChapterSlide label={$($('Improvement: 課題点', 'Improvement: open issues'), 'Improvement: open issues')} chapter="Improvement" layout="full">
+<ChapterSlide label={$('Improvement: 課題点', 'Improvement: open issues')} chapter="Improvement" layout="full">
   <div class="flex flex-col gap-[8px]">
     <h3 class={t.title}>{$('課題点', 'Open issues')}</h3>
     <p class:list={[t.lead, 'opacity-60']}>{$('現在での課題と、改善案', 'Current issues and how we plan to improve them')}</p>
   </div>
-  <ul class="mt-[48px] grid grid-cols-3 gap-[40px]">
+  <ul class="mt-[32px] grid grid-cols-1 gap-[32px] md:mt-[48px] md:grid-cols-3 md:gap-[40px]">
     {issues.map((issue) => (
       <li class="flex flex-col gap-[24px]">
-        <p class="text-caption leading-[1.35] tracking-[-0.02em]">{issue.title[0]}<br />{issue.title[1]}</p>
+        <p class="text-nav leading-[1.35] tracking-[-0.02em] md:text-caption">{issue.title[0]}<br />{issue.title[1]}</p>
         <div class:list={[t.body, 'flex flex-col gap-[8px] opacity-80']}>{issue.body.map((line) => <p>{line}</p>)}</div>
       </li>
     ))}

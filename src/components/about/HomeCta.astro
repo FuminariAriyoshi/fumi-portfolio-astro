@@ -1,18 +1,17 @@
 ---
-/** About の最後に置く、ホーム(トップ)への誘導。トップの最初の写真を大きく見せる */
-import { profile } from '@/data/about';
-
-interface Props {
-  label: string;
-}
-
-const { label } = Astro.props;
+/**
+ * About の最後に置く、ホームへの誘導。ホームの 1 ページ目(表紙 IntroSlide)をそのまま縮めて見せる。
+ * 表紙は飾りとして止めた状態で見せるだけ(動かさない。読み上げ・フォーカスの対象外)。カード全体が 1 つのリンク。
+ */
+import IntroSlide from '../sections/IntroSlide.astro';
 ---
 
-<a href="/" class="group relative mt-[clamp(2rem,6vh,4rem)] block overflow-clip rounded-xl border border-white/10" aria-label={`${label}(ポートフォリオのホームへ)`} data-about-in>
-  <img src={profile.photo.src} alt="" width={profile.photo.width} height={profile.photo.height} loading="lazy" class="aspect-[16/7] w-full object-cover transition-opacity duration-500 group-hover:opacity-80" />
-  <span class="absolute inset-x-0 bottom-0 flex items-end justify-between bg-linear-to-t from-black/70 to-transparent px-6 pt-16 pb-5">
-    <span class="font-serif text-subtitle leading-auto md:text-greeting">{label}</span>
+<a href="/" class="group relative block overflow-clip rounded-xl border border-white/10" aria-label="Go to Home">
+  <div class="pointer-events-none" aria-hidden="true" inert>
+    <IntroSlide preview />
+  </div>
+  <span class="absolute inset-x-0 bottom-0 flex items-end justify-between bg-linear-to-t from-black/70 to-transparent px-6 pt-16 pb-5 transition-opacity duration-500 group-hover:opacity-80">
+    <span class="font-serif text-subtitle leading-auto md:text-greeting">Go to Home</span>
     <span class="text-nav" aria-hidden="true">→</span>
   </span>
 </a>
