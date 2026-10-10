@@ -121,11 +121,11 @@ const { slides } = Astro.props;
         const top = active.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop;
         nav.scrollTo({ top: Math.max(0, top - NAV_PAD), behavior: 'instant' });
       } else {
-        const start = active.offsetLeft - nav.offsetLeft;
-        const end = start + active.offsetWidth;
-        if (start < nav.scrollLeft || end > nav.scrollLeft + nav.clientWidth) {
-          nav.scrollTo({ left: Math.max(0, start - (nav.clientWidth - active.offsetWidth) / 2), behavior: 'instant' });
-        }
+        // スマホ(下の横並び):押した・今の項目を毎回帯の中央に寄せる。章を持つ作品は枠の中にあるので画面上の位置で測る
+        const rect = active.getBoundingClientRect();
+        const navRect = nav.getBoundingClientRect();
+        const left = nav.scrollLeft + (rect.left - navRect.left) - (nav.clientWidth - rect.width) / 2;
+        nav.scrollTo({ left: Math.max(0, left), behavior: 'instant' });
       }
     };
     // 変更の前後にイベントを出す。アニメーション(PortfolioMotion)はこれを使う

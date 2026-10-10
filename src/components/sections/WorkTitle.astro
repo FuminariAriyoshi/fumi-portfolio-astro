@@ -13,12 +13,14 @@ interface Props {
   showMeta?: boolean;
   /** 作品名を PP Migra(font-serif)にする */
   serif?: boolean;
+  /** 上下の余白(48px)を付けない(呼ぶ側で間を決める時) */
+  flush?: boolean;
 }
 
-const { project, compactTitle = false, responsiveTitle = false, intro, showTitle = true, showMeta = true, serif = false } = Astro.props;
+const { project, compactTitle = false, responsiveTitle = false, intro, showTitle = true, showMeta = true, serif = false, flush = false } = Astro.props;
 ---
 
-<header class="flex w-full shrink-0 flex-col gap-[16px] py-[48px]">
+<header class:list={['flex w-full shrink-0 flex-col gap-[16px]', !flush && 'py-[48px]']}>
   {showTitle && <h2 class:list={['leading-auto', serif ? 'font-serif font-normal' : 'font-semibold tracking-tighter', compactTitle ? 'text-subtitle' : responsiveTitle ? 'text-subtitle md:text-title' : 'whitespace-nowrap text-title']}>{project.title}</h2>}
   {intro && <p class="max-w-[720px] text-meta leading-body">{intro}</p>}
   {showMeta && <div class="flex flex-wrap items-start gap-x-[24px] gap-y-[8px] text-meta">

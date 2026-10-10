@@ -36,13 +36,13 @@ const button = theme === 'light' ? 'bg-ink text-paper' : 'bg-paper text-ink';
     <button type="button" tabindex="-1" aria-hidden="true" data-deck-go="1" class="absolute inset-y-0 right-0 w-1/2 cursor-e-resize"></button>
   </div>
   <div class:list={['flex items-center justify-between gap-[16px]', theme === 'light' ? 'text-ink' : 'text-paper']}>
-    <p class="text-meta leading-auto opacity-60">{caption}</p>
-    <div class="flex items-center gap-[12px]">
-      <p class="text-body leading-auto tabular-nums" aria-live="polite">
+    <p class="text-small leading-auto opacity-60 md:text-meta">{caption}</p>
+    <div class="flex items-center gap-[8px] md:gap-[12px]">
+      <p class="text-small leading-auto tabular-nums md:text-body" aria-live="polite">
         <span data-deck-current>01</span><span class="opacity-50"> / {pad(pages.length)}</span>
       </p>
-      <button type="button" data-deck-go="-1" aria-label={lang === 'en' ? 'Previous page' : '前のページ'} class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>←</button>
-      <button type="button" data-deck-go="1" aria-label={lang === 'en' ? 'Next page' : '次のページ'} class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>→</button>
+      <button type="button" data-deck-go="-1" aria-label={lang === 'en' ? 'Previous page' : '前のページ'} class:list={['flex size-[32px] items-center justify-center rounded-full font-serif text-meta md:size-[44px] md:text-body', button]}>←</button>
+      <button type="button" data-deck-go="1" aria-label={lang === 'en' ? 'Next page' : '次のページ'} class:list={['flex size-[32px] items-center justify-center rounded-full font-serif text-meta md:size-[44px] md:text-body', button]}>→</button>
     </div>
   </div>
 </div>

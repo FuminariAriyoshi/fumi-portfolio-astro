@@ -27,8 +27,9 @@ const siteHref = project.href?.startsWith('http') ? project.href : undefined;
 <div class="work-deck-wrap relative w-full">
 <details class="work-deck w-full" data-work-deck>
   <summary class="work-deck-summary cursor-pointer list-none" aria-label={lang === 'en' ? `Open or close the slides: ${project.title}` : `${project.title}のスライドを開閉`} aria-controls={`${id}-slides`}>
+    {/* スマホ:タイトル → 表紙 → 説明文の順(説明文と Client / Year / Role は表紙の下) */}
     {revealTitle ? (
-      <div class="md:hidden"><WorkTitle {...titleProps} intro={project.intro} /></div>
+      <div class="pt-[32px] pb-[4px] md:hidden"><WorkTitle {...titleProps} showMeta={false} flush /></div>
     ) : <WorkTitle {...titleProps} />}
     <div class="work-deck-stack relative isolate">
       {sheets.map((sheet) => (
@@ -50,6 +51,7 @@ const siteHref = project.href?.startsWith('http') ? project.href : undefined;
         {revealTitle && <CoverCaption project={project} serif={titleProps.serif} class="hidden md:flex" />}
       </div>
     </div>
+    {revealTitle && <div class="mt-[20px] md:hidden"><WorkTitle {...titleProps} showTitle={false} intro={project.intro} flush /></div>}
   </summary>
   <div id={`${id}-slides`} class="flex w-full flex-col gap-4">
     {revealTitle && siteHref && <ProjectSiteLink href={siteHref} title={project.title} class="md:hidden" />}
@@ -76,6 +78,11 @@ const siteHref = project.href?.startsWith('http') ? project.href : undefined;
   .work-deck-sheet { transform-origin: top center; }
   .work-deck-sheet-back { transform: translate(-12px, -20px) rotate(-2.5deg) scale(0.92); z-index: -2; }
   .work-deck-sheet-middle { transform: translate(10px, -10px) rotate(1.5deg) scale(0.96); z-index: -1; }
+  /* スマホは表紙が小さく、同じずれでは重なりが見えにくいので大きくする(script の sheetRest と同じ値) */
+  @media (max-width: 767px) {
+    .work-deck-sheet-back { transform: translate(-10px, -26px) rotate(-5deg) scale(0.9); }
+    .work-deck-sheet-middle { transform: translate(10px, -13px) rotate(3deg) scale(0.95); }
+  }
   .work-deck[open]:not(.is-dealing) .work-deck-sheet { display: none; }
 </style>
 
@@ -90,10 +97,18 @@ const siteHref = project.href?.startsWith('http') ? project.href : undefined;
 
   const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   // CSS の .work-deck-sheet-back / -middle と同じ重なり方
-  const sheetRest = [
+  const sheetRestDesktop = [
     { x: -12, y: -20, rotation: -2.5, scale: 0.92, opacity: 1 },
     { x: 10, y: -10, rotation: 1.5, scale: 0.96, opacity: 1 },
   ];
+  // スマホ(CSS の @media と同じ値)
+  const sheetRestMobile = [
+    { x: -10, y: -26, rotation: -5, scale: 0.9, opacity: 1 },
+    { x: 10, y: -13, rotation: 3, scale: 0.95, opacity: 1 },
+  ];
+  const mobileQuery = matchMedia('(max-width: 767px)');
+  let sheetRest = mobileQuery.matches ? sheetRestMobile : sheetRestDesktop;
+  mobileQuery.addEventListener('change', () => { sheetRest = mobileQuery.matches ? sheetRestMobile : sheetRestDesktop; });
   const stackMarginTop = 32;
   // ホバーで「開くそぶり」: 紙が少し持ち上がって扇状に開き、表紙もわずかに浮く
   const sheetPeek = [

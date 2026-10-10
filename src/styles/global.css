@@ -164,8 +164,13 @@
     padding: 8px 10px;
     justify-content: flex-end;
   }
+  /* 長い作品名(ReiKikkawa Graduation Work など)でも崩れないよう、小さくして 2 行までに収める */
   [data-workspace] [data-slide-list] [data-thumb] [data-thumb-label] {
-    font-size: var(--text-meta);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: var(--text-kicker);
     line-height: 1.25;
     letter-spacing: 0;
   }
@@ -174,6 +179,10 @@
     width: 240px;
   }
   [data-workspace] { padding-bottom: calc(144px + env(safe-area-inset-bottom)); }
+  /* 章を持つ作品の枠は、横並びでは項目の幅に合わせる(デスクトップ用の「サイドバー幅いっぱい」を外す)。章の一覧は出さない */
+  [data-workspace] [data-slide-list] [data-thumb-group] { width: auto; align-self: auto; flex-direction: row; }
+  [data-workspace] [data-slide-list] [data-chapter-list] { display: none; }
+  [data-workspace] [data-slide-list] > [data-thumb] { align-self: auto; }
 }
 
 /* Keep the toggle reachable while the slide list follows the page. */

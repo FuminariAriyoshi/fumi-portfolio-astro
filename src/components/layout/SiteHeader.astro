@@ -19,7 +19,7 @@ const langs = [
   <nav class="flex items-center justify-between whitespace-nowrap leading-auto" aria-label="Main">
     <a href="#top" class="block" aria-label="FumiStudio (home)"><FumiLogo class="h-[14px] w-auto" /></a>
     {links.map((link) => (
-      <a href={link.href} class="text-meta">{link.label}</a>
+      <a href={link.href} class="text-meta max-md:hidden">{link.label}</a>
     ))}
     <span class="flex items-center gap-[6px] text-meta">
       {langs.map((l, i) => (

@@ -38,20 +38,20 @@ const textClass = ['bg-linear-to-b from-ink from-[10%] to-80% bg-clip-text text-
     {stats.map((stat) => (
       <div class="grid grid-cols-1 gap-y-[12px] border-t border-ink/15 py-[24px] @3xl:grid-cols-[1fr_auto] @3xl:grid-rows-[auto_1fr] @3xl:gap-x-[40px]">
         <dt class="text-meta leading-auto @3xl:col-start-1 @3xl:row-start-1">{stat.label}</dt>
-        <dd class="flex items-baseline whitespace-nowrap font-black leading-none text-title @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-center @3xl:text-stat">
+        <dd class="flex items-baseline whitespace-nowrap font-black leading-none text-greeting md:text-title @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-center @3xl:text-stat">
           {stat.from && (
             <>
               <span class="sr-only">{lang === 'en' ? `from ${stat.from}${stat.unit} to ` : `${stat.from}${stat.unit}から`}</span>
               <span aria-hidden="true" class="flex items-center gap-[12px] self-center pr-[12px] opacity-25 @3xl:gap-[24px] @3xl:pr-[24px]">
                 <span>{stat.from}</span>
-                <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-auto w-[48px] @3xl:w-[88px]">
+                <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-auto w-[32px] md:w-[48px] @3xl:w-[88px]">
                   <path d="M2 12h42M34 3l10 9-10 9" />
                 </svg>
               </span>
             </>
           )}
           <span class:list={textClass}>{stat.value}</span>
-          {stat.unit && <span class="pl-[6px] text-subtitle font-bold @3xl:pl-[12px] @3xl:text-greeting-lg">{stat.unit}</span>}
+          {stat.unit && <span class="pl-[6px] text-nav font-bold md:text-subtitle @3xl:pl-[12px] @3xl:text-greeting-lg">{stat.unit}</span>}
         </dd>
         <dd class="flex flex-col @3xl:col-start-1 @3xl:row-start-2 @3xl:self-end">
           {stat.basis && <span class="text-small leading-body">{stat.basis}</span>}

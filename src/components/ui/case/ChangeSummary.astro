@@ -25,7 +25,7 @@ const { phase, eyebrow, changes } = Astro.props;
   <ul class="grid w-full grid-cols-1 gap-y-[20px] sm:grid-cols-3 sm:gap-x-[24px]">
     {changes.map((change) => (
       <li class="flex flex-col items-center gap-[4px] text-center">
-        <span class="text-balance text-nav font-medium leading-[1.4]">
+        <span class="text-balance text-meta font-medium leading-[1.4] md:text-nav">
           {phase === 'before' ? change.before : `✅${change.after}`}
         </span>
         {phase === 'after' && (
