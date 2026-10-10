@@ -3,10 +3,10 @@
  * アクセス解析(Google Analytics 4 と Microsoft Clarity)。各レイアウトの <head> に置く。
  * ID は環境変数(Cloudflare のビルド設定)から読む。ID が無い時・本番ビルド以外では何も読み込まない。
  *   PUBLIC_GA_ID      … GA4 の測定 ID(既定は Fumi アカウントの「studio-fumi.com」プロパティ。測定 ID は HTML に出る公開の値)
- *   PUBLIC_CLARITY_ID … Clarity のプロジェクト ID
+ *   PUBLIC_CLARITY_ID … Clarity のプロジェクト ID(既定は「studio-fumi.com」プロジェクト)
  */
 const gaId = (import.meta.env.PUBLIC_GA_ID as string | undefined) ?? 'G-VSSN3KM5HY';
-const clarityId = import.meta.env.PUBLIC_CLARITY_ID as string | undefined;
+const clarityId = (import.meta.env.PUBLIC_CLARITY_ID as string | undefined) ?? 'yvjsven286';
 const enabled = import.meta.env.PROD;
 ---
 
