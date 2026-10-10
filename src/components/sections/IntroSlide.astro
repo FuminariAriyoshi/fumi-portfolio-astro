@@ -39,8 +39,9 @@ const rowClass = 'absolute flex cursor-grab items-center whitespace-nowrap font-
         </span>
       </p>
 
-      <!-- スマホではキャンバスごと小さくなるので、顔と挨拶のまとまりだけ大きくする -->
-      <div class="absolute top-[271px] left-[377px] flex origin-center items-center gap-[25px] max-md:translate-y-[40px] max-md:scale-[1.15]">
+      <!-- 顔と挨拶のまとまりは、左右はキャンバスの中央、上下は上下の単語の列の間(文字の見た目)の中央に置く。
+           スマホではキャンバスごと小さくなるので、まとまりだけ少し大きくする -->
+      <div class="absolute top-[307px] left-1/2 flex origin-center max-md:top-[323px] -translate-x-1/2 items-center gap-[25px] max-md:scale-[1.15]">
         <MemojiAvatar size={118} still={preview} />
         <h1 class="flex flex-col items-start leading-auto text-paper">
           <span data-enter="line" class="mb-[-12px] text-greeting">Hi!</span>

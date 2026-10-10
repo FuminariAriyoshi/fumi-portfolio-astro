@@ -8,7 +8,10 @@ import { socials } from '@/data/home';
   <SlideHeading title="Contact" />
   <div class="mt-auto flex flex-col gap-[24px] pt-[32px]">
     <p class="font-serif text-greeting leading-auto md:text-title">Let’s work together.</p>
-    <ul class="flex gap-[24px] text-body leading-auto">
+  </div>
+  <!-- SNS は Back to top と同じ行・同じ大きさにそろえる(左に SNS、右に Back to top) -->
+  <footer class="portfolio-footer">
+    <ul class="flex gap-[24px]">
       {socials.map((social) => (
         <li>
           <a
@@ -23,6 +26,6 @@ import { socials } from '@/data/home';
         </li>
       ))}
     </ul>
-  </div>
-  <footer class="portfolio-footer"><a href="#top" class="ml-auto">Back to top ↑</a></footer>
+    <a href="#top">Back to top ↑</a>
+  </footer>
 </SlideFrame>

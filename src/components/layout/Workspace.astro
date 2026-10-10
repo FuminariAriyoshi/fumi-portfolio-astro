@@ -179,6 +179,8 @@ const { slides } = Astro.props;
         if (target && target.getBoundingClientRect().top <= line) id = thumb.dataset.thumb;
       });
       if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) id = thumbs.at(-1)?.dataset.thumb;
+      // ページの一番上では必ず最初の項目(スマホは表紙が低く、2 枚目の上端も最初から中央より上にあるため)
+      if (scrollY <= 4) id = thumbs[0]?.dataset.thumb;
       return id;
     };
     const unlockLater = () => {
