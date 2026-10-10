@@ -11,4 +11,11 @@ export default defineConfig({
   },
 
   integrations: [react()],
+
+  // トップの日英切り替え。日本語は /、英語は /en/(部品は Astro.currentLocale で言語を知る)
+  i18n: {
+    locales: ['ja', 'en'],
+    defaultLocale: 'ja',
+    routing: { prefixDefaultLocale: false },
+  },
 });

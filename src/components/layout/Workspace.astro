@@ -8,6 +8,9 @@ import SlideThumb from '../ui/SlideThumb.astro';
 import ChapterList from '../ui/ChapterList.astro';
 import type { SlideMeta } from '@/data/home';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   slides: SlideMeta[];
 }
@@ -41,11 +44,11 @@ const { slides } = Astro.props;
       {slides.map((slide, i) => (
         slide.chapters ? (
           <div data-thumb-group class:list={['relative flex shrink-0 flex-col', slide.nested ? 'w-[calc(100%-23px)] self-end sidebar-closed:w-full' : 'w-full']}>
-            <SlideThumb label={slide.label} href={`#${slide.id}`} color={slide.color} number={i + 1} current={i === 0} nested={slide.nested} grouped />
-            <ChapterList parent={slide.id} label={slide.label} chapters={slide.chapters} />
+            <SlideThumb label={tr(lang, slide.label)} href={`#${slide.id}`} color={slide.color} number={i + 1} current={i === 0} nested={slide.nested} grouped />
+            <ChapterList parent={slide.id} label={tr(lang, slide.label)} chapters={slide.chapters} />
           </div>
         ) : (
-          <SlideThumb label={slide.label} href={`#${slide.id}`} color={slide.color} number={i + 1} current={i === 0} nested={slide.nested} />
+          <SlideThumb label={tr(lang, slide.label)} href={`#${slide.id}`} color={slide.color} number={i + 1} current={i === 0} nested={slide.nested} />
         )
       ))}
     </nav>

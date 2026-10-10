@@ -20,6 +20,10 @@ import ResultsShowcase from './ResultsShowcase.astro';
 import ImprovementSlide from './ImprovementSlide.astro';
 import { pitatobiDeck } from '@/data/projects';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 const brandColors = [
   { hex: '#FFFFFF', dark: false },
   { hex: '#00AFFE', dark: true },
@@ -31,14 +35,14 @@ const brandColors = [
 <SlideCanvas id="pitatobi-origin"><OriginSlide /></SlideCanvas>
 
 <SlideCanvas id="pitatobi-strategy" height={584}><StrategySlide /></SlideCanvas>
-<DeckViewer title="留学NEXT 新規デザイン案" pages={pitatobiDeck} caption="ブランディング案資料" />
+<DeckViewer title={$($('留学NEXT 新規デザイン案', 'Ryugaku NEXT new design proposal'), 'Ryugaku NEXT new design proposal')} pages={pitatobiDeck} caption={$($('ブランディング案資料', 'Branding proposal deck'), 'Branding proposal deck')} />
 
 <SlideCanvas id="pitatobi-brand"><ServiceNameSlide /></SlideCanvas>
 <SlideCanvas><ServiceLogoSlide /></SlideCanvas>
 <SlideCanvas><CharacterSlide /></SlideCanvas>
 <SlideCanvas><CharacterRulesSlide /></SlideCanvas>
 <SlideCanvas><ColoringSlide /></SlideCanvas>
-<ColorBand colors={brandColors} label="ピタとびのブランドカラー" />
+<ColorBand colors={brandColors} label={$($('ピタとびのブランドカラー', 'Pitatobi brand colors'), 'Pitatobi brand colors')} />
 
 <SlideCanvas id="pitatobi-uiux" height={407}><WebSlide /></SlideCanvas>
 <WebShowcase />

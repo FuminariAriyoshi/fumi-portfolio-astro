@@ -2,17 +2,21 @@
 /** Education の 1 行: 期間 / 名称と補足(縦に積む) */
 import type { CareerItem } from '@/data/about';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   item: CareerItem;
 }
 
 const { item } = Astro.props;
+
 ---
 
 <li class="grid grid-cols-[104px_1fr] items-start gap-x-[16px] leading-auto" data-reveal-row>
-  <span class="text-kicker opacity-60" data-reveal-part>{item.period}</span>
+  <span class="text-kicker opacity-60" data-reveal-part>{tr(lang, item.period)}</span>
   <span class="flex flex-col gap-[8px]">
-    <span class="text-meta" data-reveal-part>{item.title}</span>
-    <span class="text-kicker opacity-60" data-reveal-part>{item.role}</span>
+    <span class="text-meta" data-reveal-part>{tr(lang, item.title)}</span>
+    <span class="text-kicker opacity-60" data-reveal-part>{tr(lang, item.role)}</span>
   </span>
 </li>

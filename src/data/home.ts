@@ -1,9 +1,12 @@
 // トップのスライド構成。サイドバーのサムネイルもここから作る。後で Prismic に差し替える
+import type { L } from '@/lib/i18n';
+
 export type SlideColor = 'fumi' | 'about' | 'works' | 'other' | 'contact' | 'pitatobi' | 'reikikkawa' | 'starweaving';
 
 export interface SlideMeta {
   id: string;
-  label: string;
+  /** サイドバーの表示名(日英) */
+  label: L;
   color: SlideColor;
   nested?: boolean;
   /** 作品の章。サイドバーでこの項目の下に小さく並べる(開いている時だけ) */
@@ -16,7 +19,7 @@ export const slides: SlideMeta[] = [
   { id: 'works', label: 'Works', color: 'works' },
   {
     id: 'pitatobi',
-    label: 'ピタとび',
+    label: { ja: 'ピタとび', en: 'Pitatobi' },
     color: 'pitatobi',
     nested: true,
     // ページの並び順(TheBETA はスライドが無いので出さない)
@@ -42,7 +45,7 @@ export const slides: SlideMeta[] = [
     ],
   },
   {
-    id: 'starweaving', label: '星紡ぎ', color: 'starweaving', nested: true,
+    id: 'starweaving', label: { ja: '星紡ぎ', en: 'StarWeaving' }, color: 'starweaving', nested: true,
     chapters: [
       { id: 'starweaving-intro', label: 'Introduction' },
       { id: 'starweaving-team', label: 'Team & Role' },

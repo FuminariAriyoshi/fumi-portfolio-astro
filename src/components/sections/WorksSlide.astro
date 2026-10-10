@@ -11,6 +11,10 @@ import { projects } from '@/data/projects';
 import { testimonials } from '@/data/about';
 import { buildMutedEmbedSrc, getAllPortfolios, imageAttrs } from '@/lib/works';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 const personOf = (name: string) => testimonials.find((t) => t.name === name);
 
 // ケーススタディの映像(Vimeo の背景再生)。ピタとびは動画が無いので写真
@@ -23,13 +27,14 @@ const imageOf = (title: string) => {
 const items = [
   {
     title: 'ピタとび',
+    label: $('ピタとび', 'Pitatobi'),
     href: '#pitatobi',
     genre: 'Rebranding / UIUX / Development',
     // ホバーで出す、作品の色のグラデーション(クラス名は Tailwind が拾えるよう省略しない)
     tint: 'bg-tint-strong-work-pitatobi',
     result: null,
     // ブランディングの視点のコメント
-    quote: { text: 'Webサイトの UI/UX はもちろん、サービス名の検討からキャラクター制作、ブランドカラーの策定まで、ピタとびのブランディング全体に幅広く携わってくれました。', name: '中嶋 来門' },
+    quote: { text: $('Webサイトの UI/UX はもちろん、サービス名の検討からキャラクター制作、ブランドカラーの策定まで、ピタとびのブランディング全体に幅広く携わってくれました。', 'Beyond the website’s UI/UX, you were involved in the whole Pitatobi brand — from exploring the service name to creating the character and defining the brand colors.'), name: '中嶋 来門' },
     image: imageOf('ピタとび'),
     videoSrc: null,
   },
@@ -39,7 +44,7 @@ const items = [
     genre: 'Web / UIUX / Client Work',
     tint: 'bg-tint-strong-work-reikikkawa',
     result: null,
-    quote: { text: 'Webサイトが実現するなんて思っていなかったので、こんなにかっこよく作ってもらえて嬉しかったです！', name: '吉川 伶' },
+    quote: { text: $('Webサイトが実現するなんて思っていなかったので、こんなにかっこよく作ってもらえて嬉しかったです！', 'I never imagined the website would actually come to life, so I’m thrilled you made it look this amazing!'), name: '吉川 伶' },
     image: imageOf('ReiKikkawa Graduation Work'),
     videoSrc: vimeo('1188937366'),
   },
@@ -48,7 +53,7 @@ const items = [
     href: '#starweaving',
     genre: 'Interactive / Experimental',
     tint: 'bg-tint-strong-work-starweaving',
-    result: { text: '学科紹介パンフレット(2026)に掲載', image: '/works/starweaving/recognition.png', alt: 'StarWeavingが掲載された武蔵野美術大学の2026年学科紹介パンフレット' },
+    result: { text: $('学科紹介パンフレット(2026)に掲載', 'Featured in the 2026 department brochure'), image: '/works/starweaving/recognition.png', alt: $('StarWeavingが掲載された武蔵野美術大学の2026年学科紹介パンフレット', 'Musashino Art University’s 2026 department brochure featuring StarWeaving') },
     quote: null,
     image: imageOf('StarWeaving'),
     videoSrc: vimeo('1188937811'),
@@ -61,7 +66,7 @@ const otherThumb = ja.find((work) => work.uid === '6');
 const otherVideo = (otherThumb?.data.video as any[] | undefined)?.find((item) => item.video?.html)?.video?.html;
 items.push({
   title: 'Other Works',
-  href: '/works/other',
+  href: `/works/other?lang=${lang}`,
   newTab: true,
   genre: 'Branding / Web / Graphic / Typeface / Drawing',
   // Other Works は色を付けず、白をうっすら重ねるだけ(目立たせない)
@@ -82,12 +87,12 @@ items.push({
           href={item.href}
           target={'newTab' in item && item.newTab ? '_blank' : undefined}
           rel={'newTab' in item && item.newTab ? 'noopener noreferrer' : undefined}
-          aria-label={'newTab' in item && item.newTab ? `${item.title}の一覧を新しいタブで開く` : `View case study: ${item.title}`} class="group relative -mx-[12px] flex items-center gap-[16px] rounded-card px-[12px] py-[10px] leading-auto md:gap-[24px]">
+          aria-label={'newTab' in item && item.newTab ? $(`${item.title}の一覧を新しいタブで開く`, `Open ${item.title} in a new tab`) : `View case study: ${'label' in item && item.label ? item.label : item.title}`} class="group relative -mx-[12px] flex items-center gap-[16px] rounded-card px-[12px] py-[10px] leading-auto md:gap-[24px]">
           {item.tint && <span class:list={['pointer-events-none absolute inset-0 rounded-card opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100', item.tint]} aria-hidden="true"></span>}
           <span class="relative w-[112px] shrink-0 md:w-[176px]" data-reveal-part><MediaThumb image={item.image} videoSrc={item.videoSrc} /></span>
           <span class="relative grid min-w-0 flex-1 grid-cols-1 gap-x-[24px] gap-y-[6px] md:grid-cols-2 md:items-center">
             <span class="flex flex-col gap-[4px]">
-              <span class="text-nav font-semibold" data-reveal-part>{item.title}</span>
+              <span class="text-nav font-semibold" data-reveal-part>{'label' in item && item.label ? item.label : item.title}</span>
               <span class="text-small opacity-60" data-reveal-part>{item.genre}</span>
             </span>
             {(item.result || item.quote) && (
@@ -102,10 +107,10 @@ items.push({
                   const person = personOf(item.quote.name);
                   return (
                     <span class="flex items-start gap-[10px]" data-reveal-part>
-                      {person && <img src={person.avatar} alt={`${person.name}さんの顔写真`} loading="lazy" class="size-[32px] shrink-0 rounded-full object-cover" />}
+                      {person && <img src={person.avatar} alt={$(`${person.name}さんの顔写真`, `Photo of ${person.nameEn}`)} loading="lazy" class="size-[32px] shrink-0 rounded-full object-cover" />}
                       <span class="flex min-w-0 flex-col gap-[4px]">
                         <span class="text-small leading-[1.6] opacity-80">“{item.quote.text}”</span>
-                        <span class="flex flex-wrap gap-x-[8px] text-micro leading-auto opacity-50"><span>{item.quote.name}</span>{person && <span>{person.role}</span>}</span>
+                        <span class="flex flex-wrap gap-x-[8px] text-micro leading-auto opacity-50"><span>{lang === 'en' && person ? person.nameEn : item.quote.name}</span>{person && <span>{tr(lang, person.role)}</span>}</span>
                       </span>
                     </span>
                   );

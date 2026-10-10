@@ -1,0 +1,79 @@
+---
+/**
+ * About のモーダル 2 つ。証明書の PDF と、推薦文の全文。
+ * 開くボタン: [data-doc] / [data-testimonial]。背景を押すか、閉じるボタン・Esc で閉じる(<dialog>)。
+ */
+---
+
+<dialog class="about-dialog m-auto h-[85vh] w-full max-w-4xl bg-transparent p-4 md:p-0" aria-label="証明書" data-doc-dialog>
+  <div class="relative h-full w-full">
+    <button type="button" class="absolute -top-3 -right-3 z-50 flex size-10 items-center justify-center rounded-full border border-white/20 bg-neutral-900 text-white shadow-lg hover:bg-black md:-top-4 md:-right-4" aria-label="Close document" data-dialog-close>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M11 1L1 11M1 1L11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+    <div class="h-full w-full overflow-hidden rounded-xl" data-doc-frame-wrap>
+      <iframe class="h-full w-full rounded-xl border-0" title="Document Viewer" data-doc-frame></iframe>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="about-dialog m-auto w-full max-w-xl rounded-2xl border border-white/10 bg-[#111] p-8 text-white shadow-2xl md:p-10" aria-label="推薦文" data-testimonial-dialog>
+  <button type="button" class="absolute top-4 right-4 flex size-8 items-center justify-center rounded-full border border-white/10 bg-neutral-900/80 text-white/70 hover:bg-neutral-800 hover:text-white" aria-label="Close" data-dialog-close>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M11 1L1 11M1 1L11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  </button>
+  <blockquote class="mt-2 flex flex-col gap-8 text-center">
+    <p class="text-base leading-relaxed font-medium tracking-[-0.05em] whitespace-pre-line text-white/90 md:text-[1.1rem]" data-t-quote></p>
+    <footer class="flex w-full items-center justify-center gap-4 border-t border-white/5 pt-6">
+      <img alt="" width="48" height="48" class="size-12 shrink-0 rounded-full object-cover" data-t-avatar />
+      <span class="text-left tracking-[-0.05em]">
+        <cite class="block text-sm not-italic text-white" data-t-author></cite>
+        <span class="block text-xs text-white/50" data-t-role></span>
+      </span>
+    </footer>
+  </blockquote>
+</dialog>
+
+<style>
+  .about-dialog::backdrop { background: rgb(0 0 0 / 0.65); backdrop-filter: blur(12px); }
+</style>
+
+<script>
+  const docDialog = document.querySelector<HTMLDialogElement>('[data-doc-dialog]');
+  const frame = docDialog?.querySelector<HTMLIFrameElement>('[data-doc-frame]');
+  const frameWrap = docDialog?.querySelector<HTMLElement>('[data-doc-frame-wrap]');
+  const tDialog = document.querySelector<HTMLDialogElement>('[data-testimonial-dialog]');
+
+  document.querySelectorAll<HTMLButtonElement>('[data-doc]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!docDialog || !frame) return;
+      const doc = button.dataset.doc!;
+      frame.src = `${doc}#toolbar=0&navpanes=0&scrollbar=0`;
+      // Awwwards の PDF は余白が無いので、旧サイトと同じく内側に余白を付ける
+      frameWrap?.classList.toggle('px-4', doc === '/awwwards.pdf');
+      frameWrap?.classList.toggle('md:px-16', doc === '/awwwards.pdf');
+      frameWrap?.classList.toggle('py-6', doc === '/awwwards.pdf');
+      frameWrap?.classList.toggle('md:py-10', doc === '/awwwards.pdf');
+      docDialog.showModal();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-testimonial]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!tDialog) return;
+      const set = (sel: string, text: string) => { const el = tDialog.querySelector(sel); if (el) el.textContent = text; };
+      set('[data-t-quote]', `"${button.dataset.quote}"`);
+      set('[data-t-author]', button.dataset.author ?? '');
+      set('[data-t-role]', button.dataset.role ?? '');
+      const avatar = tDialog.querySelector<HTMLImageElement>('[data-t-avatar]');
+      if (avatar) { avatar.src = button.dataset.avatar ?? ''; avatar.alt = `${button.dataset.author}さんの顔写真`; }
+      tDialog.showModal();
+    });
+  });
+
+  // 閉じる:ボタン・背景(dialog 自体)を押した時
+  [docDialog, tDialog].forEach((dialog) => {
+    if (!dialog) return;
+    dialog.querySelector('[data-dialog-close]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('close', () => { if (dialog === docDialog && frame) frame.removeAttribute('src'); });
+  });
+</script>

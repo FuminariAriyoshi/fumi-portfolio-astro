@@ -4,6 +4,9 @@
  * BEFORE を表示し、「→ AFTER」または上の切り替えで AFTER を右から横スライドで出す(GSAP expo.out)。
  * 上の切り替えはスクロール中もヘッダーの下に固定。中身は slot="before" / slot="after"。
  */
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   id?: string;
   projectTitle: string;
@@ -14,7 +17,7 @@ const { id, projectTitle } = Astro.props;
 
 <div id={id} data-before-after class="w-full shrink-0 rounded-frame bg-ink bg-(image:--work-tint) px-[16px] py-[32px] text-paper md:px-[40px] md:py-[48px]">
   <div class="sticky top-[calc(var(--portfolio-header-height,78px)+56px)] z-30 mb-[32px] flex justify-center">
-    <div role="group" aria-label={`${projectTitle} の制作前・制作後の切り替え`} class="flex rounded-full border border-paper/20 bg-ink/70 p-[4px] backdrop-blur-md">
+    <div role="group" aria-label={lang === 'en' ? `${projectTitle}: switch between before and after` : `${projectTitle} の制作前・制作後の切り替え`} class="flex rounded-full border border-paper/20 bg-ink/70 p-[4px] backdrop-blur-md">
       {[{ key: 'before', label: 'Before' }, { key: 'after', label: 'After' }].map((phase) => (
         <button
           type="button"
@@ -30,20 +33,20 @@ const { id, projectTitle } = Astro.props;
 
   <div data-ba-viewport class="relative overflow-clip">
     <div data-ba-track class="flex items-start gap-[24px]">
-      <section data-ba-panel="before" aria-label={`${projectTitle} 制作前`} class="w-full shrink-0">
+      <section data-ba-panel="before" aria-label={lang === 'en' ? `${projectTitle}: before` : `${projectTitle} 制作前`} class="w-full shrink-0">
         <div class="flex flex-col items-center gap-[24px]">
           <slot name="before" />
           <button
             type="button"
             data-ba-switch="after"
-            aria-label={`${projectTitle} の制作後(AFTER)を見る`}
+            aria-label={lang === 'en' ? `${projectTitle}: see the after` : `${projectTitle} の制作後(AFTER)を見る`}
             class="rounded-full border border-paper px-[57px] py-[18px] text-cta font-bold tracking-[0.12em] uppercase"
           >
             → After
           </button>
         </div>
       </section>
-      <section data-ba-panel="after" aria-label={`${projectTitle} 制作後`} aria-hidden="true" inert class="w-full shrink-0">
+      <section data-ba-panel="after" aria-label={lang === 'en' ? `${projectTitle}: after` : `${projectTitle} 制作後`} aria-hidden="true" inert class="w-full shrink-0">
         <slot name="after" />
       </section>
     </div>

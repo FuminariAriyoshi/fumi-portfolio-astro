@@ -4,19 +4,22 @@ import ChapterSlide from '../../layout/ChapterSlide.astro';
 import WorkGalleryImage from '../../ui/WorkGalleryImage.astro';
 import VimeoVideo from '../../ui/VimeoVideo.astro';
 import ProjectSiteLink from '../../ui/ProjectSiteLink.astro';
-import { starweavingSections } from '@/data/starweaving';
+import { starweavingSections, starweavingSectionsEn } from '@/data/starweaving';
 import { slideType as t, chapterTextHeight } from '@/lib/slideType';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   /** story = 開いた中の章 / outcome = デッキを開かなくても見せる成果(Recognition) */
   part?: 'story' | 'outcome';
 }
 const { part = 'story' } = Astro.props;
 const isOutcome = (id: string) => id === 'starweaving-recognition';
-const sections = starweavingSections.filter((section) => isOutcome(section.id) === (part === 'outcome'));
+const sections = (lang === 'en' ? starweavingSectionsEn : starweavingSections).filter((section) => isOutcome(section.id) === (part === 'outcome'));
 ---
 
-{part === 'story' && <VimeoVideo videoId="1188937811" title="StarWeavingのインタラクティブ展示の記録映像" bare sound />}
+{part === 'story' && <VimeoVideo videoId="1188937811" title={lang === 'en' ? 'Documentary video of the StarWeaving interactive exhibition' : 'StarWeavingのインタラクティブ展示の記録映像'} bare sound />}
 {sections.map((section) => {
   const merged = 'imageInSlide' in section && section.imageInSlide;
   return (
@@ -31,12 +34,12 @@ const sections = starweavingSections.filter((section) => isOutcome(section.id) =
           {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
         </div>
         {'href' in section && section.href && (
-          <ProjectSiteLink href={section.href} title="StarWeavingが掲載された学科紹介パンフレット" text="学科紹介パンフレット" />
+          <ProjectSiteLink href={section.href} title={lang === 'en' ? 'The department brochure featuring StarWeaving' : 'StarWeavingが掲載された学科紹介パンフレット'} text={lang === 'en' ? 'Department brochure' : '学科紹介パンフレット'} />
         )}
       </ChapterSlide>
     </SlideCanvas>
     {!merged && section.images.map((image) => <WorkGalleryImage {...image} />)}
-    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title="StarWeavingのカラーグレーディングと映像編集" bare />}
+    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title={lang === 'en' ? 'StarWeaving color grading and video editing' : 'StarWeavingのカラーグレーディングと映像編集'} bare />}
   </>
   );
 })}

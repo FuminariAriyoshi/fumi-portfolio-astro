@@ -2,10 +2,14 @@
 /** ピタとび: 本番WEB(Figma 193-260 を型に合わせて整理。画面はスライドの後の WebShowcase で見せる) */
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<ChapterSlide label="TheUIUX: 本番WEB" chapter="TheUIUX" layout="text">
-  <h3 class={t.title}>本番WEB</h3>
-  <p class={t.lead}>本番ではブランディングしたHPデザインに加え、機能として、会社概要、留学ブログ、留学体験記を追加した。</p>
-  <p class={t.body}>SEO等での流入をねらう。また、体験記は、強みとして定義した「経験者の種類の多さ」をそのまま貯めていく場所になる。</p>
+<ChapterSlide label={$($('TheUIUX: 本番WEB', 'TheUIUX: the live website'), 'TheUIUX: the live website')} chapter="TheUIUX" layout="text">
+  <h3 class={t.title}>{$('本番WEB', 'The live website')}</h3>
+  <p class={t.lead}>{$('本番ではブランディングしたHPデザインに加え、機能として、会社概要、留学ブログ、留学体験記を追加した。', 'For launch, on top of the branded homepage design, I added a company page, a study-abroad blog and study-abroad stories.')}</p>
+  <p class={t.body}>{$('SEO等での流入をねらう。また、体験記は、強みとして定義した「経験者の種類の多さ」をそのまま貯めていく場所になる。', 'These aim to bring in traffic through SEO, and the stories become the place that keeps collecting the strength we defined — “the variety of people with real experience.”')}</p>
 </ChapterSlide>

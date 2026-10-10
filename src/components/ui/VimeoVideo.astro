@@ -3,6 +3,9 @@
  * Vimeo の埋め込み。Vimeo 標準の操作 UI は隠し(controls=0)、自作の操作バーを Player API で動かす。
  * 画面に入ったときに初めて読み込み(閉じたデッキの中では読み込まない)、ミュートで自動再生する。画面外に出たら止める。
  */
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   videoId: string;
   title: string;
@@ -12,7 +15,8 @@ interface Props {
   sound?: boolean;
 }
 const { videoId, title, bare = false, sound = false } = Astro.props;
-const muteLabels = { mute: `${title}をミュートする`, unmute: `${title}の音声をオンにする` };
+const muteLabels = lang === 'en' ? { mute: `Mute: ${title}`, unmute: `Turn on sound: ${title}` } : { mute: `${title}をミュートする`, unmute: `${title}の音声をオンにする` };
+const playLabels = lang === 'en' ? { play: `Play: ${title}`, pause: `Pause: ${title}` } : { play: `${title}を再生`, pause: `${title}を一時停止` };
 ---
 <div class:list={['relative aspect-video w-full overflow-clip rounded-frame text-paper', bare ? 'bg-paper' : 'bg-ink']} data-vimeo>
   <iframe
@@ -26,17 +30,17 @@ const muteLabels = { mute: `${title}をミュートする`, unmute: `${title}の
   <button type="button" tabindex="-1" aria-hidden="true" class="absolute inset-0 cursor-pointer" data-vimeo-surface></button>
 
   <div class="absolute inset-x-0 bottom-0 flex items-center gap-[12px] bg-linear-to-t from-ink/70 to-transparent px-[16px] pt-[40px] pb-[12px]">
-    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={`${title}を一時停止`} data-vimeo-play data-label-play={`${title}を再生`} data-label-pause={`${title}を一時停止`}>
+    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={playLabels.pause} data-vimeo-play data-label-play={playLabels.play} data-label-pause={playLabels.pause}>
       <svg data-icon-pause viewBox="0 0 24 24" class="size-[20px] fill-current" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
       <svg data-icon-play viewBox="0 0 24 24" class="hidden size-[20px] fill-current" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" /></svg>
     </button>
-    <input type="range" min="0" max="1000" step="1" value="0" class="vimeo-seek h-[4px] min-w-0 flex-1 cursor-pointer" aria-label={`${title}の再生位置`} data-vimeo-seek />
+    <input type="range" min="0" max="1000" step="1" value="0" class="vimeo-seek h-[4px] min-w-0 flex-1 cursor-pointer" aria-label={lang === 'en' ? `Playback position: ${title}` : `${title}の再生位置`} data-vimeo-seek />
     <span class="shrink-0 text-small tabular-nums" data-vimeo-time>0:00</span>
     <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={muteLabels.unmute} data-vimeo-mute data-label-mute={muteLabels.mute} data-label-unmute={muteLabels.unmute}>
       <svg data-icon-muted viewBox="0 0 24 24" class="size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>
       <svg data-icon-sound viewBox="0 0 24 24" class="hidden size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" stroke-linecap="round" /></svg>
     </button>
-    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={`${title}を全画面表示`} data-vimeo-fullscreen>
+    <button type="button" class="grid size-[32px] shrink-0 place-items-center" aria-label={lang === 'en' ? `Full screen: ${title}` : `${title}を全画面表示`} data-vimeo-fullscreen>
       <svg viewBox="0 0 24 24" class="size-[20px] fill-none stroke-current stroke-2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
   </div>

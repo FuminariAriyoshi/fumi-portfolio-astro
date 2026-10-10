@@ -1,8 +1,8 @@
 ---
 /**
  * About 2 枚目(Figma 427-350):
- * 左 = Education / Language & Certifications & Awards(画像付き、クリックで拡大)
- * 右 = Experience / Workshop & short-term intern
+ * 4 分割:左上 = Education / 右上 = Experience
+ *        左下 = Language & Certifications & Awards(画像付き、クリックで拡大) / 右下 = Workshop & short-term intern
  */
 import SlideFrame from '../layout/SlideFrame.astro';
 import InfoBlock from '../ui/InfoBlock.astro';
@@ -12,6 +12,9 @@ import CredentialCard from '../ui/CredentialCard.astro';
 import ImageLightbox from '../ui/ImageLightbox.astro';
 import { awards, certifications, education, experience, languages } from '@/data/about';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 const work = experience.filter((item) => item.group !== 'workshop');
 const workshop = experience.filter((item) => item.group === 'workshop');
 // 画像の並びと枠の比率(Figma の枠: TOEFL 145×128 / TOEIC 136×221 / Awwwards 166×221 / CSSWinner 156×221)
@@ -22,44 +25,43 @@ const credentials = [
   { item: awards[1], boxAspect: '156/221', fit: 'contain' as const, column: 156 },
 ];
 const columns = credentials.map((c) => `${c.column}fr`).join(' ');
+
 ---
 
 <SlideFrame id="about-experience" label="About: Experience and Education" tone="about" class="md:py-[32px]">
-  <div class="grid flex-1 grid-cols-1 gap-x-[40px] gap-y-[32px] md:grid-cols-2">
-    <div class="flex flex-col justify-between gap-[32px]">
-      <InfoBlock label="Education">
-        <ul class="flex flex-col gap-[20px]">
-          {education.map((item) => <CareerRow item={item} />)}
-        </ul>
-      </InfoBlock>
+  <!-- 4 分割(左上 Education / 右上 Experience / 左下 Language… / 右下 Workshop) -->
+  <div class="grid flex-1 grid-cols-1 gap-x-[40px] gap-y-[24px] md:grid-cols-2 md:grid-rows-[auto_1fr]">
+    <InfoBlock label="Education">
+      <ul class="flex flex-col gap-[20px]">
+        {education.map((item) => <CareerRow item={item} />)}
+      </ul>
+    </InfoBlock>
 
-      <InfoBlock label="Language & Certifications & Awards">
-        <ul class="flex flex-wrap gap-x-[24px] gap-y-[4px] leading-auto">
-          {languages.map((lang) => (
-            <li class="flex items-baseline gap-[8px]">
-              <span class="text-kicker opacity-60">{lang.label}</span>
-              <span class="text-meta">{lang.value}</span>
-            </li>
-          ))}
-        </ul>
-        <ul class="mt-[10px] grid gap-x-[10px] gap-y-[8px]" style={`grid-template-columns: ${columns}`}>
-          {credentials.map((c) => <CredentialCard item={c.item} boxAspect={c.boxAspect} fit={c.fit} />)}
-        </ul>
-      </InfoBlock>
-    </div>
+    <InfoBlock label="Experience">
+      <ul class="flex flex-col gap-[14px]">
+        {work.map((item) => <ExperienceItem item={item} />)}
+      </ul>
+    </InfoBlock>
 
-    <div class="flex flex-col gap-[16px]">
-      <InfoBlock label="Experience">
-        <ul class="flex flex-col gap-[14px]">
-          {work.map((item) => <ExperienceItem item={item} />)}
-        </ul>
-      </InfoBlock>
-      <InfoBlock label="Workshop & short-term intern">
-        <ul class="flex flex-col gap-[14px]">
-          {workshop.map((item) => <ExperienceItem item={item} />)}
-        </ul>
-      </InfoBlock>
-    </div>
+    <InfoBlock label="Language & Certifications & Awards">
+      <ul class="flex flex-wrap gap-x-[24px] gap-y-[4px] leading-auto">
+        {languages.map((item) => (
+          <li class="flex items-baseline gap-[8px]">
+            <span class="text-kicker opacity-60">{item.label}</span>
+            <span class="text-meta">{tr(lang, item.value)}</span>
+          </li>
+        ))}
+      </ul>
+      <ul class="mt-[10px] grid gap-x-[10px] gap-y-[8px]" style={`grid-template-columns: ${columns}`}>
+        {credentials.map((c) => <CredentialCard item={c.item} boxAspect={c.boxAspect} fit={c.fit} />)}
+      </ul>
+    </InfoBlock>
+
+    <InfoBlock label="Workshop & short-term intern">
+      <ul class="flex flex-col gap-[14px]">
+        {workshop.map((item) => <ExperienceItem item={item} />)}
+      </ul>
+    </InfoBlock>
   </div>
 </SlideFrame>
 

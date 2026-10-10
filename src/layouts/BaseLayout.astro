@@ -1,14 +1,16 @@
 ---
 import '../styles/global.css';
+import { getLang } from '@/lib/i18n';
 
 interface Props {
   title: string;
 }
 
 const { title } = Astro.props;
+const lang = getLang(Astro);
 ---
 
-<html lang="ja">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,6 +25,21 @@ const { title } = Astro.props;
       rel="stylesheet"
     />
     <title>{title}</title>
+    <link rel="alternate" hreflang="ja" href="/" />
+    <link rel="alternate" hreflang="en" href="/en/" />
+    <!-- 言語の振り分け:ヘッダーで選んだ言語(localStorage)→ 無ければブラウザの言語。合わない方のページに来たら移す -->
+    <script is:inline>
+      (function () {
+        try {
+          var pref = localStorage.getItem('fumi-lang');
+          var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+          var want = pref || (langs.some(function (l) { return /^ja/i.test(l); }) ? 'ja' : 'en');
+          var isEn = location.pathname.indexOf('/en') === 0;
+          if (want === 'en' && !isEn) location.replace('/en/' + location.search + location.hash);
+          else if (want === 'ja' && isEn) location.replace('/' + location.search + location.hash);
+        } catch (e) {}
+      })();
+    </script>
     <!-- 登場アニメーション対象を初回描画から隠す。JS が動かなかった時は 3 秒で戻す -->
     <script is:inline>
       (function () {
@@ -34,7 +51,7 @@ const { title } = Astro.props;
     </script>
   </head>
   <body class="bg-paper font-sans text-ink">
-    <a href="#main-content" class="portfolio-skip">本文へ移動</a>
+    <a href="#main-content" class="portfolio-skip">{lang === 'en' ? 'Skip to content' : '本文へ移動'}</a>
     <slot />
   </body>
 </html>

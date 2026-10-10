@@ -2,12 +2,16 @@
 /** 作品ごとの推薦文(暗い横長の箱。左に人、右に全文)。データは About の testimonials から名前で引く */
 import { testimonials } from '@/data/about';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   name: string;
 }
 
 const { name } = Astro.props;
 const item = testimonials.find((t) => t.name === name);
+
 ---
 
 {item && (
@@ -16,12 +20,12 @@ const item = testimonials.find((t) => t.name === name);
     <figcaption class="flex items-center gap-[16px] leading-auto">
       <img src={item.avatar} alt="" width="56" height="56" loading="lazy" class="size-[56px] shrink-0 rounded-full object-cover" />
       <span class="flex flex-col gap-[2px]">
-        <span class="text-meta">{item.name}</span>
-        <span class="text-small opacity-60">{item.role}</span>
+        <span class="text-meta">{lang === 'en' ? item.nameEn : item.name}</span>
+        <span class="text-small opacity-60">{tr(lang, item.role)}</span>
       </span>
     </figcaption>
     <blockquote class="flex flex-col text-meta leading-[1.9]">
-      {item.quote.map((paragraph) => <p>{paragraph}</p>)}
+      {tr(lang, item.quote).map((paragraph) => <p>{paragraph}</p>)}
     </blockquote>
   </figure>
 )}

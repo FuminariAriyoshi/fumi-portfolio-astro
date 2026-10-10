@@ -4,6 +4,9 @@ import CoverCaption from '../ui/CoverCaption.astro';
 import ProjectSiteLink from '../ui/ProjectSiteLink.astro';
 import type { Project } from './ProjectSlide.astro';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   project: Project;
   id: string;
@@ -23,7 +26,7 @@ const siteHref = project.href?.startsWith('http') ? project.href : undefined;
 
 <div class="work-deck-wrap relative w-full">
 <details class="work-deck w-full" data-work-deck>
-  <summary class="work-deck-summary cursor-pointer list-none" aria-label={`${project.title}のスライドを開閉`} aria-controls={`${id}-slides`}>
+  <summary class="work-deck-summary cursor-pointer list-none" aria-label={lang === 'en' ? `Open or close the slides: ${project.title}` : `${project.title}のスライドを開閉`} aria-controls={`${id}-slides`}>
     {revealTitle ? (
       <div class="md:hidden"><WorkTitle {...titleProps} intro={project.intro} /></div>
     ) : <WorkTitle {...titleProps} />}
@@ -35,7 +38,7 @@ const siteHref = project.href?.startsWith('http') ? project.href : undefined;
         {coverVideoId ? (
           <iframe
             src={`https://player.vimeo.com/video/${coverVideoId}?background=1&autoplay=1&loop=1&muted=1&playsinline=1`}
-            title={`${project.title}の表紙動画`}
+            title={lang === 'en' ? `Cover video: ${project.title}` : `${project.title}の表紙動画`}
             tabindex="-1"
             allow="autoplay"
             class="pointer-events-none size-full scale-[1.02] border-0"

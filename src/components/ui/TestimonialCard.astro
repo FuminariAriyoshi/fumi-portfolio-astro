@@ -2,23 +2,27 @@
 /** 推薦文カード。全文を段落ごとに載せる。About のスライド(暗い地)の上に置くので、白を薄く重ねた背景。角丸は最小段階(media)。人より言葉が目立つよう本文を大きく */
 import type { Testimonial } from '@/data/about';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   item: Testimonial;
   class?: string;
 }
 
 const { item, class: className } = Astro.props;
+
 ---
 
 <figure class:list={['flex w-[480px] shrink-0 flex-col justify-between gap-[16px] rounded-media bg-paper/10 p-[16px] text-paper', className]}>
   <blockquote class="flex flex-col gap-[10px] text-meta leading-body">
-    {item.quote.map((paragraph) => <p>{paragraph}</p>)}
+    {tr(lang, item.quote).map((paragraph) => <p>{paragraph}</p>)}
   </blockquote>
   <figcaption class="flex items-center gap-[10px] leading-auto">
     <img src={item.avatar} alt="" width="32" height="32" loading="lazy" class="size-[32px] shrink-0 rounded-full object-cover" />
     <span class="flex flex-col gap-[2px]">
-      <span class="text-small">{item.name}</span>
-      <span class="text-kicker opacity-70">{item.role}</span>
+      <span class="text-small">{lang === 'en' ? item.nameEn : item.name}</span>
+      <span class="text-kicker opacity-70">{tr(lang, item.role)}</span>
     </span>
   </figcaption>
 </figure>

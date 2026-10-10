@@ -1,4 +1,7 @@
 ---
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 /**
  * 画像を大きく見せるオーバーレイ。ページに 1 つ置き、[data-lightbox-src] を持つボタンから開く。
  * <dialog> の showModal を使うので、Esc で閉じ、フォーカスは中に閉じ込められ、閉じると元のボタンに戻る。
@@ -7,7 +10,7 @@
 
 <dialog
   data-lightbox
-  aria-label="画像の拡大表示"
+  aria-label={lang === 'en' ? 'Enlarged image' : '画像の拡大表示'}
   class="m-auto max-h-[92dvh] max-w-[92vw] overflow-visible bg-transparent p-0 text-paper backdrop:bg-ink/75"
 >
   <figure class="relative flex flex-col items-center gap-[12px]">
@@ -16,7 +19,7 @@
     <button
       type="button"
       data-lightbox-close
-      aria-label="拡大表示を閉じる"
+      aria-label={lang === 'en' ? 'Close enlarged image' : '拡大表示を閉じる'}
       class="absolute top-[-16px] right-[-16px] flex size-[40px] items-center justify-center rounded-full bg-paper text-nav leading-none text-ink"
     >
       <span aria-hidden="true">×</span>

@@ -1,0 +1,43 @@
+---
+import WorksLayout from '@/layouts/WorksLayout.astro';
+import AboutContent from '@/components/about/AboutContent.astro';
+import AboutModals from '@/components/about/AboutModals.astro';
+import type { Lang } from '@/data/aboutPage';
+
+const langs: Lang[] = ['en', 'ja'];
+---
+
+<WorksLayout title="About — Fumi" fumiHref="/">
+  <main id="main-content" class="mx-auto flex w-full max-w-[1700px] flex-col px-6 pt-[88px] pb-[clamp(1rem,4vh,2.5rem)]" data-about-root>
+    {langs.map((lang) => (
+      <div data-lang-block={lang} hidden={lang !== 'en'} lang={lang}>
+        <AboutContent lang={lang} />
+      </div>
+    ))}
+  </main>
+  <AboutModals />
+</WorksLayout>
+
+<style is:global>
+  .about-scroll::-webkit-scrollbar { width: 4px; }
+  .about-scroll::-webkit-scrollbar-track { background: rgb(255 255 255 / 0.05); border-radius: 10px; }
+  .about-scroll::-webkit-scrollbar-thumb { background: rgb(255 255 255 / 0.2); border-radius: 10px; }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  // 言語：?lang= → ブラウザの言語(旧サイトと同じ判定)
+  const urlLang = new URLSearchParams(location.search).get('lang');
+  const lang = urlLang === 'ja' || urlLang === 'en'
+    ? urlLang
+    : navigator.language.startsWith('ja') || navigator.languages?.some((l) => l.startsWith('ja')) ? 'ja' : 'en';
+  document.querySelectorAll<HTMLElement>('[data-lang-block]').forEach((block) => { block.hidden = block.dataset.langBlock !== lang; });
+  document.documentElement.lang = lang;
+
+  // 読み込み時に下から順に出す(旧サイトの framer-motion と同じ動き)。reduced-motion では出さない
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const blocks = document.querySelectorAll(`[data-lang-block="${lang}"] [data-about-in]`);
+    gsap.from(blocks, { autoAlpha: 0, y: 16, duration: 0.8, ease: 'expo.out', stagger: 0.05, delay: 0.1, clearProps: 'all' });
+  }
+</script>

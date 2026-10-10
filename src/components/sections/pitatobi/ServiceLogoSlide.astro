@@ -3,6 +3,10 @@
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 const panels = [
   { tone: 'bg-paper text-ink', shingo: '/works/pitatobi-story/logo-shingo-black.webp', final: '/works/pitatobi-story/logo-final-black.svg', finalH: 55.3109 },
   { tone: 'bg-pitatobi-blue text-paper', shingo: '/works/pitatobi-story/logo-shingo-white.webp', final: '/works/pitatobi-story/logo-final-white.svg', finalH: 54.2673 },
@@ -10,25 +14,25 @@ const panels = [
 // パネルの中身は pt-[40px] で 20px 下げる(キャプションが薄く小さいぶん下が空いて見えるため、見た目の中央にそろえる)
 ---
 
-<ChapterSlide label="BrandSystem: サービスロゴ" chapter="BrandSystem">
+<ChapterSlide label={$($('BrandSystem: サービスロゴ', 'BrandSystem: service logo'), 'BrandSystem: service logo')} chapter="BrandSystem">
   <div slot="visual" class="grid h-[420px] w-full grid-cols-2 overflow-clip rounded-card">
     {panels.map((panel) => (
       <div class:list={['flex flex-col items-center justify-center gap-[40px] pt-[40px]', panel.tone]}>
         <div class="flex flex-col items-start gap-[12px]">
-          <img src={panel.shingo} alt="新ゴで組んだ「ピタとび」" width="400" height="106" loading="lazy" class="h-[48px] w-[180px] object-cover" />
-          <p class={t.caption}>新ゴ</p>
+          <img src={panel.shingo} alt={$($('新ゴで組んだ「ピタとび」', '“Pitatobi” set in Shin Go'), '“Pitatobi” set in Shin Go')} width="400" height="106" loading="lazy" class="h-[48px] w-[180px] object-cover" />
+          <p class={t.caption}>{$('新ゴ', 'Shin Go')}</p>
         </div>
         <div class="flex flex-col items-start gap-[12px]">
-          <img src={panel.final} alt="最終的な「ピタとび」のロゴ" width="186.835" height={panel.finalH} loading="lazy" class="h-[53px] w-[180px]" />
-          <p class={t.caption}>最終ロゴ</p>
+          <img src={panel.final} alt={$($('最終的な「ピタとび」のロゴ', 'The final “Pitatobi” logo'), 'The final “Pitatobi” logo')} width="186.835" height={panel.finalH} loading="lazy" class="h-[53px] w-[180px]" />
+          <p class={t.caption}>{$('最終ロゴ', 'Final logo')}</p>
         </div>
       </div>
     ))}
   </div>
-  <h3 class={t.title}>サービスロゴ</h3>
-  <p class={t.lead}>サービスロゴもキーバリューに沿ってデザインを行った。</p>
+  <h3 class={t.title}>{$('サービスロゴ', 'Service logo')}</h3>
+  <p class={t.lead}>{$('サービスロゴもキーバリューに沿ってデザインを行った。', 'I designed the service logo along the key values too.')}</p>
   <div class={t.body}>
-    <p>信頼性のあるカッチッとしたイメージとそれでも親しみのあるデザインを目指した。ロゴももう一人のデザイナーと共同で製作した。</p>
-    <p>モリサワフォントの新ゴを元に、角を少し落として表現した。また、びの点々に遊び心を持たせた</p>
+    <p>{$('信頼性のあるカッチッとしたイメージとそれでも親しみのあるデザインを目指した。ロゴももう一人のデザイナーと共同で製作した。', 'I aimed for something solid and trustworthy that still feels friendly, and made the logo together with another designer.')}</p>
+    <p>{$('モリサワフォントの新ゴを元に、角を少し落として表現した。また、びの点々に遊び心を持たせた', 'Starting from Morisawa’s Shin Go, I softened the corners slightly and added a playful touch to the dakuten (the two dots) on “び.”')}</p>
   </div>
 </ChapterSlide>

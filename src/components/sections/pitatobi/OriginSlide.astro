@@ -2,9 +2,12 @@
 /** ピタとび: Origin(留学は人生を変える。) */
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
-import { pitatobiStories } from '@/data/projects';
+import { pitatobiStories, pitatobiStoriesEn } from '@/data/projects';
 
-const story = pitatobiStories[0];
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const story = (lang === 'en' ? pitatobiStoriesEn : pitatobiStories)[0];
 const paragraphs = story.paragraphs.filter(Boolean);
 ---
 

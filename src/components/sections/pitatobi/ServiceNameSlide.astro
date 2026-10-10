@@ -2,25 +2,29 @@
 /** ピタとび: サービス名(Figma 172-3 を型に合わせて整理) */
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<ChapterSlide label="BrandSystem: サービス名" chapter="BrandSystem">
+<ChapterSlide label={$($('BrandSystem: サービス名', 'BrandSystem: service name'), 'BrandSystem: service name')} chapter="BrandSystem">
   <!-- 「ピタとび」をカードの縦の中心に置き、由来はその下にぶら下げる(由来の分だけ上にずれないよう absolute) -->
   <div slot="visual" class:list={[t.card, 'flex h-[420px] w-full items-center justify-center']}>
     <div class="relative">
-      <p class="text-name font-bold leading-[1.2] tracking-[-0.06em]">ピタとび</p>
-      <p class:list={[t.body, 'absolute top-full left-1/2 mt-[16px] -translate-x-1/2 whitespace-nowrap font-medium opacity-60']}>ピッタリ × 旅 × 飛ぶ</p>
+      <p class="text-name font-bold leading-[1.2] tracking-[-0.06em]">{$('ピタとび', 'Pitatobi')}</p>
+      <p class:list={[t.body, 'absolute top-full left-1/2 mt-[16px] -translate-x-1/2 whitespace-nowrap font-medium opacity-60']}>{$('ピッタリ × 旅 × 飛ぶ', 'Perfect fit × Journey × Take flight')}</p>
     </div>
   </div>
-  <h3 class={t.title}>サービス名</h3>
-  <p class={t.lead}>元のサービス名 である、留学NEXTのサービス名にはあまり理由がなかった。</p>
+  <h3 class={t.title}>{$('サービス名', 'Service name')}</h3>
+  <p class={t.lead}>{$('元のサービス名 である、留学NEXTのサービス名にはあまり理由がなかった。', 'The original name, Ryugaku NEXT, didn’t have much of a reason behind it.')}</p>
   <div class={t.body}>
-    <p>留学NEXTチームの強みは「一人ひとりにピッタリ」な留学方法を提案できること。またよりICPに刺さるサービス名があると思い、</p>
-    <p>だからサービス名から作り直した。もう一人のデザイナーと案出しを行い、非常にいい案が出た。</p>
-    <p>それが「ピタとび」だった。覚えやすく、ICPにも刺さりそうな名前。実際</p>
+    <p>{$('留学NEXTチームの強みは「一人ひとりにピッタリ」な留学方法を提案できること。またよりICPに刺さるサービス名があると思い、', 'The Ryugaku NEXT team’s strength is proposing a way to study abroad that fits each person perfectly. I also felt there was a name that would resonate more with the ICP,')}</p>
+    <p>{$('だからサービス名から作り直した。もう一人のデザイナーと案出しを行い、非常にいい案が出た。', 'so we rebuilt it starting from the name. Brainstorming with another designer, we landed on a great idea.')}</p>
+    <p>{$('それが「ピタとび」だった。覚えやすく、ICPにも刺さりそうな名前。実際', 'That was “Pitatobi” — easy to remember, and a name that seemed likely to resonate with the ICP.')}</p>
   </div>
   <div class={t.column}>
-    <p class={t.columnTitle}>サービスコンセプト</p>
-    <p class={t.columnBody}>実際の経験に基づいた多様な留学のカタチをご提案。ユーザーが自分らしさを大切にしながら、「本当にやりたい、ぴったりな留学」を見つけ、海外へ飛び立つための一歩を全力でサポート。</p>
+    <p class={t.columnTitle}>{$('サービスコンセプト', 'Service concept')}</p>
+    <p class={t.columnBody}>{$('実際の経験に基づいた多様な留学のカタチをご提案。ユーザーが自分らしさを大切にしながら、「本当にやりたい、ぴったりな留学」を見つけ、海外へ飛び立つための一歩を全力でサポート。', 'Proposing many ways to study abroad, grounded in real experience. We fully support users in finding the study-abroad path they truly want — one that fits them perfectly — while staying true to themselves, and in taking their first step overseas.')}</p>
   </div>
 </ChapterSlide>

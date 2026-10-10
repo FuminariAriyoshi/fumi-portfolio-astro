@@ -5,6 +5,9 @@
  * 遊び(ユーザー指定):マウスが顔の近くに来た時だけ、顔がそちらへ少し寄る(近いほど強く。回転はしない)。クリックしても何も起こらない。
  * reduced-motion では写真のまま・動かさない。登場アニメーション(data-enter)は外側、遊びは内側(data-memoji-face)に付ける。
  */
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   /** 枠の大きさ(px) */
   size?: number;
@@ -15,7 +18,7 @@ const { size = 118 } = Astro.props;
 
 <span data-enter="avatar" data-memoji class="relative block shrink-0" style={`width: ${size}px; height: ${size}px`}>
   <span data-memoji-face class="relative block size-full overflow-clip rounded-full">
-    <img src="/slides/fumi-memoji.png" alt="Fumi のミー文字" width={size} height={size} class="size-full object-cover" data-memoji-image />
+    <img src="/slides/fumi-memoji.png" alt={lang === 'en' ? 'Fumi’s Memoji' : 'Fumi のミー文字'} width={size} height={size} class="size-full object-cover" data-memoji-image />
     <video
       data-src="/memoji-compressed.mp4"
       muted

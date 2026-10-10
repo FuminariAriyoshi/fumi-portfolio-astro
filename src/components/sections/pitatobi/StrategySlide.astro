@@ -2,17 +2,21 @@
 /** ピタとび: 強みの特定と ICP(Figma 154-1627 を型に合わせて整理。資料はスライドの後の DeckViewer で見せる) */
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<ChapterSlide label="Strategy&ICP: 強みの特定とICP" chapter="Strategy&ICP" layout="text">
+<ChapterSlide label={$($('Strategy&ICP: 強みの特定とICP', 'Strategy&ICP: defining the strength and the ICP'), 'Strategy&ICP: defining the strength and the ICP')} chapter="Strategy&ICP" layout="text">
   <div class="flex flex-col gap-[4px]">
-    <h3 class={t.title}>強みの特定とICP</h3>
-    <p class="text-subtitle font-medium leading-[1.35] tracking-[-0.02em]">「一人一人にピッタリな留学」</p>
+    <h3 class={t.title}>{$('強みの特定とICP', 'Defining the strength and the ICP')}</h3>
+    <p class="text-subtitle font-medium leading-[1.35] tracking-[-0.02em]">{$('「一人一人にピッタリな留学」', '“Study abroad that fits each person perfectly”')}</p>
   </div>
-  <p class={t.lead}>最初に、留学NEXTの強みを洗い直した。</p>
+  <p class={t.lead}>{$('最初に、留学NEXTの強みを洗い直した。', 'First, I took a fresh look at Ryugaku NEXT’s strengths.')}</p>
   <div class={t.body}>
-    <p>強みは運営3名の留学方法が全員違い、経験者の種類が多いことだった。正規留学、コミカレ＋編入、交換留学、大学院留学。ルートの違う経験者が揃っている。だから相談者の目的・性格・予算・不安に近い実体験を、必ず誰かが持っている。</p>
-    <p>留学エージェントの比較は、学校数・料金・手続きで終わりやすい。この強みがあれば、</p>
-    <p>「一人一人にピッタリな留学方法」まで具体化できる。競合との差はここにあった。</p>
+    <p>{$('強みは運営3名の留学方法が全員違い、経験者の種類が多いことだった。正規留学、コミカレ＋編入、交換留学、大学院留学。ルートの違う経験者が揃っている。だから相談者の目的・性格・予算・不安に近い実体験を、必ず誰かが持っている。', 'The strength was that the three people running it had each studied abroad in a different way, so they covered many kinds of experience: full degree, community college plus transfer, exchange, and graduate school. With people from different routes, someone always has real experience close to each person’s goals, personality, budget and worries.')}</p>
+    <p>{$('留学エージェントの比較は、学校数・料金・手続きで終わりやすい。この強みがあれば、', 'Comparisons between study-abroad agencies tend to stop at the number of schools, fees and paperwork. With this strength,')}</p>
+    <p>{$('「一人一人にピッタリな留学方法」まで具体化できる。競合との差はここにあった。', 'we could make it concrete — down to “the way to study abroad that fits each person perfectly.” That was the difference from competitors.')}</p>
   </div>
 </ChapterSlide>

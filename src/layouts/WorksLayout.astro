@@ -5,13 +5,16 @@
  */
 import '../styles/global.css';
 import SmoothScroll from '@/components/works/SmoothScroll.astro';
+import FumiLogo from '@/components/ui/FumiLogo.astro';
 
 interface Props {
   title: string;
   lang?: 'en' | 'ja';
+  /** ヘッダーの「Fumi」の行き先(既定は Other Works の一覧) */
+  fumiHref?: string;
 }
 
-const { title, lang = 'en' } = Astro.props;
+const { title, lang = 'en', fumiHref = '/works/other' } = Astro.props;
 ---
 
 <html lang={lang} class="works-theme">
@@ -33,8 +36,8 @@ const { title, lang = 'en' } = Astro.props;
   <body class="works-body min-h-screen bg-ink text-paper antialiased selection:bg-neutral-800">
     <a href="#main-content" class="portfolio-skip">本文へ移動</a>
     <header class="fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-ink/80 px-4 py-4 backdrop-blur-md md:px-8">
-      <!-- Fumi は Other Works の一覧へ(このページ群のホーム) -->
-      <a href="/works/other" class="font-serif text-nav leading-none" aria-label="Fumi (Other Works の一覧へ)">Fumi</a>
+      <!-- Fumi は既定で Other Works の一覧へ(このページ群のホーム)。About ではトップへ -->
+      <a href={fumiHref} class="block text-paper" aria-label={fumiHref === '/' ? 'FumiStudio (ホームへ)' : 'FumiStudio (Other Works の一覧へ)'}><FumiLogo class="h-[20px] w-auto" /></a>
       <nav class="flex items-center gap-6 text-sm" aria-label="Works">
         <a href="/#works" aria-label="ポートフォリオの Works に戻る">Back to portfolio</a>
       </nav>

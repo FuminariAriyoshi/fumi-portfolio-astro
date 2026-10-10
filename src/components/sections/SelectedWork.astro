@@ -16,8 +16,11 @@ import WorkTestimonial from './WorkTestimonial.astro';
 import ReikikkawaChapters from './reikikkawa/ReikikkawaChapters.astro';
 import StarWeavingChapters from './starweaving/StarWeavingChapters.astro';
 import StackedWorkDeck from './StackedWorkDeck.astro';
-import { projects, projectTitles } from '@/data/projects';
+import { localizeProject, projects, projectTitles } from '@/data/projects';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   id: string;
   index: number;
@@ -25,7 +28,10 @@ interface Props {
 
 const { id, index } = Astro.props;
 const title = projectTitles[index];
-const project = projects.find((p) => p.title === title);
+const base = projects.find((p) => p.title === title);
+// 表示用(英語版では作品名・紹介文などを英語に差し替える)。title は日本語のまま目印に使う
+const project = base && localizeProject(base, lang);
+const keywordsLabel = (name: string) => (lang === 'en' ? `Keywords: ${name}` : `${name} のキーワード`);
 const stacked = id === 'reikikkawa' || id === 'starweaving';
 // キーワードの帯の色と章スライドがあるのは現状ピタとびのみ
 const bandColor: Record<string, string> = { ピタとび: 'to-work-pitatobi-deep' };
@@ -47,7 +53,7 @@ const tintClass: Record<string, string> = {
       coverVideoId={id === 'reikikkawa' ? '1188937366' : '1188937811'}
       revealTitle
     >
-      <KeywordBand words={project.keywords} toClass="to-ink-soft" label={`${title} のキーワード`} />
+      <KeywordBand words={project.keywords} toClass="to-ink-soft" label={keywordsLabel(project.title)} />
       <SlideCanvas id={`${id}-intro`}><ProjectIntroSlide project={project} /></SlideCanvas>
       {id === 'reikikkawa' ? <ReikikkawaChapters /> : <StarWeavingChapters />}
     </StackedWorkDeck>
@@ -74,7 +80,7 @@ const tintClass: Record<string, string> = {
         />
       </div>
       <WorkTitle project={project} showTitle={false} />
-      <KeywordBand words={project.keywords} toClass={bandColor[title] ?? 'to-ink-soft'} label={`${title} のキーワード`} />
+      <KeywordBand words={project.keywords} toClass={bandColor[title] ?? 'to-ink-soft'} label={keywordsLabel(project.title)} />
       {title === 'ピタとび' && <PitatobiBeforeAfter />}
       <SlideCanvas id={`${id}-intro`}>
         <ProjectIntroSlide project={project} />

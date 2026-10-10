@@ -1,0 +1,67 @@
+---
+/**
+ * 推薦文が横に流れ続ける帯(旧サイト testimonials-ticker の compact 版)。
+ * カードを押すと全文をモーダルで開く(AboutModals)。両端は背景色へフェード。
+ */
+import { tickerTestimonials, type Lang } from '@/data/aboutPage';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+// 密度を出すため 3 周分並べ、さらにループ用に 2 回並べる(2 回目は読み上げから外す)
+const cards = [...tickerTestimonials, ...tickerTestimonials, ...tickerTestimonials];
+---
+
+<div class="relative w-full overflow-hidden" data-ticker>
+  <div class="pointer-events-none absolute inset-y-0 left-0 z-30 w-12 bg-linear-to-r from-ink via-ink/80 to-transparent" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute inset-y-0 right-0 z-30 w-12 bg-linear-to-l from-ink via-ink/80 to-transparent" aria-hidden="true"></div>
+  <div class="flex w-max" data-ticker-track>
+    {[0, 1].map((copy) => (
+      <ul class="flex shrink-0 gap-4 pr-4" aria-hidden={copy === 1 ? 'true' : undefined} aria-label={copy === 0 ? 'Testimonials' : undefined}>
+        {cards.map((t) => {
+          const author = t.author[lang];
+          const full = (t.fullQuote ?? t.quote)[lang];
+          return (
+            <li class="w-[280px] shrink-0 md:w-[350px]">
+              <button
+                type="button"
+                tabindex={copy === 1 ? -1 : undefined}
+                class="flex h-full w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-white/10 bg-[#111] p-4 shadow-[0_2px_15px_-3px_rgba(255,255,255,0.05)] transition-colors hover:bg-neutral-900/40"
+                aria-haspopup="dialog"
+                aria-label={`${author} さんの推薦文を全文で読む`}
+                data-testimonial
+                data-quote={full}
+                data-author={author}
+                data-role={t.role[lang]}
+                data-avatar={t.avatar}
+              >
+                <span class="line-clamp-2 w-full text-center text-xs leading-relaxed font-normal tracking-tight whitespace-pre-line text-white md:line-clamp-3 md:text-[0.8125rem]">"{t.quote[lang]}"</span>
+                {t.fullQuote && <span class="flex items-center gap-1 text-xs text-neutral-400"><span class="underline">more</span> →</span>}
+                <span class="flex w-full items-center justify-center gap-4">
+                  <img src={t.avatar} alt="" width="48" height="48" loading="lazy" class="size-12 shrink-0 rounded-full object-cover" />
+                  <span class="text-left tracking-[-0.05em]">
+                    <span class="block text-sm text-neutral-400">{author}</span>
+                    <span class="block text-xs text-white/50">{t.role[lang]}</span>
+                  </span>
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    ))}
+  </div>
+</div>
+
+<script>
+  /** 帯をゆっくり流し続ける(旧サイトと同じく 1 周 180 秒)。reduced-motion では止めたまま */
+  import gsap from 'gsap';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<HTMLElement>('[data-ticker-track]').forEach((track) => {
+      gsap.fromTo(track, { xPercent: 0 }, { xPercent: -50, duration: 180, ease: 'none', repeat: -1 });
+    });
+  }
+</script>

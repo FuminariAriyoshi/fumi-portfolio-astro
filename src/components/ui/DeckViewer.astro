@@ -4,6 +4,9 @@
  * スマホでも見られるよう PDF は埋め込まず、書き出したページ画像を切り替える。
  * 画像の左半分/右半分のクリック、下のボタン、フォーカス中の ←→ キーで送る。最後の次は最初に戻る(ループ)。
  */
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   title: string;
   pages: string[];
@@ -22,12 +25,12 @@ const button = theme === 'light' ? 'bg-ink text-paper' : 'bg-paper text-ink';
   data-pages={JSON.stringify(pages)}
   class="flex w-full flex-col gap-[16px] outline-none"
   role="region"
-  aria-roledescription="スライド"
+  aria-roledescription={lang === 'en' ? 'slide' : 'スライド'}
   aria-label={title}
   tabindex="0"
 >
   <div class="relative aspect-video w-full overflow-clip rounded-frame bg-paper">
-    <img data-deck-image src={pages[0]} alt={`${title} 1ページ目`} width="1600" height="900" loading="lazy" class="absolute inset-0 size-full object-cover select-none" />
+    <img data-deck-image src={pages[0]} alt={lang === 'en' ? `${title}, page 1` : `${title} 1ページ目`} width="1600" height="900" loading="lazy" class="absolute inset-0 size-full object-cover select-none" />
     <!-- 画像の左右をクリックしてもページを送れる(ボタンと同じ操作なので読み上げからは外す) -->
     <button type="button" tabindex="-1" aria-hidden="true" data-deck-go="-1" class="absolute inset-y-0 left-0 w-1/2 cursor-w-resize"></button>
     <button type="button" tabindex="-1" aria-hidden="true" data-deck-go="1" class="absolute inset-y-0 right-0 w-1/2 cursor-e-resize"></button>
@@ -38,8 +41,8 @@ const button = theme === 'light' ? 'bg-ink text-paper' : 'bg-paper text-ink';
       <p class="text-body leading-auto tabular-nums" aria-live="polite">
         <span data-deck-current>01</span><span class="opacity-50"> / {pad(pages.length)}</span>
       </p>
-      <button type="button" data-deck-go="-1" aria-label="前のページ" class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>←</button>
-      <button type="button" data-deck-go="1" aria-label="次のページ" class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>→</button>
+      <button type="button" data-deck-go="-1" aria-label={lang === 'en' ? 'Previous page' : '前のページ'} class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>←</button>
+      <button type="button" data-deck-go="1" aria-label={lang === 'en' ? 'Next page' : '次のページ'} class:list={['flex size-[44px] items-center justify-center rounded-full font-serif text-body', button]}>→</button>
     </div>
   </div>
 </div>
@@ -60,7 +63,7 @@ const button = theme === 'light' ? 'bg-ink text-paper' : 'bg-paper text-ink';
     const go = (delta: number) => {
       index = (index + delta + pages.length) % pages.length;
       image.src = pages[index];
-      image.alt = `${title} ${index + 1}ページ目`;
+      image.alt = document.documentElement.lang === 'en' ? `${title}, page ${index + 1}` : `${title} ${index + 1}ページ目`;
       if (current) current.textContent = pad(index + 1);
       prefetch(index + 1);
     };

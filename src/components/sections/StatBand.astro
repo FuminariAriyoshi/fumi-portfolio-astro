@@ -7,6 +7,9 @@
  */
 import { slideType as t } from '@/lib/slideType';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Stat {
   label: string;
   value: string;
@@ -38,7 +41,7 @@ const textClass = ['bg-linear-to-b from-ink from-[10%] to-80% bg-clip-text text-
         <dd class="flex items-baseline whitespace-nowrap font-black leading-none text-title @3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1 @3xl:self-center @3xl:text-stat">
           {stat.from && (
             <>
-              <span class="sr-only">{stat.from}{stat.unit}から</span>
+              <span class="sr-only">{lang === 'en' ? `from ${stat.from}${stat.unit} to ` : `${stat.from}${stat.unit}から`}</span>
               <span aria-hidden="true" class="flex items-center gap-[12px] self-center pr-[12px] opacity-25 @3xl:gap-[24px] @3xl:pr-[24px]">
                 <span>{stat.from}</span>
                 <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-auto w-[48px] @3xl:w-[88px]">

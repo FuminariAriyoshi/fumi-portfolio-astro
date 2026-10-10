@@ -9,17 +9,22 @@ import WorkRow from '../ui/WorkRow.astro';
 import SeeAllRow from '../ui/SeeAllRow.astro';
 import { getAllPortfolios, otherWorksOf } from '@/lib/works';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 // 見せる作品(Prismic の uid)
 const SHOWCASE_UIDS = ['15', '8', '6']; // 異なれ。One of a kind BX / VoiceCast WEBSITE / PrismFont & Asset
 
-const { ja } = await getAllPortfolios();
-const works = SHOWCASE_UIDS.map((uid) => ja.find((work) => work.uid === uid)).filter((work) => work !== undefined);
+const all = await getAllPortfolios();
+// 英語版は Prismic の英語版の作品を使う(無ければ日本語版)
+const list = lang === 'en' && all.en.length ? all.en : all.ja;
+const works = SHOWCASE_UIDS.map((uid) => list.find((work) => work.uid === uid)).filter((work) => work !== undefined);
 ---
 
 <SlideFrame id="other-works" label="Other Works" tone="ink">
   <SlideHeading title="Other Works" />
   <ol class="mt-auto flex flex-col gap-[4px] pt-[24px]">
     {works.map((work) => <WorkRow work={work} />)}
-    <SeeAllRow href="/works/other" count={otherWorksOf(ja).length} />
+    <SeeAllRow href={`/works/other?lang=${lang}`} count={otherWorksOf(list).length} />
   </ol>
 </SlideFrame>

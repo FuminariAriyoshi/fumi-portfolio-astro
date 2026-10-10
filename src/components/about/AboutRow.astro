@@ -1,0 +1,21 @@
+---
+/** 左に期間、右寄せで名称・役割・説明(Education / Experience の1件) */
+interface Props {
+  period: string;
+  title: string;
+  sub: string;
+  desc?: string;
+  ja?: boolean;
+}
+
+const { period, title, sub, desc, ja = false } = Astro.props;
+---
+
+<div class:list={['flex justify-between gap-4', desc ? 'items-start' : 'items-baseline']}>
+  <span class:list={['text-micro font-normal whitespace-nowrap text-white/40', desc && 'pt-0.5']}>{period}</span>
+  <div class:list={['flex flex-1 flex-col items-end text-right', desc ? 'gap-1' : 'gap-2']}>
+    <span class:list={['text-xs leading-tight', ja ? 'font-medium' : 'font-normal']}>{title}</span>
+    <p class:list={['text-micro leading-relaxed', desc ? 'text-white/80' : 'text-white/60', ja ? 'font-medium' : 'font-normal']}>{sub}</p>
+    {desc && <p class="mt-1 text-[0.59375rem] leading-[1.6] text-white/40 [text-align-last:right] sm:max-w-[280px] text-justify">{desc}</p>}
+  </div>
+</div>

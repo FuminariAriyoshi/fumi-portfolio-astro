@@ -3,6 +3,9 @@
  * BEFORE の課題と AFTER の成果を、同じ3列・同じ位置に並べる(studio-fumi の ChangeSummary)。
  * AFTER に切り替えると同じ場所に ✅ が付くので、変化が一目でわかる。
  */
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 export interface Change {
   before: string;
   after: string;
@@ -26,7 +29,7 @@ const { phase, eyebrow, changes } = Astro.props;
           {phase === 'before' ? change.before : `✅${change.after}`}
         </span>
         {phase === 'after' && (
-          <span class="text-kicker line-through opacity-40"><span class="sr-only">改善前：</span>{change.before}</span>
+          <span class="text-kicker line-through opacity-40"><span class="sr-only">{lang === 'en' ? 'Before: ' : '改善前：'}</span>{change.before}</span>
         )}
       </li>
     ))}

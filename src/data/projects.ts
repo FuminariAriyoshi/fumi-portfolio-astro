@@ -62,3 +62,42 @@ export const pitatobiStories: Story[] = [
 
 // 「留学NEXT 新規デザイン案」PDF の各ページ(21枚)。資料ビューア(DeckViewer)で見せる
 export const pitatobiDeck = Array.from({ length: 21 }, (_, i) => `/works/pitatobi-case/deck/${String(i + 1).padStart(2, '0')}.webp`);
+
+// ---- 英語版(トップの /en/)。日本語のデータはそのままにして、表示する時に localizeProject で差し替える ----
+const projectsEn: Record<string, Partial<Project>> = {
+  StarWeaving: {
+    image: { src: '/works/starweaving/cover.png', alt: 'The StarWeaving exhibition space, with constellations projected on the ceiling' },
+    intro: 'StarWeaving is an interactive exhibition presented at Musashino Art University. Visitors arrange and control stars to create their own constellations. Through the unusual experience of controlling the stars and the cosmos — things people have longed for since ancient times — it aims to spark curiosity toward what lies beyond our reach.',
+  },
+  'ReiKikkawa Graduation Work': {
+    image: { src: '/works/reikikkawa/cover.png', alt: 'Rei Kikkawa’s graduation work website, lined with photos of butterflies' },
+    intro: 'My senior, Rei Kikkawa, bound her photos of handmade butterflies into a 70-page book as her graduation work. It was shared on Google Drive, but its UI made the photos hard to browse and the beauty of the paper butterflies hard to feel. As a big fan of her work, I suggested turning it into a website.',
+  },
+  ピタとび: {
+    title: 'Pitatobi',
+    image: { src: '/slides/pitatobi-logo.png', alt: 'Pitatobi logo' },
+    intro: 'The study-abroad media “Ryugaku NEXT” had gathered 2,000 followers through consistent posting on Instagram and TikTok. But there was no channel beyond social media, so the interest it gathered stopped there. What began as building an official website grew, along the way, into a rebrand that started from the service name itself.',
+    client: 'Raigate Inc.',
+    year: '2026.04 – ongoing',
+  },
+};
+
+export const localizeProject = (project: Project, lang: 'ja' | 'en'): Project =>
+  lang === 'en' ? { ...project, ...projectsEn[project.title] } : project;
+
+export const pitatobiStoriesEn: Story[] = [
+  {
+    heading: 'Studying abroad changes lives.',
+    paragraphs: [
+      'The client, Raimon Nakajima, studied at UCLA, and the experience greatly widened his worldview and the choices in his life — diverse values, connections and career possibilities. He knows firsthand that studying abroad changes lives.',
+      '',
+      'Yet that feeling doesn’t reach the students and parents who are considering it. Without real information, vague anxiety keeps them from taking the first step.',
+      'To close that gap, he started “Ryugaku NEXT,” a study-abroad media that began on social media.',
+    ],
+    image: { src: '/slides/pitatobi-origin.png', alt: 'Raimon Nakajima ringing the bell at Timee’s IPO ceremony' },
+    note: {
+      title: 'About Raimon Nakajima',
+      body: 'After high school he moved to the US and studied at UCLA. After graduating, he joined Timee Inc. in the service’s second year and went through its 2024 IPO as an early member, then founded Raigate Inc., which runs study-abroad and international talent businesses.',
+    },
+  },
+];

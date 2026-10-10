@@ -1,16 +1,51 @@
 ---
+import FumiLogo from '../ui/FumiLogo.astro';
+import { getLang } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 const links = [
   { href: '#about', label: 'About' },
   { href: '#works', label: 'Works' },
   { href: '#contact', label: 'Contact' },
 ];
+// 日英の切り替え(選んだ言語は覚えておき、次から最初にそちらを開く)
+const langs = [
+  { code: 'en', label: 'EN', href: '/en/', name: 'English' },
+  { code: 'ja', label: 'JP', href: '/', name: '日本語' },
+] as const;
 ---
 
 <header class="portfolio-header bg-paper px-[24px] py-[25px]">
   <nav class="flex items-center justify-between whitespace-nowrap leading-auto" aria-label="Main">
-    <a href="#top" class="font-serif text-nav" aria-label="Fumi (home)">Fumi</a>
+    <a href="#top" class="block" aria-label="FumiStudio (home)"><FumiLogo class="h-[20px] w-auto" /></a>
     {links.map((link) => (
       <a href={link.href} class="text-meta">{link.label}</a>
     ))}
+    <span class="flex items-center gap-[6px] text-meta">
+      {langs.map((l, i) => (
+        <>
+          {i > 0 && <span class="opacity-30" aria-hidden="true">/</span>}
+          <a
+            href={l.href}
+            hreflang={l.code}
+            lang={l.code}
+            data-lang-switch={l.code}
+            aria-current={l.code === lang ? 'true' : undefined}
+            aria-label={l.name}
+            class:list={[l.code === lang ? 'opacity-100' : 'opacity-40']}
+          >
+            {l.label}
+          </a>
+        </>
+      ))}
+    </span>
   </nav>
 </header>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('[data-lang-switch]').forEach((link) => {
+    link.addEventListener('click', () => {
+      try { localStorage.setItem('fumi-lang', link.dataset.langSwitch!); } catch {}
+    });
+  });
+</script>

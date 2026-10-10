@@ -3,34 +3,38 @@
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 const rules = [
-  { title: '色を黒赤にしない', body: 'くまモンという強すぎる資産に勝てない' },
-  { title: '顔は四角ベース', body: '他は基本円形ベース' },
-  { title: '目を大きく', body: '元のクマの特徴でもあるが、最大の差別化にもなる。' },
+  { title: $('色を黒赤にしない', 'No black and red'), body: $('くまモンという強すぎる資産に勝てない', 'We could never beat an asset as strong as Kumamon.') },
+  { title: $('顔は四角ベース', 'A square-based face'), body: $('他は基本円形ベース', 'Most others are round.') },
+  { title: $('目を大きく', 'Big eyes'), body: $('元のクマの特徴でもあるが、最大の差別化にもなる。', 'A trait of the original bear — and our biggest point of difference.') },
 ];
 ---
 
-<ChapterSlide label="BrandSystem: キャラクターの3つ縛り" chapter="BrandSystem">
+<ChapterSlide label={$($('BrandSystem: キャラクターの3つ縛り', 'BrandSystem: three rules for the character'), 'BrandSystem: three rules for the character')} chapter="BrandSystem">
   <div slot="visual" class:list={[t.card, 'flex h-[560px] w-full flex-col items-center justify-center gap-[32px] px-[40px]']}>
     <figure class="flex flex-col items-center gap-[8px]">
       <div class="flex items-center gap-[16px]">
         <div class="relative h-[148px] w-[298px] overflow-clip rounded-media">
-          <img src="/works/pitatobi-story/character-rough.webp" alt="キャラクターの初期ラフ(手描きのクマ)" width="700" height="525" loading="lazy" class="absolute top-[-32.8%] left-0 h-[151.2%] w-full max-w-none" />
+          <img src="/works/pitatobi-story/character-rough.webp" alt={$($('キャラクターの初期ラフ(手描きのクマ)', 'Early rough sketch of the character (a hand-drawn bear)'), 'Early rough sketch of the character (a hand-drawn bear)')} width="700" height="525" loading="lazy" class="absolute top-[-32.8%] left-0 h-[151.2%] w-full max-w-none" />
         </div>
-        <img src="/works/pitatobi-story/character-gray.svg" alt="グレーで塗ったキャラクターの初期案" width="159" height="159" loading="lazy" class="size-[148px]" />
+        <img src="/works/pitatobi-story/character-gray.svg" alt={$($('グレーで塗ったキャラクターの初期案', 'Early version of the character in gray'), 'Early version of the character in gray')} width="159" height="159" loading="lazy" class="size-[148px]" />
       </div>
-      <figcaption class={t.caption}>キャラクター初期ラフ</figcaption>
+      <figcaption class={t.caption}>{$('キャラクター初期ラフ', 'Early character sketch')}</figcaption>
     </figure>
     <figure class="flex w-full flex-col items-center gap-[8px]">
-      <img src="/works/pitatobi-story/bear-ranking.webp" alt="既存のクマのキャラクター(プーさん、リラックマ、くまモンなど)" width="800" height="312" loading="lazy" class="aspect-[1076/418.5] w-[400px] object-cover" />
+      <img src="/works/pitatobi-story/bear-ranking.webp" alt={$($('既存のクマのキャラクター(プーさん、リラックマ、くまモンなど)', 'Existing bear characters (Winnie the Pooh, Rilakkuma, Kumamon and more)'), 'Existing bear characters (Winnie the Pooh, Rilakkuma, Kumamon and more)')} width="800" height="312" loading="lazy" class="aspect-[1076/418.5] w-[400px] object-cover" />
       <figcaption class:list={[t.caption, 'text-center']}>
         【人気投票 1~69位】クマのキャラクターといえば？くまのキャラランキング！<br />
         <span class="text-tiny">https://ranking.net/rankings/best-bear-characters</span>
       </figcaption>
     </figure>
   </div>
-  <h3 class={t.title}>キャラクター</h3>
-  <div class={t.lead}><p>ただしクマは競合だらけだった。プーさん、リラックマ、くまモン、ダッフィー、テッド。</p><p>似てしまう特徴の組み合わせを避けるために、3つ縛りを決めた。</p></div>
+  <h3 class={t.title}>{$('キャラクター', 'Character')}</h3>
+  <div class={t.lead}><p>{$('ただしクマは競合だらけだった。プーさん、リラックマ、くまモン、ダッフィー、テッド。', 'But bears were everywhere: Winnie the Pooh, Rilakkuma, Kumamon, Duffy, Ted.')}</p><p>{$('似てしまう特徴の組み合わせを避けるために、3つ縛りを決めた。', 'To avoid combinations of features that would look alike, I set three rules.')}</p></div>
   <ol class="flex flex-col">
     {rules.map((rule, i) => (
       <li class="grid grid-cols-[32px_1fr] gap-x-[8px] py-[16px]">

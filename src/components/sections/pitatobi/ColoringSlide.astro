@@ -3,33 +3,37 @@
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 ---
 
-<ChapterSlide label="BrandSystem: カラーリング" chapter="BrandSystem">
+<ChapterSlide label={$($('BrandSystem: カラーリング', 'BrandSystem: color'), 'BrandSystem: color')} chapter="BrandSystem">
   <!-- 上: 3色の比較(資料の見出しが映らないよう下寄せで切り抜く) / 下: 採用した青 と アイコンの変更 を同じ高さで2枚 -->
   <div slot="visual" class="flex w-full flex-col gap-[16px]">
     <div class:list={[t.card, 'relative aspect-[576/240] w-full']}>
-      <img src="/works/pitatobi-story/color-study.webp" alt="赤・青・黄の3色で塗り分けたキャラクターの比較" width="800" height="450" loading="lazy" class="absolute inset-0 size-full object-cover object-[50%_70%]" />
+      <img src="/works/pitatobi-story/color-study.webp" alt={$($('赤・青・黄の3色で塗り分けたキャラクターの比較', 'The character colored in red, blue and yellow, side by side'), 'The character colored in red, blue and yellow, side by side')} width="800" height="450" loading="lazy" class="absolute inset-0 size-full object-cover object-[50%_70%]" />
     </div>
     <div class="grid grid-cols-2 gap-[16px]">
       <figure class:list={[t.card, 'flex h-[220px] flex-col items-center justify-center gap-[16px]']}>
-        <img src="/works/pitatobi-story/character-blue.svg" alt="青に決めたキャラクター" width="133" height="140.261" loading="lazy" class="h-[132px] w-auto" />
-        <figcaption class={t.note}>採用した青</figcaption>
+        <img src="/works/pitatobi-story/character-blue.svg" alt={$($('青に決めたキャラクター', 'The character in the chosen blue'), 'The character in the chosen blue')} width="133" height="140.261" loading="lazy" class="h-[132px] w-auto" />
+        <figcaption class={t.note}>{$('採用した青', 'The chosen blue')}</figcaption>
       </figure>
       <div class:list={[t.card, 'flex h-[220px] items-center justify-center gap-[20px]']}>
         <figure class="flex flex-col items-center gap-[12px]">
-          <img src="/works/pitatobi-story/icon-old.webp" alt="留学NEXT の元のアイコン" width="200" height="200" loading="lazy" class="size-[88px] rounded-full object-cover ring-1 ring-ink/10" />
-          <figcaption class={t.note}>元アイコン</figcaption>
+          <img src="/works/pitatobi-story/icon-old.webp" alt={$($('留学NEXT の元のアイコン', 'Ryugaku NEXT’s original icon'), 'Ryugaku NEXT’s original icon')} width="200" height="200" loading="lazy" class="size-[88px] rounded-full object-cover ring-1 ring-ink/10" />
+          <figcaption class={t.note}>{$('元アイコン', 'Original icon')}</figcaption>
         </figure>
         <span class="pb-[32px] font-serif text-nav opacity-40" aria-hidden="true">→</span>
         <figure class="flex flex-col items-center gap-[12px]">
-          <img src="/works/pitatobi-story/icon-new.webp" alt="ピタとびの新しいアイコン" width="200" height="200" loading="lazy" class="size-[88px] object-cover" />
-          <figcaption class={t.note}>新規アイコン</figcaption>
+          <img src="/works/pitatobi-story/icon-new.webp" alt={$($('ピタとびの新しいアイコン', 'Pitatobi’s new icon'), 'Pitatobi’s new icon')} width="200" height="200" loading="lazy" class="size-[88px] object-cover" />
+          <figcaption class={t.note}>{$('新規アイコン', 'New icon')}</figcaption>
         </figure>
       </div>
     </div>
   </div>
-  <h3 class={t.title}>カラーリング</h3>
-  <div class={t.lead}><p>色は3案で検証した。</p><p>赤は、SNSですでに認知を得ていた競合と正面から被る。</p><p>黄は白背景で沈む。</p></div>
-  <p class={t.body}>留学NEXT時代のカラーリングが黄色と青であり、そのブランド資産を保ちたかったのも理由となり、 青色を選んだ。</p>
+  <h3 class={t.title}>{$('カラーリング', 'Color')}</h3>
+  <div class={t.lead}><p>{$('色は3案で検証した。', 'I tested three color options.')}</p><p>{$('赤は、SNSですでに認知を得ていた競合と正面から被る。', 'Red would clash head-on with a competitor already well known on social media.')}</p><p>{$('黄は白背景で沈む。', 'Yellow sinks into a white background.')}</p></div>
+  <p class={t.body}>{$('留学NEXT時代のカラーリングが黄色と青であり、そのブランド資産を保ちたかったのも理由となり、 青色を選んだ。', 'Ryugaku NEXT’s colors had been yellow and blue, and wanting to keep that brand equity was another reason I chose blue.')}</p>
 </ChapterSlide>

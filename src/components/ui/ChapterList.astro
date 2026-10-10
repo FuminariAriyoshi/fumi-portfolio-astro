@@ -5,6 +5,9 @@
  * 閉じている時: 幅が狭いので章名は隠し、点を縦に並べる(今の章の点だけ不透明度 100%。マウスを乗せると章名、読み上げは章名のまま)。
  * 今読んでいる章は Workspace が aria-current="step" を付ける。
  */
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 interface Props {
   parent: string;
   label: string;
@@ -16,7 +19,7 @@ const { parent, label, chapters } = Astro.props;
 
 <ul
   data-chapter-list
-  aria-label={`${label} の章`}
+  aria-label={lang === 'en' ? `Chapters: ${label}` : `${label} の章`}
   class="absolute top-[40px] right-[12px] bottom-[10px] z-[2] hidden flex-col items-end justify-between text-paper md:flex sidebar-closed:top-[26px] sidebar-closed:right-[4px] sidebar-closed:bottom-[30px]"
 >
   {chapters.map((chapter) => (
@@ -26,7 +29,7 @@ const { parent, label, chapters } = Astro.props;
         title={chapter.label}
         data-chapter={chapter.id}
         data-chapter-parent={parent}
-        aria-label={`${label}: ${chapter.label} へ移動`}
+        aria-label={lang === 'en' ? `${label}: go to ${chapter.label}` : `${label}: ${chapter.label} へ移動`}
         class="group flex items-center justify-end py-[3px] text-small leading-auto opacity-55 aria-[current=step]:font-semibold aria-[current=step]:opacity-100 sidebar-closed:p-[3px]"
       >
         <span class="sidebar-closed:sr-only">{chapter.label}</span>

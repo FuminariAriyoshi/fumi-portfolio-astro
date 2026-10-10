@@ -1,0 +1,15 @@
+---
+/** FumiStudio のロゴ(public/FumiStudio.svg)。文字色(currentColor)で塗るので、白地・黒地どちらでも使える */
+import raw from '../../../public/FumiStudio.svg?raw';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const svg = raw
+  .replace('fill="#040404"', 'fill="currentColor"')
+  .replace('<svg ', `<svg aria-hidden="true" focusable="false" class="${className ?? ''}" `);
+---
+
+<Fragment set:html={svg} />

@@ -1,0 +1,18 @@
+---
+/** 資格・受賞の1件。押すと PDF をモーダルで開く(AboutModals) */
+interface Props {
+  date: string;
+  name: string;
+  doc: string;
+  /** 長い名前(受賞)は大文字・1行で切る */
+  award?: boolean;
+  ja?: boolean;
+}
+
+const { date, name, doc, award = false, ja = false } = Astro.props;
+---
+
+<button type="button" class="flex w-full items-baseline justify-between gap-2 text-left transition-opacity hover:opacity-50" data-doc={doc} aria-haspopup="dialog" aria-label={`${name} の証明書を開く`}>
+  <span class="text-micro font-normal whitespace-nowrap text-white/40">{date}</span>
+  <span class:list={['inline-block w-fit border-b border-white/50 text-right text-xs leading-tight text-white', award ? 'ml-auto max-w-full truncate font-normal uppercase' : ja ? 'font-medium' : 'font-normal']}>{name}</span>
+</button>

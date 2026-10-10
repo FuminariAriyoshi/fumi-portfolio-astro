@@ -42,3 +42,48 @@ export const reikikkawaSections = [
     ],
   },
 ];
+
+// 英語版(トップの /en/)。旧サイトの英語版(Prismic en-us)をもとに、日本語版と同じ構成・画像で
+export const reikikkawaSectionsEn: typeof reikikkawaSections = [
+  {
+    id: 'reikikkawa-values', chapter: 'Core Value', title: 'Let the photos speak for themselves.',
+    paragraphs: [
+      'Simplicity. To bring out the beauty of the photos, I left out complicated features and aimed for a carousel that is simply easy to browse.',
+      'Curiosity. Not getting in the way of the work, without being boring. To satisfy both, I chose a Three.js carousel.',
+      'Fast loading. With a 70-page book to handle, I managed the images with SSG, while also keeping the original colors of the photos.',
+    ],
+    images: [],
+  },
+  {
+    id: 'reikikkawa-prototype', chapter: 'Prototype', title: 'Choosing the carousel from the core values.',
+    paragraphs: [
+      'After defining the core values, I made a draft in Figma. At this stage, I came up with the idea of a Three.js carousel.',
+      'I built several carousel prototypes and, weighing visibility against the core values, picked the most suitable one: No. 3.',
+    ],
+    images: [
+      { src: '/works/reikikkawa/prototype.png', alt: 'Layout and draft of the graduation work website made in Figma' },
+      { src: '/works/reikikkawa/carousel-options.png', alt: 'Four Three.js carousel prototypes compared side by side; No. 3 was chosen' },
+    ],
+  },
+  {
+    id: 'reikikkawa-development', chapter: 'Development', title: 'From design to launch in three days.',
+    paragraphs: ['Once the design was set, I finished development in three days, building the Three.js carousel into a website with Google Antigravity.'],
+    images: [{ src: '/works/reikikkawa/development.png', alt: 'Implementing the Three.js carousel, with Google Antigravity' }],
+  },
+  {
+    id: 'reikikkawa-text', chapter: 'Text Animation', title: 'Bringing out the years in each photo.',
+    paragraphs: ['This book holds not only photos but also Rei’s memories. Seeing value in the dates written on the photos, I added a text animation that brings the years to the front.'],
+    images: [], videoId: '1188936532',
+  },
+  {
+    id: 'reikikkawa-mobile', chapter: 'Mobile', title: 'Tuning the experience for each device.',
+    paragraphs: [
+      'On mobile, I turned the horizontal carousel into a vertical one, and adjusted — or left out — some interactions to suit the device.',
+      'The hit areas for “Next” and “Previous” were also resized for each device, so the interface feels comfortable on mobile too.',
+    ],
+    images: [
+      { src: '/works/reikikkawa/mobile.png', alt: 'Smartphone version using a vertical carousel' },
+      { src: '/works/reikikkawa/mobile-navigation.png', alt: 'Comparison of the “Previous” and “Next” hit areas on desktop and smartphone' },
+    ],
+  },
+];

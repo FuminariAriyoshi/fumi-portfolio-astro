@@ -4,6 +4,10 @@ import SlideFrame from '../layout/SlideFrame.astro';
 import SlideHeading from '../ui/SlideHeading.astro';
 import { profile } from '@/data/about';
 import { socials } from '@/data/home';
+import { getLang, tr } from '@/lib/i18n';
+
+
+const lang = getLang(Astro);
 ---
 
 <SlideFrame id="about" label="About" tone="about" class="md:grid md:grid-cols-[46%_1fr] md:gap-[40px]">
@@ -11,7 +15,7 @@ import { socials } from '@/data/home';
   <div class="relative aspect-[4/3] w-full overflow-clip rounded-card md:aspect-auto md:h-full">
     <img
       src={profile.photo.src}
-      alt={profile.photo.alt}
+      alt={tr(lang, profile.photo.alt)}
       width={profile.photo.width}
       height={profile.photo.height}
       loading="lazy"
@@ -24,10 +28,10 @@ import { socials } from '@/data/home';
     <div class="flex flex-1 flex-col justify-center gap-[16px] pt-[24px]">
       <h3 class="flex flex-col leading-auto">
         <span class="font-serif text-subtitle @[60rem]:text-greeting">{profile.name}</span>
-        <span class="text-meta opacity-60">{profile.nameJa}</span>
+        {lang === 'ja' && <span class="text-meta opacity-60">{profile.nameJa}</span>}
       </h3>
       <div class="flex flex-col gap-[4px] text-meta leading-body">
-        {profile.intro.map((line) => <p>{line}</p>)}
+        {profile.intro.map((line) => <p>{tr(lang, line)}</p>)}
       </div>
       <ul class="flex gap-[20px] text-meta">
         {socials.map((social) => (

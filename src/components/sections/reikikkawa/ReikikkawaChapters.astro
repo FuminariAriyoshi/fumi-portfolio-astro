@@ -3,12 +3,15 @@ import SlideCanvas from '../../layout/SlideCanvas.astro';
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import WorkGalleryImage from '../../ui/WorkGalleryImage.astro';
 import VimeoVideo from '../../ui/VimeoVideo.astro';
-import { reikikkawaSections } from '@/data/reikikkawa';
+import { reikikkawaSections, reikikkawaSectionsEn } from '@/data/reikikkawa';
 import { slideType as t, chapterTextHeight } from '@/lib/slideType';
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
 ---
 
-<VimeoVideo videoId="1188937366" title="ReiKikkawa Graduation WorkのWebサイト操作動画" bare />
-{reikikkawaSections.map((section) => (
+<VimeoVideo videoId="1188937366" title={lang === 'en' ? 'Screen recording of the ReiKikkawa Graduation Work website' : 'ReiKikkawa Graduation WorkのWebサイト操作動画'} bare />
+{(lang === 'en' ? reikikkawaSectionsEn : reikikkawaSections).map((section) => (
   <>
     <SlideCanvas id={section.id} height={chapterTextHeight}>
       <ChapterSlide label={`${section.chapter}: ${section.title}`} chapter={section.chapter} layout="text" compact>
@@ -19,7 +22,7 @@ import { slideType as t, chapterTextHeight } from '@/lib/slideType';
       </ChapterSlide>
     </SlideCanvas>
     {section.images.map((image) => <WorkGalleryImage {...image} />)}
-    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title="写真の年月を際立たせるテキストアニメーション" bare />}
+    {'videoId' in section && section.videoId && <VimeoVideo videoId={section.videoId} title={lang === 'en' ? 'Text animation that brings out the year of each photo' : '写真の年月を際立たせるテキストアニメーション'} bare />}
   </>
 ))}
-<WorkGalleryImage src="/works/reikikkawa/recognition.png" alt="CSSWinner StarとNomineeの認定、デザイン・機能性・使いやすさ・コンテンツの評価" />
+<WorkGalleryImage src="/works/reikikkawa/recognition.png" alt={lang === 'en' ? 'CSSWinner Star and Nominee recognition, with scores for design, functionality, usability and content' : 'CSSWinner StarとNomineeの認定、デザイン・機能性・使いやすさ・コンテンツの評価'} />

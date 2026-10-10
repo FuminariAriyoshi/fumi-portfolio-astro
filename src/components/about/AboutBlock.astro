@@ -1,0 +1,20 @@
+---
+/** About の区切り(上に罫線、左に見出し・右に番号) */
+interface Props {
+  label: string;
+  number: string;
+  class?: string;
+  /** 見出しと番号を見えなくして高さだけ残す(旧サイトの Interests 枠) */
+  invisible?: boolean;
+}
+
+const { label, number, class: className, invisible = false } = Astro.props;
+---
+
+<section class:list={['flex flex-col gap-3 border-t border-white/20 pt-3', className]} aria-label={invisible ? undefined : label} data-about-in>
+  <div class:list={['flex items-center justify-between', invisible && 'invisible']} aria-hidden={invisible ? 'true' : undefined}>
+    <span class="text-micro font-bold tracking-[-0.04rem] text-white/40 uppercase">{label}</span>
+    <span class="text-micro font-bold tracking-[-0.04rem] text-white/20 uppercase">{number}</span>
+  </div>
+  <slot />
+</section>

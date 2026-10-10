@@ -3,15 +3,19 @@
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
 
-const funnel = ['流入', '診断', 'LINE登録'];
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
+const funnel = [$('流入', 'Visit'), $('診断', 'Quiz'), $('LINE登録', 'LINE sign-up')];
 const entries = ['Instagram', 'TikTok', 'Web'];
 const tools = ['GA4', 'Clarity', 'GTM', 'UTM'];
 ---
 
-<ChapterSlide label="TheUIUX: CMS管理と分析ツール" chapter="TheUIUX">
-  <figure slot="visual" class:list={[t.card, 'flex h-[420px] w-full flex-col justify-center gap-[32px] px-[40px]']} aria-label="入口別に、流入から診断、LINE登録までの歩留まりを見る分析の流れ">
+<ChapterSlide label={$($('TheUIUX: CMS管理と分析ツール', 'TheUIUX: CMS and analytics tool'), 'TheUIUX: CMS and analytics tool')} chapter="TheUIUX">
+  <figure slot="visual" class:list={[t.card, 'flex h-[420px] w-full flex-col justify-center gap-[32px] px-[40px]']} aria-label={$($('入口別に、流入から診断、LINE登録までの歩留まりを見る分析の流れ', 'Analytics flow showing conversion from visit to quiz to LINE sign-up, by entry point'), 'Analytics flow showing conversion from visit to quiz to LINE sign-up, by entry point')}>
     <div class="flex flex-col gap-[8px]">
-      <p class={t.caption}>入口</p>
+      <p class={t.caption}>{$('入口', 'Entry point')}</p>
       <ul class="flex gap-[8px]">
         {entries.map((entry) => <li class="rounded-full border border-ink/20 px-[14px] py-[6px] text-small leading-auto">{entry}</li>)}
       </ul>
@@ -25,16 +29,16 @@ const tools = ['GA4', 'Clarity', 'GTM', 'UTM'];
       ))}
     </ol>
     <div class="flex flex-col gap-[8px]">
-      <p class={t.caption}>計測</p>
+      <p class={t.caption}>{$('計測', 'Tracking')}</p>
       <ul class="flex gap-[8px]">
         {tools.map((tool) => <li class="rounded-full bg-ink px-[14px] py-[6px] text-small leading-auto text-paper">{tool}</li>)}
       </ul>
     </div>
   </figure>
-  <h3 class={t.title}>CMS管理と分析ツール</h3>
+  <h3 class={t.title}>{$('CMS管理と分析ツール', 'CMS and analytics tool')}</h3>
   <div class="flex flex-col gap-[12px]">
-    <p class={t.body}>本番では会社概要、留学ブログ、留学体験記を追加した。体験記は、強みとして定義した「経験者の種類の多さ」をそのまま貯めていく場所になる。クライアント自身でも更新できるようにCMSを組んだ。</p>
-    <p class={t.body}>詳しく分析ができるよう、GA4はもちろん、Clarityや、診断の回答等もGTMをつけて計測を行っている。また、SNSのbioにはUTMを設置して入口も判定している。</p>
-    <p class={t.body}>GA4のデータを元に、流入 → 診断 → LINE登録の歩留まりを入口別に見れる分析ツールをクライアントの要望から製作した。</p>
+    <p class={t.body}>{$('本番では会社概要、留学ブログ、留学体験記を追加した。体験記は、強みとして定義した「経験者の種類の多さ」をそのまま貯めていく場所になる。クライアント自身でも更新できるようにCMSを組んだ。', 'For launch, I added a company page, a study-abroad blog and study-abroad stories. The stories become the place that keeps collecting the strength we defined — “the variety of people with real experience.” I set up a CMS so the client can update it themselves.')}</p>
+    <p class={t.body}>{$('詳しく分析ができるよう、GA4はもちろん、Clarityや、診断の回答等もGTMをつけて計測を行っている。また、SNSのbioにはUTMを設置して入口も判定している。', 'For detailed analysis, we track not only GA4 but also Clarity and the quiz answers via GTM. UTM parameters in the social media bios tell us which entry point people came from.')}</p>
+    <p class={t.body}>{$('GA4のデータを元に、流入 → 診断 → LINE登録の歩留まりを入口別に見れる分析ツールをクライアントの要望から製作した。', 'At the client’s request, I built an analytics tool on top of GA4 data that shows the conversion from visit → quiz → LINE sign-up for each entry point.')}</p>
   </div>
 </ChapterSlide>

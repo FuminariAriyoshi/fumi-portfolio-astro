@@ -3,36 +3,40 @@
 import ChapterSlide from '../../layout/ChapterSlide.astro';
 import { slideType as t } from '@/lib/slideType';
 
+import { getLang, tr } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 const issues = [
   {
-    title: ['SNS経由での', '診断開始率'],
+    title: [$('SNS経由での', 'Quiz start rate'), $('診断開始率', 'from social media')],
     body: [
-      '90日で、Instagram経由の160人のうち、ホームページから診断に入るのは20人であった。Instagram単体で見ても、87.5%が診断をせずにHomeで落ちている。ホーム自体が診断ページであったベータ版での診断開始率は59.4%であったことから、ホームの役割が変わったことにより、SNSでの診断開始率が大幅に落ちてしまった。',
-      '現在、SNSのbioでは、ベータ版のようにいきなり診断にしようと計画をしている。',
+      $('90日で、Instagram経由の160人のうち、ホームページから診断に入るのは20人であった。Instagram単体で見ても、87.5%が診断をせずにHomeで落ちている。ホーム自体が診断ページであったベータ版での診断開始率は59.4%であったことから、ホームの役割が変わったことにより、SNSでの診断開始率が大幅に落ちてしまった。', 'Over 90 days, of the 160 people who came from Instagram, only 20 started the quiz from the homepage — 87.5% of Instagram visitors left at the home page without taking it. In the beta, where the home page itself was the quiz, the start rate was 59.4%, so changing the role of the home page caused a big drop in quiz starts from social media.'),
+      $('現在、SNSのbioでは、ベータ版のようにいきなり診断にしようと計画をしている。', 'We’re now planning to have the social media bios link straight to the quiz, as in the beta.'),
     ],
   },
   {
-    title: ['マネタイズが', '起こっていない'],
+    title: [$('マネタイズが', 'Not yet'), $('起こっていない', 'monetizing')],
     body: [
-      '再生数やフォロワーは取れているものの、マネタイズが未だ起こせていない。',
-      '私自身もマネタイズへの戦略へ関わらせていただいており、現在も改善を行っている。',
-      '低単価×多客数でマネタイズを起こそうとしたが、うまくいかず、高単価×低客数への方向転換の提案なども行っている。',
+      $('再生数やフォロワーは取れているものの、マネタイズが未だ起こせていない。', 'Views and followers are growing, but the service hasn’t started monetizing yet.'),
+      $('私自身もマネタイズへの戦略へ関わらせていただいており、現在も改善を行っている。', 'I’m also involved in the monetization strategy and we’re still improving it.'),
+      $('低単価×多客数でマネタイズを起こそうとしたが、うまくいかず、高単価×低客数への方向転換の提案なども行っている。', 'We tried monetizing with low prices and many customers, but it didn’t work, so I’ve proposed shifting to higher prices with fewer customers.'),
     ],
   },
   {
-    title: ['ICPと実際の', 'オーディエンス'],
+    title: [$('ICPと実際の', 'ICP vs. the'), $('オーディエンス', 'actual audience')],
     body: [
-      'デザイン時点でのICPとコンテンツで獲得できている視聴層は大きく異なってしまっている。元のICPでは17才高校生であり、当時のコンテンツでは18歳~20代前半等が取れていたものの、',
-      'マネタイズが難しい、新規コンテンツで実際に取れている視聴者が20代後半または40~50代であること、現在のマネタイズ戦略では後者をターゲットにしようとしていることから将来的に再度デザイン戦略の改善が必要かもしれない。',
+      $('デザイン時点でのICPとコンテンツで獲得できている視聴層は大きく異なってしまっている。元のICPでは17才高校生であり、当時のコンテンツでは18歳~20代前半等が取れていたものの、', 'The ICP at design time and the audience the content actually attracts have drifted far apart. The original ICP was a 17-year-old high school student, and the content back then did reach people from 18 to their early 20s, but'),
+      $('マネタイズが難しい、新規コンテンツで実際に取れている視聴者が20代後半または40~50代であること、現在のマネタイズ戦略では後者をターゲットにしようとしていることから将来的に再度デザイン戦略の改善が必要かもしれない。', 'that group is hard to monetize. The new content actually reaches people in their late 20s or in their 40s and 50s, and the current monetization strategy is aiming at the latter — so the design strategy may need revisiting in the future.'),
     ],
   },
 ];
 ---
 
-<ChapterSlide label="Improvement: 課題点" chapter="Improvement" layout="full">
+<ChapterSlide label={$($('Improvement: 課題点', 'Improvement: open issues'), 'Improvement: open issues')} chapter="Improvement" layout="full">
   <div class="flex flex-col gap-[8px]">
-    <h3 class={t.title}>課題点</h3>
-    <p class:list={[t.lead, 'opacity-60']}>現在での課題と、改善案</p>
+    <h3 class={t.title}>{$('課題点', 'Open issues')}</h3>
+    <p class:list={[t.lead, 'opacity-60']}>{$('現在での課題と、改善案', 'Current issues and how we plan to improve them')}</p>
   </div>
   <ul class="mt-[48px] grid grid-cols-3 gap-[40px]">
     {issues.map((issue) => (
