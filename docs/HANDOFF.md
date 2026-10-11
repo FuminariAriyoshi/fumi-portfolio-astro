@@ -264,3 +264,4 @@ src/
 - ヘッダー下の 0.5px の隙間を修正: `--portfolio-header-height` を offsetHeight(四捨五入)から getBoundingClientRect の切り捨てに。
 - md 以上で `main` の最大幅を「16:9 のスライドが揃え線から画面下(26px)までに収まる幅」に制限し、中央寄せ(広い画面でファーストビューのスライドが下で切れないように)。
 - **ブログはまだ公開しない**(ユーザー指定)。記事は `draft: true`。下書きは dev でだけ表示され、本番ビルドでは /blog/・記事・トップの About this portfolio・sitemap の /blog/ がすべて出ない(`lib/blog.ts` の getPosts)。公開する時は記事の `draft: true` を消すだけ。
+- **Search Console**: URL プレフィックス `https://studio-fumi.com/` を 2026-10-11 に登録。所有権は `public/google9c3f6825741acd56.html`(HTML ファイル方式)で確認済み — **このファイルは消さないこと**(消すと確認が外れる)。sitemap.xml も送信済み。
