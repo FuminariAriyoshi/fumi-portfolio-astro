@@ -14,7 +14,7 @@ const { item, class: className } = Astro.props;
 
 ---
 
-<figure class:list={['flex w-[480px] shrink-0 flex-col justify-between gap-[16px] rounded-media bg-paper/10 p-[16px] text-paper', className]}>
+<figure class:list={['flex w-[calc(100vw-48px)] max-w-[480px] md:w-[480px] shrink-0 flex-col justify-between gap-[16px] rounded-media bg-paper/10 p-[16px] text-paper', className]}>
   <blockquote class="flex flex-col gap-[10px] text-meta leading-body">
     {tr(lang, item.quote).map((paragraph) => <p>{paragraph}</p>)}
   </blockquote>
