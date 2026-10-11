@@ -1,0 +1,64 @@
+---
+import { render } from 'astro:content';
+import BlogLayout from '@/layouts/BlogLayout.astro';
+import AuthorLine from '@/components/blog/AuthorLine.astro';
+import ArticleBody from '@/components/blog/ArticleBody.astro';
+import ArticleAuthorCard from '@/components/blog/ArticleAuthorCard.astro';
+import { getPosts } from '@/lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, seoTitle, description, date, updated, cover, coverAlt, tags } = post.data;
+const url = new URL(Astro.url.pathname, Astro.site).href;
+// 検索結果に記事として出すための構造化データ
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: seoTitle ?? title,
+  description,
+  image: new URL(cover, Astro.site).href,
+  datePublished: date.toISOString(),
+  dateModified: (updated ?? date).toISOString(),
+  inLanguage: 'ja',
+  mainEntityOfPage: url,
+  keywords: tags.join(', '),
+  author: { '@type': 'Person', name: 'Fumi (Fuminari Ariyoshi)', url: new URL('/', Astro.site).href },
+  publisher: { '@type': 'Organization', name: 'FumiStudio', url: new URL('/', Astro.site).href },
+};
+---
+
+<BlogLayout
+  title={seoTitle ?? title}
+  description={description}
+  image={cover}
+  imageAlt={coverAlt}
+  type="article"
+  publishedTime={date.toISOString()}
+  modifiedTime={(updated ?? date).toISOString()}
+  jsonLd={jsonLd}
+>
+  <!-- note の記事と同じ並び: アイキャッチ → タイトル → 書き手 → 本文(幅 620px) -->
+  <article class="mx-auto max-w-[660px] px-[20px] pt-[24px] pb-[80px] md:pt-[48px]">
+    <img src={cover} alt={coverAlt} width="1200" height="630" class="aspect-[1200/630] w-full object-cover" />
+    <header class="mt-[40px] flex flex-col gap-[16px] md:mt-[72px]">
+      <h1 class="text-nav leading-[1.5] font-bold tracking-[0.04em] md:text-article-title">{title}</h1>
+      <AuthorLine date={date} />
+    </header>
+    <div class="mt-[48px]">
+      <ArticleBody><Content /></ArticleBody>
+    </div>
+    {tags.length > 0 && (
+      <ul class="mt-[56px] flex flex-wrap gap-[8px]" aria-label="タグ">
+        {tags.map((tag) => <li class="rounded-full bg-article-ink/5 px-[12px] py-[4px] text-small">#{tag}</li>)}
+      </ul>
+    )}
+    <div class="mt-[40px]">
+      <ArticleAuthorCard />
+    </div>
+  </article>
+</BlogLayout>

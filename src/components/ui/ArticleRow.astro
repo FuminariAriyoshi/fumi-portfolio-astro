@@ -1,0 +1,42 @@
+---
+/**
+ * ブログ記事への行(Other Works の行 WorkRow と同じ形：写真・タイトル + 右端に矢印)。
+ * 押すと記事を新しいタブで開く。ホバーは WorkRow と同じく白をうっすら重ねるだけ。
+ */
+import { getLang } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+interface Props {
+  href: string;
+  title: string;
+  meta: string;
+  image: { src: string; alt: string; width: number; height: number };
+}
+
+const { href, title, meta, image } = Astro.props;
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  aria-label={lang === 'en' ? `Read “${title}” in a new tab` : `記事「${title}」を新しいタブで読む`}
+  class="group relative -mx-[12px] flex flex-col items-stretch gap-[16px] rounded-card px-[12px] py-[12px] leading-auto md:flex-row md:items-center md:gap-[32px]"
+  data-reveal-row
+>
+  <span class="pointer-events-none absolute inset-0 rounded-card bg-linear-to-br from-paper/5 to-paper/25 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"></span>
+  <img
+    src={image.src}
+    alt={image.alt}
+    width={image.width}
+    height={image.height}
+    loading="lazy"
+    class="relative aspect-[1200/630] w-full shrink-0 rounded-media object-cover md:w-[45%]"
+    data-reveal-part
+  />
+  <span class="relative flex min-w-0 flex-1 flex-col gap-[8px]">
+    <span class="text-nav leading-[1.4] font-semibold md:text-subtitle" data-reveal-part>{title}</span>
+    <span class="text-small opacity-60" data-reveal-part>{meta}</span>
+  </span>
+  <span class="relative self-end font-serif text-cta leading-none md:self-center" aria-hidden="true" data-reveal-part>→</span>
+</a>

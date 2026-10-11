@@ -29,7 +29,7 @@ const notes = [
   </div>
   <h3 class={t.title}>{$('キャラクター', 'Character')}</h3>
   <p class={t.lead}>{$('ピタとびのサービスに親しみを持てるようキャラクターも制作をした。コアバリューの「信頼できる相談者」だった。これを表現するように、モチーフをクマとした。また、クライアントの原体験であるUCLAのシンボルも、クマであり、ピッタリだと思った。', 'To make the service feel approachable, I also created a character. One of the core values was “an advisor you can trust,” so I chose a bear as the motif. The symbol of UCLA — where the client’s own story began — is also a bear, which made it a perfect fit.')}</p>
-  <div class="grid grid-cols-2 gap-[24px]">
+  <div class="grid grid-cols-1 gap-[24px] md:grid-cols-2">
     {notes.map((note) => (
       <div class={t.column}>
         <p class={t.columnTitle}>{note.title}</p>

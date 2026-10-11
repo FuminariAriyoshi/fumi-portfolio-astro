@@ -1,0 +1,73 @@
+---
+/**
+ * 記事の本文(Markdown を描画したもの)。寸法は note の本文に合わせる
+ * (本文 18px / 行の高さ 36px / 段落の上下 36px、見出し 28px で上 54px・下 18px、リスト左 24px)。
+ * Markdown の要素にはクラスを付けられないので、.article-body の中だけにスタイルを当てる。
+ */
+---
+
+<div class="article-body">
+  <slot />
+</div>
+
+<style>
+  .article-body {
+    font-size: var(--text-article);
+    line-height: 36px;
+    overflow-wrap: anywhere;
+  }
+  .article-body :global(p),
+  .article-body :global(ul),
+  .article-body :global(ol),
+  .article-body :global(blockquote) {
+    margin-block: 36px;
+  }
+  .article-body :global(h2) {
+    margin-top: 54px;
+    font-size: var(--text-article-h2);
+    font-weight: 700;
+    line-height: 36px;
+    letter-spacing: 0.04em;
+  }
+  .article-body :global(h3) {
+    margin-top: 54px;
+    font-size: var(--text-body);
+    font-weight: 700;
+    line-height: 36px;
+  }
+  .article-body :global(h2 + *),
+  .article-body :global(h3 + *) {
+    margin-top: 18px;
+  }
+  .article-body :global(ul),
+  .article-body :global(ol) {
+    padding-left: 24px;
+  }
+  .article-body :global(ul) {
+    list-style: disc;
+  }
+  .article-body :global(ol) {
+    list-style: decimal;
+  }
+  .article-body :global(li) {
+    margin-block: 9px;
+  }
+  .article-body :global(strong) {
+    font-weight: 700;
+  }
+  .article-body :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .article-body :global(img) {
+    margin-block: 36px;
+  }
+  .article-body :global(blockquote) {
+    border-left: 4px solid color-mix(in srgb, var(--color-article-ink) 15%, transparent);
+    padding-left: 16px;
+    color: color-mix(in srgb, var(--color-article-ink) 66%, transparent);
+  }
+  .article-body > :global(:first-child) {
+    margin-top: 0;
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+/**
+ * Contact の前の「このポートフォリオについて」。ブログの記事(写真・タイトル・矢印)を1つ置き、押すと新しいタブで開く。
+ * 見出しはほかのスライド(About / Works / Contact)と同じく英語。
+ * サイドバーの一覧には入れない(data/home.ts の slides に足さない)。
+ */
+import SlideFrame from '../layout/SlideFrame.astro';
+import SlideHeading from '../ui/SlideHeading.astro';
+import ArticleRow from '../ui/ArticleRow.astro';
+import { getPosts, postPath } from '@/lib/blog';
+import { getLang } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+// 記事が下書きの間(本番)はスライドごと出さない
+const post = (await getPosts()).find((entry) => entry.id === 'best-portfolio');
+---
+
+{post && (
+  <SlideFrame id="about-this-portfolio" label="About this portfolio" tone="ink">
+    <SlideHeading title="About this portfolio" />
+    <div class="mt-auto pt-[24px]">
+      <ArticleRow
+        href={postPath(post.id)}
+        title={post.data.title}
+        meta={lang === 'en' ? 'Blog (in Japanese)' : 'Blog'}
+        image={{ src: post.data.cover, alt: post.data.coverAlt, width: 1200, height: 630 }}
+      />
+    </div>
+  </SlideFrame>
+)}

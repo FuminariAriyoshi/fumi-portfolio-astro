@@ -6,6 +6,9 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
+  // 公開 URL。canonical / OGP / sitemap の絶対 URL に使う
+  site: 'https://studio-fumi.com',
+
   vite: {
     plugins: [tailwindcss()],
   },

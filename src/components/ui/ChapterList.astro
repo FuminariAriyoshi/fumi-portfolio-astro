@@ -1,7 +1,7 @@
 ---
 /**
  * 作品の章の一覧。作品のサムネイルが current(大きく黒い)の時だけ、その右側に重ねる(md 以上。表示条件は global.css)。
- * 開いている時: 白文字で上下いっぱいに並べる(space-between)。
+ * 開いている時: 白文字で上下いっぱいに並べる(space-between)。下端は作品名(左下)の上で止める(長い作品名と重ならないよう)。
  * 閉じている時: 幅が狭いので章名は隠し、点を縦に並べる(今の章の点だけ不透明度 100%。マウスを乗せると章名、読み上げは章名のまま)。
  * 今読んでいる章は Workspace が aria-current="step" を付ける。
  */
@@ -20,7 +20,7 @@ const { parent, label, chapters } = Astro.props;
 <ul
   data-chapter-list
   aria-label={lang === 'en' ? `Chapters: ${label}` : `${label} の章`}
-  class="absolute top-[40px] right-[12px] bottom-[10px] z-[2] hidden flex-col items-end justify-between text-paper md:flex sidebar-closed:top-[26px] sidebar-closed:right-[4px] sidebar-closed:bottom-[30px]"
+  class="absolute top-[40px] right-[12px] bottom-[40px] z-[2] hidden flex-col items-end justify-between text-paper md:flex sidebar-closed:top-[26px] sidebar-closed:right-[4px] sidebar-closed:bottom-[30px]"
 >
   {chapters.map((chapter) => (
     <li>

@@ -1,0 +1,14 @@
+---
+/**
+ * ブログのヘッダー。ロゴの位置・大きさはトップの SiteHeader と同じ(px 24 / py 25、高さ 14px)。
+ * 右はブログ一覧へのリンク。下に note のような 1px の線。
+ */
+import FumiLogo from '../ui/FumiLogo.astro';
+---
+
+<header class="portfolio-header font-sans text-ink border-b border-article-ink/10 bg-paper px-[24px] py-[25px]">
+  <nav class="flex items-center justify-between whitespace-nowrap leading-auto" aria-label="Main">
+    <a href="/" class="block" aria-label="FumiStudio のポートフォリオ(トップ)へ"><FumiLogo class="h-[14px] w-auto" /></a>
+    <a href="/blog/" class="text-meta">Blog</a>
+  </nav>
+</header>

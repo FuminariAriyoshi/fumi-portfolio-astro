@@ -1,0 +1,28 @@
+---
+/**
+ * ブログ一覧の左に置くプロフィール(note のクリエイターページと同じ組み:
+ * アイコン 80px + 名前 18px 太字 / 自己紹介 14px / SNS / 黒いボタン)。
+ */
+import { socials } from '@/data/home';
+---
+
+<aside class="flex flex-col gap-[16px]" aria-label="プロフィール">
+  <div class="flex items-center gap-[12px]">
+    <img src="/blog/author-fumi.webp" alt="Fumi のアイコン(ミー文字)" width="80" height="80" class="size-[80px] shrink-0 rounded-full bg-article-ink/5" />
+    <h1 class="text-article leading-[1.5] font-bold">Fumi</h1>
+  </div>
+  <p class="text-small leading-[1.5]">
+    有吉史成。UI/UX・ブランドデザイナー。<br />
+    武蔵野美術大学・2028卒 | 現在シンガポール🇸🇬 | TOEIC935
+  </p>
+  <ul class="flex gap-[16px] text-small">
+    {socials.map((social) => (
+      <li>
+        <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={`Fumi の ${social.label}(新しいタブで開く)`} class="underline underline-offset-4">
+          {social.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <a href="/" class="flex h-[32px] items-center justify-center rounded-thumb bg-article-ink text-kicker font-bold text-paper">ポートフォリオを見る</a>
+</aside>

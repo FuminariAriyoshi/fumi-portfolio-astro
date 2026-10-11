@@ -1,0 +1,26 @@
+---
+/** ブログ一覧の 1 記事(note のクリエイターページのカード:カバー画像 → タイトル 16px 太字 → 書き手と日付) */
+interface Props {
+  href: string;
+  title: string;
+  date: Date;
+  cover: string;
+  coverAlt: string;
+}
+
+const { href, title, date, cover, coverAlt } = Astro.props;
+const iso = date.toISOString().slice(0, 10);
+const label = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+---
+
+<li>
+  <a href={href} class="flex flex-col gap-[12px]">
+    <img src={cover} alt={coverAlt} width="1200" height="630" loading="lazy" class="aspect-[1200/630] w-full rounded-thumb object-cover" />
+    <h2 class="text-meta leading-[1.5] font-bold">{title}</h2>
+    <div class="flex items-center gap-[6px] text-kicker text-article-ink/60">
+      <img src="/blog/author-fumi.webp" alt="" width="80" height="80" class="size-[20px] rounded-full bg-article-ink/5" />
+      <span>Fumi</span>
+      <time datetime={iso}>{label}</time>
+    </div>
+  </a>
+</li>

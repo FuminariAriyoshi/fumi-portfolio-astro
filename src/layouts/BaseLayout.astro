@@ -3,11 +3,14 @@ import '../styles/global.css';
 import { getLang } from '@/lib/i18n';
 
 import Analytics from '@/components/layout/Analytics.astro';
+import SeoHead from '@/components/layout/SeoHead.astro';
 interface Props {
   title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title } = Astro.props;
+const { title, description, jsonLd } = Astro.props;
 const lang = getLang(Astro);
 ---
 
@@ -25,13 +28,16 @@ const lang = getLang(Astro);
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap"
       rel="stylesheet"
     />
-    <title>{title}</title>
-    <link rel="alternate" hreflang="ja" href="/" />
-    <link rel="alternate" hreflang="en" href="/en/" />
-    <!-- 言語の振り分け:ヘッダーで選んだ言語(localStorage)→ 無ければブラウザで一番上に設定した言語。合わない方のページに来たら移す -->
+    <SeoHead title={title} description={description} jsonLd={jsonLd} />
+    <link rel="alternate" hreflang="ja" href={new URL('/', Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL('/en/', Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site)} />
+    <!-- 言語の振り分け:ヘッダーで選んだ言語(localStorage)→ 無ければブラウザで一番上に設定した言語。合わない方のページに来たら移す
+         検索エンジンのクローラーは振り分けない(英語設定のクローラーが日本語版を読めなくなるため。両方は hreflang で伝える) -->
     <script is:inline>
       (function () {
         try {
+          if (/bot|crawl|spider|slurp|facebookexternalhit|embedly|preview/i.test(navigator.userAgent)) return;
           var pref = localStorage.getItem('fumi-lang');
           var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
           var want = pref || (/^ja/i.test(langs[0] || '') ? 'ja' : 'en');

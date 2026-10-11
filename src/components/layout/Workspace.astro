@@ -62,7 +62,8 @@ const { slides } = Astro.props;
 <script>
   document.querySelectorAll<HTMLElement>('[data-workspace]').forEach((root) => {
     const header = document.querySelector<HTMLElement>('.portfolio-header');
-    if (header) new ResizeObserver(() => root.style.setProperty('--portfolio-header-height', `${header.offsetHeight}px`)).observe(header);
+    // offsetHeight は四捨五入されるので(69.5 → 70)、下の帯との間に 0.5px の隙間ができて後ろのスライドが線のように見えていた。切り捨てて少し重ねる
+    if (header) new ResizeObserver(() => root.style.setProperty('--portfolio-header-height', `${Math.floor(header.getBoundingClientRect().height)}px`)).observe(header);
     const button = root.querySelector<HTMLButtonElement>('[data-sidebar-toggle]');
     const sync = () => button?.setAttribute('aria-expanded', String(root.dataset.sidebar === 'open'));
     sync();

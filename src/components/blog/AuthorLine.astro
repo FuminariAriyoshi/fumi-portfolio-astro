@@ -1,0 +1,18 @@
+---
+/** 記事の書き手と日付の行(note と同じく、小さいアイコン + 名前 + 日付) */
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+const iso = date.toISOString().slice(0, 10);
+const label = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+---
+
+<div class="flex items-center gap-[8px] leading-auto">
+  <img src="/blog/author-fumi.webp" alt="" width="80" height="80" class="size-[32px] shrink-0 rounded-full bg-article-ink/5" />
+  <div class="flex flex-col gap-[2px]">
+    <span class="text-kicker font-bold">Fumi</span>
+    <time datetime={iso} class="text-kicker text-article-ink/60">{label}</time>
+  </div>
+</div>

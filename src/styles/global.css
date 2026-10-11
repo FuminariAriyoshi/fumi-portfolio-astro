@@ -19,6 +19,8 @@
 @theme {
   --font-sans: "Inter", "Hiragino Sans", "Noto Sans JP", sans-serif;
   --font-serif: "PP Migra", "Hiragino Mincho ProN", serif;
+  /* ブログ(note と同じ組み。和文・欧文とも太字を持つシステムフォント) */
+  --font-article: "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Arial, "Noto Sans JP", Meiryo, sans-serif;
 
   --color-ink: #000;
   --color-paper: #fff;
@@ -28,6 +30,7 @@
   --color-thumb-3: #d4d4d4;
   --color-accent: #d75e5e;
   --color-ink-soft: #666;
+  --color-article-ink: #08131a; /* ブログの文字色(note と同じ) */
 
   /* サイドバーのサムネイル色。
      -soft: 普段(白に近い)。無印: 現在のスライドで使う色。表紙と同じく黒地に 20% で重ねるグラデーション(bg-tint-*)にする。
@@ -63,6 +66,9 @@
   --text-kicker: 0.75rem;
   --text-small: 0.875rem;
   --text-meta: 1rem;
+  --text-article: 1.125rem; /* ブログ本文(18px) */
+  --text-article-h2: 1.75rem; /* ブログの見出し(28px) */
+  --text-article-title: 2rem; /* ブログの記事タイトル(32px) */
   --text-body: 1.25rem;
   --text-nav: 1.5rem;
   --text-subtitle: 2.25rem;
@@ -189,6 +195,9 @@
 /* 開閉ボタンの帯。下に 12px 空けて、スクロールしたサムネイルがボタンにくっつかないようにする */
 [data-workspace] .portfolio-toolbar { position: sticky; top: var(--portfolio-header-height, 78px); z-index: 40; padding-bottom: 12px; background: var(--color-paper); }
 @media (min-width: 768px) {
+  /* 横に広い画面でスライドが大きくなりすぎないよう、16:9 のスライドが揃え線から画面の下(26px 空ける)までに収まる幅を上限にする。
+     余った幅は左右に均等に空けて、本体を中央に置く */
+  [data-workspace] main { max-width: calc((100dvh - var(--align-line, 149px) - 26px) * 16 / 9); margin-inline: auto; }
   /* 開閉ボタンの帯(32px + 下余白 12px)の下から始める */
   [data-workspace] [data-slide-list] { top: calc(var(--portfolio-header-height, 78px) + 44px); max-height: calc(100dvh - var(--portfolio-header-height, 78px) - 60px); }
   /* 閉じている時はサイドバーを縦いっぱいにし、項目の高さで埋める(高さは Workspace が --thumb-h に出す) */

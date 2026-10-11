@@ -16,10 +16,33 @@ import ContactSlide from '@/components/sections/ContactSlide.astro';
 import SelectedWork from '@/components/sections/SelectedWork.astro';
 import PortfolioMotion from '@/components/animations/PortfolioMotion.astro';
 import ScrollReveal from '@/components/animations/ScrollReveal.astro';
-import { slides } from '@/data/home';
+import PortfolioNoteSlide from '@/components/sections/PortfolioNoteSlide.astro';
+import { slides, socials } from '@/data/home';
+import { getLang } from '@/lib/i18n';
+
+const lang = getLang(Astro);
+const seo = lang === 'en'
+  ? {
+      title: 'Fumi',
+      description: 'Portfolio of Fumi (Fuminari Ariyoshi), a UI/UX and brand designer. Think logically, build intuitively — case studies from rebranding to web design and development.',
+    }
+  : {
+      title: 'Fumi',
+      description: '有吉史成(Fumi)のポートフォリオ。UI/UX・ブランドデザイナー。Think logically, build intuitively. リブランディングから Web のデザイン・実装までのケーススタディを掲載しています。',
+    };
+// タブのタイトルは「Fumi」のまま。本名(有吉史成)で検索した時に出るよう、人物の構造化データで名前を伝える
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: '有吉史成',
+  alternateName: ['有吉 史成', 'Fuminari Ariyoshi', 'Fumi'],
+  jobTitle: 'Designer',
+  url: new URL('/', Astro.site).href,
+  sameAs: socials.map((social) => social.href),
+};
 ---
 
-<BaseLayout title="Fumi">
+<BaseLayout title={seo.title} description={seo.description} jsonLd={person}>
   <SiteHeader />
   <Workspace slides={slides}>
     <IntroSlide />
@@ -32,6 +55,8 @@ import { slides } from '@/data/home';
     <SelectedWork id="reikikkawa" index={1} />
     <SelectedWork id="starweaving" index={2} />
     <OtherWorksSlide />
+    <!-- サイドバーには出さない(ブログ記事への入口) -->
+    <PortfolioNoteSlide />
     <ContactSlide />
   </Workspace>
   <PortfolioMotion />

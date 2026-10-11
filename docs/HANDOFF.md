@@ -249,3 +249,18 @@ src/
 - デッキの後ろの紙は画像をやめ、作品のテーマカラーのグラデーション(bg-ink + bg-(image:--work-tint)。推薦文の箱と同じ)。previews prop は削除。表紙の動画は scale-[1.02](縁に下地の黒が 1px 透けて線に見えたため)。
 - 後ろの紙は半透明をやめて黒地(不透明)+ グラデーション(ユーザー指定)。
 - Contact スライドも黒 + Contact の色(slide-contact)のグラデーション(SlideFrame tone="contact"。ユーザー指定)。
+
+## Claude 更新(2026-10-11)
+- **OGP / SEO**: `astro.config` に `site: 'https://studio-fumi.com'`。共通の head は `layout/SeoHead.astro`(title・description・canonical・OGP・X カード・JSON-LD)。プレビュー画像は `public/og.jpg`(ユーザー提供の表紙スクショを 1200×630 に切り抜き)。`public/robots.txt`、`pages/sitemap.xml.ts`。BaseLayout の言語振り分けはクローラー(UA に bot 等)では行わない。hreflang に x-default を追加。
+- **ブログ**: `/blog/`(一覧)・`/blog/<slug>/`(記事)。note 風の白地 1 カラム。記事は `src/content/blog/*.md`(content collection、`src/content.config.ts`)。部品は `components/blog/*`、枠は `layouts/BlogLayout.astro`(日本語のみ・言語振り分けなし)。本文 18px = `--text-article`。第1弾 `best-portfolio`(ユーザーの ReDesigner 用下書き。「↓サイトはこちら」のリンクは削除、見出し h2 を3つ追加)。
+- **About this portfolio**: Contact の前に `sections/PortfolioNoteSlide.astro`(`ui/ArticleRow.astro` = 写真・タイトル・→、新しいタブで記事を開く)。サイドバー(`data/home.ts`)には**入れない**(ユーザー指定)。
+- ピタとび: サービス名スライドの途切れた「実際」を削除。キャラクターの2コラム(ICPへの反応 / クマかペンギンか)はモバイルで縦積み。
+- サイドバー(開): 章の一覧の下端を 40px にし、長い作品名(ReiKikkawa Graduation Work)と最後の章が重ならないように。
+- **トップの <title> は「Fumi」のまま変えない**(ユーザー指定)。本名「有吉史成」での検索は description と Person の構造化データ(HomePage の person)で拾う。
+- ブログを note の寸法に合わせた(本文幅 620px、本文 18px/行の高さ 36px/段落 36px、見出し 28px、タイトル 32px、アイキャッチ → タイトル → 書き手 → 本文の並び)。文字はシステムフォント `--font-article`(Inter は 700 を読み込んでおらず、太字が 900 に置き換わって欧文だけ極太になっていたため)。色 `--color-article-ink`(#08131a)。
+- ブログのヘッダーはトップの SiteHeader とロゴの位置を完全に一致させる(px 24 / py 25、ヘッダーだけ Inter)。
+- 記事の `seoTitle`(検索・OGP 用。見出しの title はそのまま)。第1弾は「最強のポートフォリオができた。デザイナー就活のためのスライド型Webポートフォリオ」。
+- `/blog/` 一覧は note のクリエイターページの組み(カバーの帯 240px = 表紙と同じ bg-tint-slide-fumi → 左 384px に `BlogProfile` / 右に `ArticleCard` を 3 列)。
+- ヘッダー下の 0.5px の隙間を修正: `--portfolio-header-height` を offsetHeight(四捨五入)から getBoundingClientRect の切り捨てに。
+- md 以上で `main` の最大幅を「16:9 のスライドが揃え線から画面下(26px)までに収まる幅」に制限し、中央寄せ(広い画面でファーストビューのスライドが下で切れないように)。
+- **ブログはまだ公開しない**(ユーザー指定)。記事は `draft: true`。下書きは dev でだけ表示され、本番ビルドでは /blog/・記事・トップの About this portfolio・sitemap の /blog/ がすべて出ない(`lib/blog.ts` の getPosts)。公開する時は記事の `draft: true` を消すだけ。
