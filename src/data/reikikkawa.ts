@@ -78,7 +78,7 @@ export const reikikkawaSectionsEn: typeof reikikkawaSections = [
   {
     id: 'reikikkawa-mobile', chapter: 'Mobile', title: 'Tuning the experience for each device.',
     paragraphs: [
-      'On mobile, I turned the horizontal carousel into a vertical one, and adjusted — or left out — some interactions to suit the device.',
+      'On mobile, I turned the horizontal carousel into a vertical one, and adjusted or left out some interactions to suit the device.',
       'The hit areas for “Next” and “Previous” were also resized for each device, so the interface feels comfortable on mobile too.',
     ],
     images: [

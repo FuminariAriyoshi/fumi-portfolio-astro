@@ -1,7 +1,7 @@
 ---
 /**
  * 作品のキーワードを大きな打ち抜き文字で横に流す帯(Figma 427-350)。Think Logically と同じく枠なし。
- * 文字のグラデーションは黒 → toClass の色。lib/marquee.ts の等速ループ(スクロールには連動しない)。
+ * 文字のグラデーションは黒 → toClass の色。lib/marquee.ts の等速ループ(スクロールには連動しない)。押したまま左右にドラッグでも動かせる。
  */
 interface Props {
   words: string[];
@@ -15,7 +15,8 @@ const textClass = ['bg-linear-to-b from-ink from-[10%] to-80% bg-clip-text', toC
 ---
 
 <section aria-label={label} class="w-full shrink-0 overflow-clip">
-  <p class="flex items-center whitespace-nowrap font-black leading-auto text-transparent text-title md:text-marquee-jp">
+  <!-- 押したまま左右にドラッグして動かせる(lib/marquee.ts) -->
+  <p data-marquee-interactive class="flex cursor-grab items-center whitespace-nowrap select-none touch-pan-y data-dragging:cursor-grabbing font-black leading-auto text-transparent text-title md:text-marquee-jp">
     <span class="flex" data-marquee="forward" data-duration="50">
       {[0, 1].map((copy) => (
         <span class="flex shrink-0 gap-[40px] pr-[40px]" aria-hidden={copy === 1 ? 'true' : undefined}>

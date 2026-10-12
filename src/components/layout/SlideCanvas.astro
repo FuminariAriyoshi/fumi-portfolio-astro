@@ -15,6 +15,7 @@ const { id, height = 720 } = Astro.props;
 <div
   id={id}
   data-canvas
+  data-canvas-height={height}
   class="relative w-full shrink-0 overflow-clip rounded-frame bg-ink text-paper"
   style={`aspect-ratio: 1280 / ${height}`}
 >
@@ -31,6 +32,33 @@ const { id, height = 720 } = Astro.props;
       el.style.setProperty('--canvas-scale', String(entry.contentRect.width / 1280));
     });
   });
+  // 章スライドの文章の列(上下の余白の間で縦中央)が余白からはみ出す時(英語版は文が長い)、
+  // はみ出した分だけキャンバスを高くして、上下の余白を日本語版と同じに保つ。スマホは global.css で縦に積むので関係しない
+  const desktop = matchMedia('(min-width: 768px)');
+  const fitHeight = (canvas: HTMLElement) => {
+    const inner = canvas.firstElementChild as HTMLElement | null;
+    const base = Number(canvas.dataset.canvasHeight);
+    if (!inner || !base) return;
+    inner.style.height = `${base}px`;
+    canvas.style.aspectRatio = `1280 / ${base}`;
+    if (!desktop.matches) return;
+    let over = 0;
+    canvas.querySelectorAll<HTMLElement>('[data-chapter] > .justify-center').forEach((column) => {
+      const first = column.firstElementChild as HTMLElement | null;
+      const last = column.lastElementChild as HTMLElement | null;
+      if (!first || !last) return;
+      over = Math.max(over, last.offsetTop + last.offsetHeight - first.offsetTop - column.clientHeight);
+    });
+    if (over <= 0) return;
+    const height = base + Math.ceil(over);
+    inner.style.height = `${height}px`;
+    canvas.style.aspectRatio = `1280 / ${height}`;
+  };
+  const fitAll = () => canvases.forEach(fitHeight);
+  // 行の折り返しはフォント読み込み後に決まる
+  document.fonts.ready.then(fitAll);
+  desktop.addEventListener('change', fitAll);
+
   canvases.forEach((canvas) => {
     observer.observe(canvas);
     // 元デザインの「次へ」ボタンは、ページ内の次のスライドへ送る

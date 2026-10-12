@@ -24,15 +24,48 @@ const langs: Lang[] = ['en', 'ja'];
   .about-scroll::-webkit-scrollbar-thumb { background: rgb(255 255 255 / 0.2); border-radius: 10px; }
 </style>
 
+<style is:global>
+  /* 出現前は最初から隠す(スクリプトが動くまでのチラつき防止)。html.motion は WorksLayout が付ける */
+  .motion [data-about-root] [data-about-in]:not(.reveal-managed) { opacity: 0; }
+</style>
+
 <script>
   import gsap from 'gsap';
+  import { SplitText } from 'gsap/SplitText';
+  import { settle, splitVars } from '@/lib/split';
+
+  gsap.registerPlugin(SplitText);
 
   // 言語は WorksLayout が描く前に <html lang> に入れている(ヘッダーの EN / JP で切り替え)
   const lang = document.documentElement.lang === 'ja' ? 'ja' : 'en';
+  const blocks = [...document.querySelectorAll<HTMLElement>(`[data-lang-block="${lang}"] [data-about-in]`)];
+  // 文字だけの要素(中に要素を持たない)を、行ごとに切り抜いて下から出す。見えない枠(Interests)は外す
+  const textsOf = (block: HTMLElement) =>
+    [...block.querySelectorAll<HTMLElement>('h1, p, span, a')].filter(
+      (el) => !el.children.length && el.textContent?.trim() && !el.closest('.invisible, [aria-hidden="true"]'),
+    );
 
-  // 読み込み時に下から順に出す(旧サイトの framer-motion と同じ動き)。reduced-motion では出さない
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const blocks = document.querySelectorAll(`[data-lang-block="${lang}"] [data-about-in]`);
-    gsap.from(blocks, { autoAlpha: 0, y: 16, duration: 0.8, ease: 'expo.out', stagger: 0.05, delay: 0.1, clearProps: 'all' });
-  }
+  // 読み込み時に上から順に出す(ホームの ScrollReveal と同じ「行で切り抜いて下から」)。reduced-motion では出さない
+  gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+    blocks.forEach((block) => block.classList.add('reveal-managed'));
+    gsap.set(blocks, { autoAlpha: 0 });
+    // 行の折り返しはフォント読み込み後でないと決まらない
+    document.fonts.ready.then(() => {
+      blocks.forEach((block, i) => {
+        const at = 0.1 + i * 0.05;
+        const tl = gsap.timeline({ delay: at, defaults: { ease: 'expo.out', duration: 1.2 } });
+        // 罫線・顔・ボタンなど文字以外は枠ごと薄く出す
+        tl.to(block, { autoAlpha: 1, duration: 0.6, ease: 'power1.out', clearProps: 'opacity,visibility' }, 0);
+        textsOf(block).forEach((el) => {
+          const split = SplitText.create(el, splitVars(el, 'lines'));
+          tl.fromTo(
+            split.lines,
+            { yPercent: 110 },
+            { yPercent: 0, immediateRender: true, stagger: 0.08, onComplete: () => settle(split) },
+            0,
+          );
+        });
+      });
+    });
+  });
 </script>

@@ -53,6 +53,15 @@ const { title, lang = 'en', fumiHref = '/works/other', langMode = 'switch' } = A
         })();
       </script>
     )}
+    <!-- 登場アニメーション対象を初回描画から隠す(BaseLayout と同じ)。JS が動かなかった時は 3 秒で戻す -->
+    <script is:inline>
+      (function () {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var html = document.documentElement;
+        html.classList.add('motion');
+        setTimeout(function () { html.classList.remove('motion'); }, 3000);
+      })();
+    </script>
     <Analytics />
   </head>
   <body class="works-body min-h-screen bg-ink text-paper antialiased selection:bg-neutral-800">

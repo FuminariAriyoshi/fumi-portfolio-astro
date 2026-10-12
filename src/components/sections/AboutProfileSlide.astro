@@ -30,6 +30,8 @@ const lang = getLang(Astro);
         <span class="font-serif text-subtitle @[60rem]:text-greeting">{profile.name}</span>
         {lang === 'ja' && <span class="text-meta opacity-60">{profile.nameJa}</span>}
       </h3>
+      <!-- 信条の一文は自己紹介と分けて大きく出す -->
+      <p class="font-serif text-nav leading-tight @[60rem]:text-caption">{profile.tagline}</p>
       <div class="flex flex-col gap-[4px] text-meta leading-body">
         {profile.intro.map((line) => <p>{tr(lang, line)}</p>)}
       </div>

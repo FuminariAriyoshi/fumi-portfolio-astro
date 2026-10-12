@@ -67,7 +67,7 @@ export const pitatobiDeck = Array.from({ length: 21 }, (_, i) => `/works/pitatob
 const projectsEn: Record<string, Partial<Project>> = {
   StarWeaving: {
     image: { src: '/works/starweaving/cover.png', alt: 'The StarWeaving exhibition space, with constellations projected on the ceiling' },
-    intro: 'StarWeaving is an interactive exhibition presented at Musashino Art University. Visitors arrange and control stars to create their own constellations. Through the unusual experience of controlling the stars and the cosmos — things people have longed for since ancient times — it aims to spark curiosity toward what lies beyond our reach.',
+    intro: 'StarWeaving is an interactive exhibition presented at Musashino Art University. Visitors arrange and control stars to create their own constellations. Through the unusual experience of controlling the stars and the cosmos, things people have longed for since ancient times, it aims to spark curiosity toward what lies beyond our reach.',
   },
   'ReiKikkawa Graduation Work': {
     image: { src: '/works/reikikkawa/cover.png', alt: 'Rei Kikkawa’s graduation work website, lined with photos of butterflies' },
@@ -89,7 +89,7 @@ export const pitatobiStoriesEn: Story[] = [
   {
     heading: 'Studying abroad changes lives.',
     paragraphs: [
-      'The client, Raimon Nakajima, studied at UCLA, and the experience greatly widened his worldview and the choices in his life — diverse values, connections and career possibilities. He knows firsthand that studying abroad changes lives.',
+      'The client, Raimon Nakajima, studied at UCLA, and the experience greatly widened his worldview and the choices in his life, with diverse values, connections and career possibilities. He knows firsthand that studying abroad changes lives.',
       '',
       'Yet that feeling doesn’t reach the students and parents who are considering it. Without real information, vague anxiety keeps them from taking the first step.',
       'To close that gap, he started “Ryugaku NEXT,” a study-abroad media that began on social media.',

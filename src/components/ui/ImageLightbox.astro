@@ -4,6 +4,7 @@ import { getLang, tr } from '@/lib/i18n';
 const lang = getLang(Astro);
 /**
  * 画像を大きく見せるオーバーレイ。ページに 1 つ置き、[data-lightbox-src] を持つボタンから開く。
+ * [data-lightbox-zone](作品の中)の写真も、クリック・Enter・Space で同じように開く(alt の無い飾り・小さなアイコン・リンクの中は除く)。
  * <dialog> の showModal を使うので、Esc で閉じ、フォーカスは中に閉じ込められ、閉じると元のボタンに戻る。
  */
 ---
@@ -38,13 +39,12 @@ const lang = getLang(Astro);
   if (dialog && image && caption) {
     const content = dialog.querySelector('figure');
 
-    const open = (trigger: HTMLElement) => {
-      const { lightboxSrc, lightboxAlt, lightboxCaption, lightboxWidth, lightboxHeight } = trigger.dataset;
-      image.src = lightboxSrc ?? '';
-      image.alt = lightboxAlt ?? '';
-      if (lightboxWidth) image.width = Number(lightboxWidth);
-      if (lightboxHeight) image.height = Number(lightboxHeight);
-      caption.textContent = lightboxCaption ?? '';
+    const show = (src: string, alt: string, text: string, width?: number, height?: number) => {
+      image.src = src;
+      image.alt = alt;
+      if (width) image.width = width;
+      if (height) image.height = height;
+      caption.textContent = text;
       dialog.showModal();
       window.portfolioLenis?.stop();
       if (!reduce()) gsap.fromTo(content, { autoAlpha: 0, scale: 0.92, y: 16 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.6, ease: 'expo.out' });
@@ -72,8 +72,33 @@ const lang = getLang(Astro);
       });
     };
 
+    const open = (trigger: HTMLElement) => {
+      const { lightboxSrc, lightboxAlt, lightboxCaption, lightboxWidth, lightboxHeight } = trigger.dataset;
+      show(lightboxSrc ?? '', lightboxAlt ?? '', lightboxCaption ?? '', Number(lightboxWidth) || undefined, Number(lightboxHeight) || undefined);
+    };
+
     document.querySelectorAll<HTMLElement>('[data-lightbox-src]').forEach((trigger) => {
       trigger.addEventListener('click', () => open(trigger));
+    });
+
+    // 作品の中の写真。ボタンで包むと切り抜きの組みが崩れるので、img 自体をボタンとして扱う
+    const en = document.documentElement.lang === 'en';
+    const MIN_WIDTH = 160; // これより小さいアイコンは拡大しない
+    document.querySelectorAll<HTMLImageElement>('[data-lightbox-zone] img').forEach((img) => {
+      if (!img.alt.trim() || img.src.endsWith('.svg') || Number(img.getAttribute('width') ?? MIN_WIDTH) < MIN_WIDTH) return;
+      if (img.closest('a, button, summary, [data-lightbox-src], [data-deck-image]')) return;
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      img.setAttribute('aria-haspopup', 'dialog');
+      img.setAttribute('aria-label', en ? `Enlarge image: ${img.alt}` : `${img.alt} の画像を拡大表示`);
+      img.classList.add('cursor-zoom-in');
+      const openImage = () => show(img.currentSrc || img.src, img.alt, img.alt, img.naturalWidth, img.naturalHeight);
+      img.addEventListener('click', openImage);
+      img.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        openImage();
+      });
     });
     dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', close);
     dialog.addEventListener('close', () => window.portfolioLenis?.start());

@@ -42,6 +42,8 @@ const textClass = ['text-xs leading-tight', ja ? 'font-medium' : 'font-normal'];
     <!-- 1 列目 -->
     <div class="flex min-h-0 flex-col gap-8">
       <AboutBlock label="PHILOSOPHY" number="00">
+        <!-- 信条の一文は本文と分けて大きく出す -->
+        <p class="mb-1 font-serif text-2xl leading-tight tracking-[-0.03em]">{a.tagline}</p>
         <p class:list={textClass}>{a.philosophy[lang]}</p>
       </AboutBlock>
       <AboutBlock label="INTRODUCTION" number="01">

@@ -45,7 +45,8 @@ const tintClass: Record<string, string> = {
 ---
 
 {/* 作品と作品の間は、作品の中(14px)より広く空けてまとまりを見せる */}
-<div id={id} class:list={['flex w-full shrink-0 flex-col gap-[14px]', index > 0 && 'mt-[48px]', tintClass[id]]}>
+{/* 作品の中の写真はクリックで拡大できる(ImageLightbox の data-lightbox-zone) */}
+<div id={id} data-lightbox-zone class:list={['flex w-full shrink-0 flex-col gap-[14px]', index > 0 && 'mt-[48px]', tintClass[id]]}>
   {project && stacked && (
     <StackedWorkDeck
       project={project}

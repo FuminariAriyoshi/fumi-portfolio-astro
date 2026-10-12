@@ -5,9 +5,11 @@ type Text = Record<Lang, string>;
 export const aboutPage = {
   name: 'Fuminari Ariyoshi',
   nameJa: '有吉 史成',
+  // PHILOSOPHY の一文。本文の上に大きく出す(日英共通)
+  tagline: 'Think logically. Build intuitively.',
   philosophy: {
-    en: 'Think logically. Build intuitively. Based on logical thinking, I aim to be able to output intuitively. Once the problem is identified, the brand identity is determined, and the concept is decided, I believe that it is very important to create intuitively to build that aesthetic. Users touch intuitively and feel the brand, so I value their senses very much.',
-    ja: 'Think logically. Build intuitively. 論理的思考を踏まえ、感覚的にアウトプットできることが私の目指していることです。問題特定、ブランドアイデンティティ、コンセプトが決まったらその世界観を構築するために、感覚的に作ることがとても大切だと考えています。ユーザーは感覚的に触り、ブランドを”感じる”ため、感覚と直感もとても大切にしています。',
+    en: 'Based on logical thinking, I aim to be able to output intuitively. Once the problem is identified, the brand identity is determined, and the concept is decided, I believe that it is very important to create intuitively to build that aesthetic. Users touch intuitively and feel the brand, so I value their senses very much.',
+    ja: '論理的思考を踏まえ、感覚的にアウトプットできることが私の目指していることです。問題特定、ブランドアイデンティティ、コンセプトが決まったらその世界観を構築するために、感覚的に作ることがとても大切だと考えています。ユーザーは感覚的に触り、ブランドを”感じる”ため、感覚と直感もとても大切にしています。',
   } as Text,
   introduction: {
     en: 'Born and raised in Kyoto, I grew up with parents who run their own Japanese restaurant. From UI/UX design to 3D projects in tools like Cinema 4D, I don’t limit myself. I use any medium necessary to deliver the best design.',

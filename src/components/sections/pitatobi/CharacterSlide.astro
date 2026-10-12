@@ -10,11 +10,11 @@ const $ = (ja: string, en: string) => (lang === 'en' ? en : ja);
 const notes = [
   {
     title: $('ICPへの反応', 'How the ICP reacted'),
-    body: $('クライアント様が福岡で留学の登壇があられた際、高校生に今の留学NEXTのインスタのアカウント見せて、「これから『ピタとび』ってサービスになるよ」って伝えて、アイコンとか見せたら、高校生の反応が「ピタとびかわいい」ってなってて、受けがとても良かった。と報告を受けた。', 'When the client gave a talk on studying abroad in Fukuoka, he showed high school students the Ryugaku NEXT Instagram account, told them it was about to become a service called “Pitatobi,” and showed them the new icon. He reported back that the students loved it — “Pitatobi is so cute!”'),
+    body: $('クライアント様が福岡で留学の登壇があられた際、高校生に今の留学NEXTのインスタのアカウント見せて、「これから『ピタとび』ってサービスになるよ」って伝えて、アイコンとか見せたら、高校生の反応が「ピタとびかわいい」ってなってて、受けがとても良かった。と報告を受けた。', 'When the client gave a talk on studying abroad in Fukuoka, he showed high school students the Ryugaku NEXT Instagram account, told them it was about to become a service called “Pitatobi,” and showed them the new icon. He reported back that the students loved it and said, “Pitatobi is so cute!”'),
   },
   {
     title: $('クマかペンギンか', 'Bear or penguin?'),
-    body: $('最初に出た案はペンギンだった。世界へ飛び込んでいく、飛び立つ。名前の「とび」とも合う。だが、勇気を出して飛び込むのはユーザーのほうだ。キャラクターが立つべきなのは飛び込む側ではなく、サービス提供者側としてなるべきは、受け止める側。相談される役。', 'The first idea was a penguin: diving into the world, taking flight — it even matched the “tobi” (fly) in the name. But it’s the user who musters the courage to take the leap. As the service provider, the character shouldn’t be the one jumping, but the one who catches them — the one people come to for advice.'),
+    body: $('最初に出た案はペンギンだった。世界へ飛び込んでいく、飛び立つ。名前の「とび」とも合う。だが、勇気を出して飛び込むのはユーザーのほうだ。キャラクターが立つべきなのは飛び込む側ではなく、サービス提供者側としてなるべきは、受け止める側。相談される役。', 'The first idea was a penguin: diving into the world, taking flight. It even matched the “tobi” (fly) in the name. But it’s the user who musters the courage to take the leap. As the service provider, the character shouldn’t be the one jumping, but the one who catches them and the one people come to for advice.'),
   },
 ];
 ---
@@ -23,12 +23,13 @@ const notes = [
   <div slot="visual" class:list={[t.card, 'flex w-full flex-col items-center gap-[32px] py-[56px]']}>
     <img src="/works/pitatobi-story/character-logo.webp" alt={$('ピタとびのキャラクター「ユーシー」とロゴ', 'Pitatobi’s character “Yuushii” and the logo')} width="868" height="376" loading="lazy" class="h-auto w-[480px]" />
     <div class="flex flex-col items-center">
-      <p class="text-greeting-lg leading-[1.1] font-bold">{$('ユーシー', 'Yuushii')}</p>
+      <!-- 英語(Inter)は同じ太さでも和文よりずっと重く見えるので、英語だけ細くする -->
+      <p class:list={['text-greeting-lg leading-[1.1]', lang === 'en' ? 'font-medium tracking-[-0.03em]' : 'font-bold']}>{$('ユーシー', 'Yuushii')}</p>
       <p class="text-nav font-medium leading-body opacity-50">Lucy × UCLA × You see.</p>
     </div>
   </div>
   <h3 class={t.title}>{$('キャラクター', 'Character')}</h3>
-  <p class={t.lead}>{$('ピタとびのサービスに親しみを持てるようキャラクターも制作をした。コアバリューの「信頼できる相談者」だった。これを表現するように、モチーフをクマとした。また、クライアントの原体験であるUCLAのシンボルも、クマであり、ピッタリだと思った。', 'To make the service feel approachable, I also created a character. One of the core values was “an advisor you can trust,” so I chose a bear as the motif. The symbol of UCLA — where the client’s own story began — is also a bear, which made it a perfect fit.')}</p>
+  <p class={t.lead}>{$('ピタとびのサービスに親しみを持てるようキャラクターも制作をした。コアバリューの「信頼できる相談者」だった。これを表現するように、モチーフをクマとした。また、クライアントの原体験であるUCLAのシンボルも、クマであり、ピッタリだと思った。', 'To make the service feel approachable, I also created a character. One of the core values was “an advisor you can trust,” so I chose a bear as the motif. The symbol of UCLA, where the client’s own story began, is also a bear, which made it a perfect fit.')}</p>
   <div class="grid grid-cols-1 gap-[24px] md:grid-cols-2">
     {notes.map((note) => (
       <div class={t.column}>

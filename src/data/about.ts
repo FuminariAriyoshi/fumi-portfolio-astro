@@ -6,11 +6,13 @@ export const profile = {
   name: 'Fuminari Ariyoshi',
   nameJa: '有吉 史成',
   photo: { src: '/about/fumi-desk.webp', alt: { ja: '自室のデスクでノートパソコンに向かって作業する Fumi', en: 'Fumi working on a laptop at his desk at home' } as L, width: 1600, height: 856 },
+  // 信条の一文。自己紹介の上に大きく出す(日英共通)
+  tagline: 'Think logically. Build intuitively.',
   // 旧サイトの PHILOSOPHY(日本語)。Figma 427-350 で差し替え
   intro: [
     {
-      ja: 'Think logically. Build intuitively. 論理的思考を踏まえ、感覚的にアウトプットできることが私の目指していることです。問題特定、ブランドアイデンティティ、コンセプトが決まったらその世界観を構築するために、感覚的に作ることがとても大切だと考えています。ユーザーは感覚的に触り、ブランドを”感じる”ため、感覚と直感もとても大切にしています。',
-      en: 'Think logically. Build intuitively. Based on logical thinking, I aim to be able to output intuitively. Once the problem is identified, the brand identity is determined, and the concept is decided, I believe that it is very important to create intuitively to build that aesthetic. Users touch intuitively and feel the brand, so I value their senses very much.',
+      ja: '論理的思考を踏まえ、感覚的にアウトプットできることが私の目指していることです。問題特定、ブランドアイデンティティ、コンセプトが決まったらその世界観を構築するために、感覚的に作ることがとても大切だと考えています。ユーザーは感覚的に触り、ブランドを”感じる”ため、感覚と直感もとても大切にしています。',
+      en: 'Based on logical thinking, I aim to be able to output intuitively. Once the problem is identified, the brand identity is determined, and the concept is decided, I believe that it is very important to create intuitively to build that aesthetic. Users touch intuitively and feel the brand, so I value their senses very much.',
     },
   ] as L[],
 };
@@ -84,7 +86,7 @@ export const experience: CareerItem[] = [
     group: 'workshop',
     description: {
       ja: '2日間の UI デザインワークショップで、アイデアからプロトタイプまでを高速で提案。デザインロジックの重要性を改めて実感しました。',
-      en: 'In a two-day UI design workshop, moved quickly from idea to prototype — and came away convinced of how much design logic matters.',
+      en: 'In a two-day UI design workshop, moved quickly from idea to prototype and came away convinced of how much design logic matters.',
     },
   },
   {
@@ -179,7 +181,7 @@ export const testimonials: Testimonial[] = [
       ],
       en: [
         'Thank you so much for building the Pitatobi website! You patiently worked through every request we had and shaped it with us over many rounds of discussion.',
-        'Beyond the website’s UI/UX, you were involved in the whole Pitatobi brand — from exploring the service name to creating the character and defining the brand colors.',
+        'Beyond the website’s UI/UX, you were involved in the whole Pitatobi brand, from exploring the service name to creating the character and defining the brand colors.',
         'It’s because of your speed and flexibility, Fumi, that the site turned out this well. Let’s make something together again!',
       ],
     },

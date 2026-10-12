@@ -74,7 +74,7 @@ export const starweavingSectionsEn: typeof starweavingSections = [
   {
     id: 'starweaving-values', chapter: 'Core Value', title: 'Playfulness, curiosity, impact.',
     paragraphs: [
-      'Playfulness. Turning the experience of controlling stars — something we can never really control — into a joyful interaction. We checked how smoothly it worked every day during the exhibition.',
+      'Playfulness. Turning the experience of controlling stars, something we can never really control, into a joyful interaction. We checked how smoothly it worked every day during the exhibition.',
       'Curiosity. We designed an unusual experience that makes people instinctively feel, “that looks interesting.”',
       'Impact. To make visitors stop among the other works in the same space, we projected the visuals onto the ceiling. Many visitors took an interest and tried it.',
     ],
@@ -89,7 +89,7 @@ export const starweavingSectionsEn: typeof starweavingSections = [
     id: 'starweaving-ideas', chapter: 'Ideas', title: 'From methods to experience design.',
     paragraphs: [
       'Through two ideation meetings, we narrowed it down to three promising ideas. The final work is based on Idea C.',
-      'At first we were tied to a method — “we want to use AI” — and lost sight of the experience itself. After more than five hours of discussion, we consulted our professors and changed direction.',
+      'At first we were tied to a method (“we want to use AI”) and lost sight of the experience itself. After more than five hours of discussion, we consulted our professors and changed direction.',
       'Back then, I hadn’t yet built my own way of developing a design consistently from a concept.',
     ],
     images: [{ src: '/works/starweaving/ideas.png', alt: 'The concepts compared: Idea A, Idea B and Idea C' }],
